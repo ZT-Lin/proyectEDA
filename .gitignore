@@ -1,0 +1,9 @@
+# Code::Blocks 
+*.layout
+*.depend
+
+bin/
+obj/
+*.o
+*.exe
+*.out
