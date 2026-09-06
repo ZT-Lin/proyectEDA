@@ -1,8 +1,4 @@
 # Code::Blocks 
 *.layout
-<<<<<<< HEAD
-*.depend
-=======
 *.depend
 *.pdf
->>>>>>> bc93dfa571a9aa2be5c99a7671081d8311ab4113
