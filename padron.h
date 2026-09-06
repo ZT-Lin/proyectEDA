@@ -6,13 +6,13 @@
 
 
 typedef struct{
-    int DNI, cPostal, mesa, circuito;
+    int dni, cPostal, mesa, circuito;
     char nombreApellido[51];
     char domicilio[81];
 }padron;
 
 void inicializarP (padron *P){
-    P->DNI = 0;
+    P->dni = 0;
     strcpy(P->nombreApellido, "indefinido");
     strcpy(P->domicilio, "indefinido");
     P->cPostal = 0;
@@ -22,7 +22,7 @@ void inicializarP (padron *P){
 
 // ============ GETTERS ============
 int getDNI( const padron *P) {
-    return P->DNI;
+    return P->dni;
 }
 
 int getCPostal( const padron *P) {
@@ -47,7 +47,7 @@ char* getDomicilio( const padron *P) {
 
 // ============ SETTERS ============
 void setDNI(padron *P, int dni) {
-    P->DNI = dni;
+    P->dni = dni;
 }
 
 void setCPostal(padron *P, int cPostal) {
