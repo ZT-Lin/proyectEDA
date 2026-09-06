@@ -1,3 +1,8 @@
+#include 
+
+
+
+
 typedef struct {
     long dni;
     char nombreApellido[51];
