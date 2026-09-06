@@ -3,6 +3,10 @@
 
 #define LSOMAX 2000
 
-padron LSO[LSOMAX];
+typedef struct{
+    padron datos[LSOMAX];
+    int cantidad;
+}LSOBB;
+
 
 #endif // LSO_H_INCLUDED
