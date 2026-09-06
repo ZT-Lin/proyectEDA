@@ -2,4 +2,4 @@
 - [ ] Crear LVO.h
 - [ ] Crear LSO.h
 - [ ] Crear ABB.h
-- [ ] Crear archivos `.txt` para registrar las personas a precargar
+- [x] Crear archivos `.txt` para registrar las personas a precargar
