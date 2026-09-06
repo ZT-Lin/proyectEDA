@@ -1,5 +1,5 @@
-[x] Crear padron.h
-[ ] Crear LVO.h
-[ ] Crear LSO.h
-[ ] Crear ABB.h
-[ ] Crear archivos `.txt` para registrar las personas a precargar
+- [x] Crear padron.h
+- [ ] Crear LVO.h
+- [ ] Crear LSO.h
+- [ ] Crear ABB.h
+- [ ] Crear archivos `.txt` para registrar las personas a precargar
