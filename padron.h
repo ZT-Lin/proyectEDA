@@ -4,9 +4,9 @@
 #include <nombreApellido.h>
 
 typedef struct{
-    int DNI, mesa, circuito;
-    fullName nombreApellido;
-    char domicilio[80], codPostal[8];
+    int DNI, cPostal, mesa, circuito;
+    char nombreApellido[51];
+    char domicilio[81];
 }padron;
 
 
