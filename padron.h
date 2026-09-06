@@ -37,11 +37,11 @@ int getCircuito( const padron *P) {
     return P->circuito;
 }
 
-char* getNombreApellido( const padron *P, char *buffer) {
+char* getNombreApellido( const padron *P) {
     return P->nombreApellido;
 }
 
-char* getDomicilio( const padron *P, char *buffer) {
+char* getDomicilio( const padron *P) {
     return P->domicilio;
 }
 
