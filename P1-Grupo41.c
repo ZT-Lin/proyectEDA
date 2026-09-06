@@ -65,13 +65,52 @@ typedef struct NodoABB{
  /*Hacer el coso para que no se repitan los dni. Acordate Valen o Lin*/
 
  void initLVO() {
-    /*Buscar o preguntar a gemini como hacer el init xd*/
+    lvo_head = (NodoLVO*)malloc(sizeof(NodoLVO));
+    lvo_head->elector.dni = INFINITO_LVO;
+    lvo_head->sig = NULL;
  }
 
  void altaLVO(Elector e) {
-    NodoLVO *actual = lvo_first, *ant = null;
+    NodoLVO *actual = lvo_head, *ant = null;
     while (actual->elector.dni < e.dni){
-    
+        ant = actual;
+        actual = actual -> sig;
     }
-    
+    NodoLVO* nuevo = (NodoLVO*)malloc(sizeof(NodoLVO));
+    nuevo->elector = e;
+
+    costo_altas_lvo += 1;
+
+    if (ant == NULL){
+        nuevo->sig = lvo_head;
+        lvo_head = nuevo;
+    } else {
+        nuevo->sig = actual;
+        ant->sig = nuevo;
+    }
  }
+
+ void bajaLVO(Elector e){
+    NodoLVO *actual = lvo_head, *ant = NULL;
+    while (actual ->elector.dni < e.dni){
+        ant = actual;
+        actual = actual->sig;
+    }
+    if (actual->elector.dni == e.dni && son_iguales(actual->elector, e)){
+        if (ant == NULL) lvo_head = actual ->sig;
+        else ant -> sig = actual ->sig;
+
+        costo_bajas_lvo += 0.5;
+        free(actual)
+    }
+ }
+
+ void evocarLVO(int dni){
+    NodoLV* actual = lvo_head;
+    while (actual->elector.dni < dni){
+        costo_consultas_lvo += 1.0;
+        actual = actual->sig;
+    }
+    costo_consultas_lvo += 1.0;
+ }
+ 
