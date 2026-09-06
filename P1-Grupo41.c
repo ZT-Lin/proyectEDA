@@ -20,12 +20,14 @@ El ingreso de datos no debe ser sensible a may ´usculas y min ´usculas, esto s
 
 
 #include <stdio.h>
+
+#define EST_ELECTORES 2000 /*Electores estimados*/
 #define INFINITO_LVO 999999999
 typedef struct {
     long dni;
     char nombreApellido[51];
     char domicilio[81];
-    int codPostal;
+    int cp;
     int mesa;
     int circuito;
 } Elector;
@@ -39,8 +41,21 @@ typedef struct {
 /*Lista Vinculada Ordenada con terminaci´on dada por contenido (+ infinito) (LVO)*/
 
 typedef struct NodoLVO{
-    Elector dato;
+    Elector elector;
     struct NodoLVO *siguien;
 } NodoLVO;
 
 /*Lista Secuencial Ordenada con b´usqueda binaria (LSOBB)*/
+typedef struct {
+    Elector electores[EST_ELECTORES];
+    int cant;
+}
+
+/*Arbol Binario de B´usqueda (ABB).*/
+typedef struct NodoABB{
+    Elector elector;
+    struct NodoABB *izq; 
+    struct NodoABB *dere;
+} NodoABB;
+
+ 
