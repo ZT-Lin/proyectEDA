@@ -58,4 +58,20 @@ typedef struct NodoABB{
     struct NodoABB *dere;
 } NodoABB;
 
- 
+ float costo_altas_lvo = 0, costo_bajas_lvo= 0, costo_consulta_lvo = 0;
+ float costo_altas_lsobb = 0, costo_bajas_lsobb= 0, costo_consulta_lsobb = 0;
+ float costo_altas_abb = 0, costo_bajas_abb= 0, costo_consulta_abb = 0;
+
+ /*Hacer el coso para que no se repitan los dni. Acordate Valen o Lin*/
+
+ void initLVO() {
+    /*Buscar o preguntar a gemini como hacer el init xd*/
+ }
+
+ void altaLVO(Elector e) {
+    NodoLVO *actual = lvo_first, *ant = null;
+    while (actual->elector.dni < e.dni){
+    
+    }
+    
+ }
