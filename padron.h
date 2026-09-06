@@ -21,28 +21,28 @@ void inicializarP (padron *P){
 }
 
 // ============ GETTERS ============
-int getDNI(const padron *P) {
+int getDNI( const padron *P) {
     return P->DNI;
 }
 
-int getCPostal(const padron *P) {
+int getCPostal( const padron *P) {
     return P->cPostal;
 }
 
-int getMesa(const padron *P) {
+int getMesa( const padron *P) {
     return P->mesa;
 }
 
-int getCircuito(const padron *P) {
+int getCircuito( const padron *P) {
     return P->circuito;
 }
 
-void getNombreApellido(const padron *P, char *buffer) {
-    strcpy(buffer, P->nombreApellido);
+char* getNombreApellido( const padron *P, char *buffer) {
+    return P->nombreApellido;
 }
 
-void getDomicilio(const padron *P, char *buffer) {
-    strcpy(buffer, P->domicilio);
+char* getDomicilio( const padron *P, char *buffer) {
+    return P->domicilio;
 }
 
 // ============ SETTERS ============
@@ -62,11 +62,11 @@ void setCircuito(padron *P, int circuito) {
     P->circuito = circuito;
 }
 
-void setNombreApellido(padron *P, const char *nombre) {
+void setNombreApellido(padron *P,  char *nombre) {
     strcpy(P->nombreApellido, nombre);
 }
 
-void setDomicilio(padron *P, const char *domicilio) {
+void setDomicilio(padron *P,  char *domicilio) {
     strcpy(P->domicilio, domicilio);
 }
 
