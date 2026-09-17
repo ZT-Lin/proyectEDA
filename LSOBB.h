@@ -14,11 +14,11 @@ void LSOBB_inicializar(LSOBB *lista) {
     lista->cantidad = 0;
 }
 
-int vaciaLSO(LSOBB l){
+int vaciaLSO(const LSOBB l){
     return (l.cantidad == 0);
 }
 
-int llenaLSO(LSOBB l){
+int llenaLSO(const LSOBB l){
     return (l.cantidad > LSOMAX);
 }
 
