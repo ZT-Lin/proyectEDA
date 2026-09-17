@@ -22,27 +22,27 @@ void inicializarP (padron *P){
 
 // ============ GETTERS ============
 int getDNI( const padron P) {
-    return P->dni;
+    return P.dni;
 }
 
 int getCPostal( const padron P) {
-    return P->cPostal;
+    return P.cPostal;
 }
 
 int getMesa( const padron P) {
-    return P->mesa;
+    return P.mesa;
 }
 
 int getCircuito( const padron P) {
-    return P->circuito;
+    return P.circuito;
 }
 
 char* getNombreApellido( const padron P) {
-    return P->nombreApellido;
+    return P.nombreApellido;
 }
 
 char* getDomicilio( const padron P) {
-    return P->domicilio;
+    return P.domicilio;
 }
 
 // ============ SETTERS ============

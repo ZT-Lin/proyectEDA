@@ -7,77 +7,84 @@
 
 typedef struct{
     padron datos[LSOMAX];
-    int cantidad = 0;
+    int cantidad;
 }LSOBB;
 
 void LSOBB_inicializar(LSOBB *lsobb) {
     lsobb->cantidad = 0;
 }
 
-int vaciaLSO(const LSOBB lsobb){
+int vacioLSO(const LSOBB lsobb){
     return (lsobb.cantidad == 0);
 }
 
 int llenaLSO(const LSOBB lsobb){
-    return (lsobb.cantidad > LSOMAX);
+    return (lsobb.cantidad >= LSOMAX);
 }
 
-int localizarLSO(LSOBB lsobb, const padron p){
+int localizarLSO(const LSOBB lsobb, const padron elector){
+    if ( vacioLSO(lsobb) ){return 0;}//lista vacia
+
     int li = 0; //inclusivo
-    int ls = lsobb.cantidad; //inclusivo
-    int medio = 0;
+    int ls = lsobb.cantidad-1; //inclusivo
+    int medio;
+    int localizar = getDNI(elector);
 
     while(li<ls){
             medio = (li+ls)/2;
-            if( getDNI(lsobb.datos[medio]) < getDNI(p) ){
+            if( getDNI(lsobb.datos[medio]) < localizar ){
                 li = medio+1;
             }else{
-                ls = medio-1;
+                ls = medio;
             }
     }
 
-    if ( getDNI(lsobb.datos[medio]) == getDNI(p) ){
-        return medio;
-    }else{
-        return -1; // no encontrado
-    }
+    return li;
+    // retornar posicion donde
 }
 
 int altaLSO(LSOBB *lsobb, const padron elector){
-    if ( llenaLSO(*lsobb) ) { return -1;} // lista llena
+    if ( llenaLSO(*lsobb) ) { return -1;}
+    // lista llena
 
     int posicion = localizarLSO(*lsobb,elector);
-    if (posicion == -1){ return -1;} //no encontrado
+    if ( padron_sonIguales( &lsobb->datos[posicion], &elector) ) { return -1;}
+    // son iguales, no se da la alta
 
-    //dar alta en posicion x
-
-    int fin = lsobb->cantidad;
+    // dar alta en posicion x
+    // mover elementos para hacer lugar
     int costo = 0;
-    while (posicion < fin){
-        lsobb->datos[fin+1] = lsobb->datos[fin];
-        fin--;
+    int mov = 0;
+    for (mov = lsobb->cantidad; mov>posicion; mov--){
+        lsobb->datos[mov] = lsobb->datos[mov-1];
         costo++;
     }
+    // dar alta, aumentar cantidad almacenada
     lsobb->datos[posicion] = elector;
+    lsobb->cantidad++;
     return costo;
 }
 
 int bajaLSO(LSOBB *lsobb, const padron elector){
-    if ( llenaLSO(*lsobb) ) { return -1;} // lista llena
+    if ( vacioLSO(*lsobb) ) { return -1;}
+    // lista vacia
 
     int posicion = localizarLSO(*lsobb,elector);
-    if (posicion == -1){ return -1;} //no encontrado
 
-    //dar alta en posicion x
+    if ( padron_sonIguales(&lsobb->datos[posicion],&elector) ){
+        //debe ser iguales para dar de baja
+        int costo = 0;
+        int mov=0;
+        for (mov = posicion; mov < lsobb->cantidad-1; mov++){
+            lsobb->datos[mov] = lsobb->datos[mov+1];
+            costo++;
+        }
 
-    int fin = lsobb->cantidad;
-    int costo = 0;
-    while (posicion < fin){
-        lsobb->datos[posicion] = l->datos[posicion+1];
-        posicion++;
-        costo++;
+        lsobb->cantidad--;
+        return costo;
     }
-    return costo;
+    return -1;
+    // no se encuentra elector para dar de baja
 }
 
 
