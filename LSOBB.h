@@ -22,7 +22,7 @@ int llenaLSO(const LSOBB lsobb){
     return (lsobb.cantidad >= LSOMAX);
 }
 
-int localizarLSO(const LSOBB lsobb, const padron elector){
+int localizarLSO(const LSOBB lsobb, const padron elector, int *costo){
     if ( vacioLSO(lsobb) ){return 0;}//lista vacia
 
     int li = 0; //inclusivo
@@ -37,6 +37,7 @@ int localizarLSO(const LSOBB lsobb, const padron elector){
             }else{
                 ls = medio;
             }
+            *costo++;//consulta 1 celda por iteracion
     }
 
     return li;
@@ -47,7 +48,7 @@ int altaLSO(LSOBB *lsobb, const padron elector){
     if ( llenaLSO(*lsobb) ) { return -1;}
     // lista llena
 
-    int posicion = localizarLSO(*lsobb,elector);
+    int posicion = localizarLSO(*lsobb,elector,0);
     if ( padron_sonIguales( &lsobb->datos[posicion], &elector) ) { return -1;}
     // son iguales, no se da la alta
 
@@ -69,7 +70,7 @@ int bajaLSO(LSOBB *lsobb, const padron elector){
     if ( vacioLSO(*lsobb) ) { return -1;}
     // lista vacia
 
-    int posicion = localizarLSO(*lsobb,elector);
+    int posicion = localizarLSO(*lsobb,elector,0);
 
     if ( padron_sonIguales(&lsobb->datos[posicion],&elector) ){
         //debe ser iguales para dar de baja
