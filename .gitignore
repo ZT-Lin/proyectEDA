@@ -2,3 +2,6 @@
 *.layout
 *.depend
 *.pdf
+
+/bin/
+/obj/
