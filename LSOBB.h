@@ -10,70 +10,72 @@ typedef struct{
     int cantidad = 0;
 }LSOBB;
 
-void LSOBB_inicializar(LSOBB *lista) {
-    lista->cantidad = 0;
+void LSOBB_inicializar(LSOBB *lsobb) {
+    lsobb->cantidad = 0;
 }
 
-int vaciaLSO(const LSOBB l){
-    return (l.cantidad == 0);
+int vaciaLSO(const LSOBB lsobb){
+    return (lsobb.cantidad == 0);
 }
 
-int llenaLSO(const LSOBB l){
-    return (l.cantidad > LSOMAX);
+int llenaLSO(const LSOBB lsobb){
+    return (lsobb.cantidad > LSOMAX);
 }
 
-int localizarLSO(LSOBB l, const padron p){
+int localizarLSO(LSOBB lsobb, const padron p){
     int li = 0; //inclusivo
-    int ls = l.cantidad; //inclusivo
+    int ls = lsobb.cantidad; //inclusivo
     int medio = 0;
 
     while(li<ls){
             medio = (li+ls)/2;
-            if( getDNI(l.datos[medio]) < getDNI(p) ){
+            if( getDNI(lsobb.datos[medio]) < getDNI(p) ){
                 li = medio+1;
             }else{
                 ls = medio-1;
             }
     }
 
-    if ( getDNI(l.datos[medio]) == getDNI(p) ){
+    if ( getDNI(lsobb.datos[medio]) == getDNI(p) ){
         return medio;
     }else{
         return -1; // no encontrado
     }
 }
 
-int altaLSO(LSOBB *l, const padron elector){
-    if ( llenaLSO(*l) ) { return -1;} // lista llena
+int altaLSO(LSOBB *lsobb, const padron elector){
+    if ( llenaLSO(*lsobb) ) { return -1;} // lista llena
 
-    int posicion = localizarLSO(*l,elector);
+    int posicion = localizarLSO(*lsobb,elector);
     if (posicion == -1){ return -1;} //no encontrado
 
     //dar alta en posicion x
 
-    int fin = l->cantidad;
+    int fin = lsobb->cantidad;
     int costo = 0;
     while (posicion < fin){
-        l->datos[fin+1] = l->datos[fin];
-        costo+1;
+        lsobb->datos[fin+1] = lsobb->datos[fin];
+        fin--;
+        costo++;
     }
-    l->datos[posicion] = elector;
+    lsobb->datos[posicion] = elector;
     return costo;
 }
 
-int bajaLSO(LSOBB *l, const padron elector){
-    if ( llenaLSO(*l) ) { return -1;} // lista llena
+int bajaLSO(LSOBB *lsobb, const padron elector){
+    if ( llenaLSO(*lsobb) ) { return -1;} // lista llena
 
-    int posicion = localizarLSO(*l,elector);
+    int posicion = localizarLSO(*lsobb,elector);
     if (posicion == -1){ return -1;} //no encontrado
 
     //dar alta en posicion x
 
-    int fin = l->cantidad;
+    int fin = lsobb->cantidad;
     int costo = 0;
-    while (posicion <= fin){
-        l->datos[fin+1] = l->datos[fin];
-        costo+1;
+    while (posicion < fin){
+        lsobb->datos[posicion] = l->datos[posicion+1];
+        posicion++;
+        costo++;
     }
     return costo;
 }
