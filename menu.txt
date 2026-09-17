@@ -1,0 +1,10 @@
+==========ANALISIS==========
+=========ESTRUCTORAS========
+1. Mostrar estructura: LSOBB
+2. Mostrar estructura: LVO
+3. Mostrar estructura: ABB
+4. Comparar estructuras
+==========SISTEMA===========
+0. Salir
+============================
+usted->
