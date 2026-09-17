@@ -31,6 +31,7 @@ int cargar_struct(LSOBB *lso){
                 case 3:{
                     fscanf(operaciones, "%d", &itemp);
                     setDNI(&elector_temp, itemp);
+
                     break;
                 }
                 default:{
