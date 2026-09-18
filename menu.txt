@@ -1,14 +1,14 @@
-==========MIEMBROS==========
+==========================MIEMBROS==========================
 Grupo nro 41
 Lin Franco
 Correa Perez Valentin
-==========ANALISIS==========
-=========ESTRUCTORAS========
+==========================ANALISIS==========================
+========================ESTRUCTURAS=========================
 1. Mostrar estructura: LSOBB
 2. Mostrar estructura: LVO
 3. Mostrar estructura: ABB
 4. Comparar estructuras
-==========SISTEMA===========
+===========================SISTEMA==========================
 0. Salir
-============================
+============================================================
 usted->

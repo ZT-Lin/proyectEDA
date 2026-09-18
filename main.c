@@ -10,8 +10,7 @@ void enter(void);
 
 int preload(LSOBB *); // esperando mas estructuras @Alts
 
-int main()
-{
+int main(){
     // menu
     bool SISTEMA = true;
     char comando_user[100];
@@ -32,7 +31,8 @@ int main()
         getchar();
         if (strlen(comando_user) != 1)
         {
-            printf("mal ingresado\n");
+            printf("============================================================\n");
+            printf("\t\t opcion invalido\n");
             enter();
             continue;
         }
@@ -83,7 +83,10 @@ int main()
         }
         default:
         {
-            break;
+            printf("============================================================\n");
+            printf("\t\t opcion invalido\n");
+            enter();
+            continue;
         }
         } // switch
 
