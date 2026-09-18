@@ -10,7 +10,7 @@ typedef struct{
     int cantidad;
 }LSOBB;
 
-void inicializarLSOBB(LSOBB *lsobb) {
+void initLSOBB(LSOBB *lsobb) {
     lsobb->cantidad = 0;
     /*
     1. posicion "vacio"
@@ -18,11 +18,11 @@ void inicializarLSOBB(LSOBB *lsobb) {
     */
 }
 
-int vacioLSO(const LSOBB lsobb){
+bool vacioLSO(const LSOBB lsobb){
     return (lsobb.cantidad == 0);
 }
 
-int llenaLSO(const LSOBB lsobb){
+bool llenaLSO(const LSOBB lsobb){
     return (lsobb.cantidad >= LSOMAX);
 }
 

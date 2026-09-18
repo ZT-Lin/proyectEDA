@@ -11,7 +11,7 @@ typedef struct{
     char domicilio[81];
 }elector;
 
-void inicializarElector (elector *Elector){
+void initElector (elector *Elector){
     Elector->dni = 0;
     strcpy(Elector->nombreApellido, "indefinido");
     strcpy(Elector->domicilio, "indefinido");

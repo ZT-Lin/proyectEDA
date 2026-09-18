@@ -17,7 +17,7 @@ int main(){
 
     // estructuras
     LSOBB lista_secuencial_ordenada;
-    inicializarLSOBB(&lista_secuencial_ordenada);
+    initLSOBB(&lista_secuencial_ordenada);
 
     // precargas
     preload(&lista_secuencial_ordenada);
@@ -46,7 +46,7 @@ int main(){
 
             for ((*i) = 0; (*i) < lista_secuencial_ordenada.cantidad; (*i)++)
             {
-                inicializarElector(e_temp);
+                initElector(e_temp);
                 *e_temp = lista_secuencial_ordenada.datos[*i];
 
                 printf("------------------------------------------------------------\n");
