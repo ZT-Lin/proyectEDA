@@ -6,9 +6,9 @@
 #include "LSOBB.h"
 
 void mostrar_menu(void);
-int preload(LSOBB *); // esperando mas estructuras @Alts
-
 void enter(void);
+
+int preload(LSOBB *); // esperando mas estructuras @Alts
 
 int main()
 {
@@ -33,7 +33,7 @@ int main()
         if (strlen(comando_user) != 1)
         {
             printf("mal ingresado\n");
-            getchar();
+            enter();
             continue;
         }
 
@@ -42,11 +42,11 @@ int main()
         case '1':
         {
             int *i = (int *)malloc(sizeof(int));
-            padron *e_temp = (padron *)malloc(sizeof(padron));
+            elector *e_temp = (elector*)malloc(sizeof(elector));
 
             for ((*i) = 0; (*i) < lista_secuencial_ordenada.cantidad; (*i)++)
             {
-                inicializarP(e_temp);
+                inicializarElector(e_temp);
                 *e_temp = lista_secuencial_ordenada.datos[*i];
 
                 printf("------------------------------------------------------------\n");
@@ -118,8 +118,8 @@ int preload(LSOBB *lsobb)
     if (operaciones == NULL)
         return -1; // archivo no encontrado
 
-    padron elector_temp;
-    // padron temporal
+    //variables
+    elector e_temp;
     int itemp = 0;
     // guarda los DNI, codigo postal, etc.
     char nam[51], dom[81];
@@ -134,64 +134,64 @@ int preload(LSOBB *lsobb)
         printf("------------------------------------------------------------\n");
         printf("Comando<%d>\n", comando);
         getchar();
-        inicializarP(&elector_temp);*/
+        inicializarP(&e_temp);*/
         // resetear el elector
 
         switch (comando){
         case 1:{
             fscanf(operaciones, "%d", &itemp);
-            setDNI(&elector_temp, itemp);
+            setDNI(&e_temp, itemp);
             fscanf(operaciones, " %[^\n]", nam);
-            setNombreApellido(&elector_temp, nam);
+            setNombreApellido(&e_temp, nam);
             fscanf(operaciones, " %[^\n]", dom);
-            setDomicilio(&elector_temp, dom);
+            setDomicilio(&e_temp, dom);
             fscanf(operaciones, "%d", &itemp);
-            setCPostal(&elector_temp, itemp);
+            setCPostal(&e_temp, itemp);
             fscanf(operaciones, "%d", &itemp);
-            setMesa(&elector_temp, itemp);
+            setMesa(&e_temp, itemp);
             fscanf(operaciones, "%d", &itemp);
-            setCircuito(&elector_temp, itemp);
+            setCircuito(&e_temp, itemp);
             // orden segun pdf del proyecto
             /*test / debug
             printf("------------------------------------------------------------\n");
-            printf("\t dar alta al elector con DNI: <%d>\n", getDNI(elector_temp));
+            printf("\t dar alta al elector con DNI: <%d>\n", getDNI(e_temp));
             getchar();*/
 
             // dar de alta en las estructuras
-            altaLSO(lsobb, elector_temp);
+            altaLSO(lsobb, e_temp);
             break;
             }
         case 2:{
             fscanf(operaciones, "%d", &itemp);
-            setDNI(&elector_temp, itemp);
+            setDNI(&e_temp, itemp);
             fscanf(operaciones, " %[^\n]", nam);
-            setNombreApellido(&elector_temp, nam);
+            setNombreApellido(&e_temp, nam);
             fscanf(operaciones, " %[^\n]", dom);
-            setDomicilio(&elector_temp, dom);
+            setDomicilio(&e_temp, dom);
             fscanf(operaciones, "%d", &itemp);
-            setCPostal(&elector_temp, itemp);
+            setCPostal(&e_temp, itemp);
             fscanf(operaciones, "%d", &itemp);
-            setMesa(&elector_temp, itemp);
+            setMesa(&e_temp, itemp);
             fscanf(operaciones, "%d", &itemp);
-            setCircuito(&elector_temp, itemp);
+            setCircuito(&e_temp, itemp);
             // orden segun pdf del proyecto
             /*test / debug
             printf("------------------------------------------------------------\n");
-            printf("\t dar baja al elector con DNI: <%d>\n", getDNI(elector_temp));
+            printf("\t dar baja al elector con DNI: <%d>\n", getDNI(e_temp));
             getchar();*/
 
             // dar de baja en las estructuras
-            bajaLSO(lsobb, elector_temp);
+            bajaLSO(lsobb, e_temp);
             break;
             }
         case 3:{
             fscanf(operaciones, "%d", &itemp);
-            setDNI(&elector_temp, itemp);
+            setDNI(&e_temp, itemp);
             /*test / debug
             printf("------------------------------------------------------------\n");
             printf("\t evocar al elector con DNI: <%d>\n", itemp);
             getchar();*/
-            evocarLSO(*lsobb, elector_temp);
+            evocarLSO(*lsobb, e_temp);
             break;
             }
         }

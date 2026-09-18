@@ -11,7 +11,7 @@ typedef struct{
     char domicilio[81];
 }elector;
 
-void inicializarElector (padron *Elector){
+void inicializarElector (elector *Elector){
     Elector->dni = 0;
     strcpy(Elector->nombreApellido, "indefinido");
     strcpy(Elector->domicilio, "indefinido");
@@ -22,27 +22,27 @@ void inicializarElector (padron *Elector){
 
 // ============ GETTERS ============
 int getDNI( const elector Elector) {
-    return P.dni;
+    return Elector.dni;
 }
 
 int getCPostal( const elector Elector) {
-    return P.cPostal;
+    return Elector.cPostal;
 }
 
 int getMesa( const elector Elector) {
-    return P.mesa;
+    return Elector.mesa;
 }
 
 int getCircuito( const elector Elector) {
-    return P.circuito;
+    return Elector.circuito;
 }
 
 char* getNombreApellido( const elector Elector) {
-    return P.nombreApellido;
+    return Elector.nombreApellido;
 }
 
 char* getDomicilio( const elector Elector) {
-    return P.domicilio;
+    return Elector.domicilio;
 }
 
 // ============ SETTERS ============
@@ -71,13 +71,13 @@ void setDomicilio(elector *Elector, const char *domicilio) {
 }
 
 // ============== PMI ==============
-bool elector_sonIguales(const elector *a, const elector *b) {
-    if (a->dni != b->dni) return false;
-    if (a->cPostal != b->cPostal) return false;
-    if (a->mesa != b->mesa) return false;
-    if (a->circuito != b->circuito) return false;
-    if (stricmp(a->nombreApellido, b->nombreApellido) != 0) return false;
-    if (stricmp(a->domicilio, b->domicilio) != 0) return false;
+bool elector_sonIguales(const elector a, const elector b) {
+    if (a.dni != b.dni) return false;
+    if (a.cPostal != b.cPostal) return false;
+    if (a.mesa != b.mesa) return false;
+    if (a.circuito != b.circuito) return false;
+    if (stricmp(a.nombreApellido, b.nombreApellido) != 0) return false;
+    if (stricmp(a.domicilio, b.domicilio) != 0) return false;
     return true;
 }
 

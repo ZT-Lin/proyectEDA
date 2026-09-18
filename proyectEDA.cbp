@@ -32,10 +32,10 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="LSOBB.h" />
+		<Unit filename="elector.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="padron.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

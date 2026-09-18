@@ -2,16 +2,20 @@
 #define LSO_H_INCLUDED
 
 #define LSOMAX 2000
-#include "padron.h"
+#include "elector.h"
 #include <math.h>
 
 typedef struct{
-    padron datos[LSOMAX];
+    elector datos[LSOMAX];
     int cantidad;
 }LSOBB;
 
 void inicializarLSOBB(LSOBB *lsobb) {
     lsobb->cantidad = 0;
+    /*
+    1. posicion "vacio"
+    2. cantidad-1 = indice del ultimo elemento
+    */
 }
 
 int vacioLSO(const LSOBB lsobb){
@@ -22,34 +26,36 @@ int llenaLSO(const LSOBB lsobb){
     return (lsobb.cantidad >= LSOMAX);
 }
 
-int localizarLSO(const LSOBB lsobb, const padron elector, int *costo){
+int localizarLSO(const LSOBB lsobb, const elector Elector, int *posicion){
     if ( vacioLSO(lsobb) ){return 0;}//lista vacia
 
     int li = 0; //inclusivo
     int ls = lsobb.cantidad-1; //inclusivo
     int medio;
-    int localizar = getDNI(elector);
+    int dni = getDNI(Elector);
+    int costo=0;
 
     while(li<ls){
             medio = (li+ls)/2;
-            if( getDNI(lsobb.datos[medio]) < localizar ){
+            if( getDNI(lsobb.datos[medio]) < dni ){
                 li = medio+1;
             }else{
                 ls = medio;
             }
-            *costo++;//consulta 1 celda por iteracion
+            costo++;//consulta 1 celda por iteracion
     }
-
-    return li;
-    // retornar posicion
+    (*posicion) = li;
+    return costo;
+    // retornar costo de localizacion
 }
 
-int altaLSO(LSOBB *lsobb, const padron elector){
+int altaLSO(LSOBB *lsobb, const elector Elector){
     if ( llenaLSO(*lsobb) ) { return -1;}
     // lista llena
 
-    int posicion = localizarLSO(*lsobb,elector,0);
-    if ( padron_sonIguales( &lsobb->datos[posicion], &elector) ) { return -2;}
+    int posicion=0;
+    localizarLSO(*lsobb,Elector,&posicion);
+    if ( elector_sonIguales( lsobb->datos[posicion], Elector) ) { return -2;}
     // son iguales, no se da la alta
 
     // dar alta en posicion x
@@ -61,22 +67,23 @@ int altaLSO(LSOBB *lsobb, const padron elector){
         costo++;
     }
     // dar alta, aumentar cantidad almacenada
-    lsobb->datos[posicion] = elector;
+    lsobb->datos[posicion] = Elector;
     lsobb->cantidad++;
     return costo;
 }
 
-int bajaLSO(LSOBB *lsobb, const padron elector){
+int bajaLSO(LSOBB *lsobb, const elector Elector){
     if ( vacioLSO(*lsobb) ) { return -1;}
     // lista vacia
 
-    int posicion = localizarLSO(*lsobb,elector,0);
+    int posicion=0;
+    localizarLSO(*lsobb,Elector,&posicion);
 
-    if ( padron_sonIguales(&lsobb->datos[posicion],&elector) ){
+    if ( elector_sonIguales(lsobb->datos[posicion],Elector) ){
         //debe ser iguales para dar de baja
         int costo = 0;
         int mov=0;
-        for (mov = posicion; mov < lsobb->cantidad-1; mov++){
+        for (mov = posicion; mov < lsobb->cantidad; mov++){
             lsobb->datos[mov] = lsobb->datos[mov+1];
             costo++;
         }
@@ -88,24 +95,19 @@ int bajaLSO(LSOBB *lsobb, const padron elector){
     // no se encuentra elector para dar de baja
 }
 
-int evocarLSO(const LSOBB lsobb, const padron elector){
+int evocarLSO(const LSOBB lsobb, const elector Elector){
 
     int posicion=0;
-    posicion = localizarLSO(lsobb,elector,0);
+    int costo = localizarLSO(lsobb,Elector,&posicion);
 
-    if ( posicion == -1 ) {
-        printf("------------------------------------------------------------\n");
-        printf("elector <%d> no encontrado! \n", elector.dni);
-        return -1;
-    }
-
-    padron e_temp;
-    inicializarP(&e_temp);
+    elector e_temp;
     e_temp = lsobb.datos[posicion];
-    if(e_temp.dni != elector.dni){
+    costo++;
+    if( getDNI(e_temp)!= getDNI(Elector) ){
+        // segun pdf, nos da nada mas que dni, no se controla que todo sea igual
         printf("------------------------------------------------------------\n");
-        printf("elector <%d> no encontrado! \n", elector.dni);
-        return -2;
+        printf("elector <%d> no encontrado! \n", Elector.dni);
+        return -1;
     }
 
     printf("------------------------------------------------------------\n");
@@ -116,7 +118,7 @@ int evocarLSO(const LSOBB lsobb, const padron elector){
     printf("Mesa de votacion: %d\n",e_temp.mesa);
     printf("Circuito:\t%d\n",e_temp.circuito);
 
-    return 0;
+    return costo;
 }
 
 #endif // LSO_H_INCLUDED
