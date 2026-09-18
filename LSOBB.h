@@ -10,7 +10,7 @@ typedef struct{
     int cantidad;
 }LSOBB;
 
-void LSOBB_inicializar(LSOBB *lsobb) {
+void inicializarLSOBB(LSOBB *lsobb) {
     lsobb->cantidad = 0;
 }
 
@@ -41,7 +41,7 @@ int localizarLSO(const LSOBB lsobb, const padron elector, int *costo){
     }
 
     return li;
-    // retornar posicion donde
+    // retornar posicion
 }
 
 int altaLSO(LSOBB *lsobb, const padron elector){
@@ -49,7 +49,7 @@ int altaLSO(LSOBB *lsobb, const padron elector){
     // lista llena
 
     int posicion = localizarLSO(*lsobb,elector,0);
-    if ( padron_sonIguales( &lsobb->datos[posicion], &elector) ) { return -1;}
+    if ( padron_sonIguales( &lsobb->datos[posicion], &elector) ) { return -2;}
     // son iguales, no se da la alta
 
     // dar alta en posicion x
@@ -88,5 +88,35 @@ int bajaLSO(LSOBB *lsobb, const padron elector){
     // no se encuentra elector para dar de baja
 }
 
+int evocarLSO(const LSOBB lsobb, const padron elector){
+
+    int posicion=0;
+    posicion = localizarLSO(lsobb,elector,0);
+
+    if ( posicion == -1 ) {
+        printf("------------------------------------------------------------\n");
+        printf("elector <%d> no encontrado! \n", elector.dni);
+        return -1;
+    }
+
+    padron e_temp;
+    inicializarP(&e_temp);
+    e_temp = lsobb.datos[posicion];
+    if(e_temp.dni != elector.dni){
+        printf("------------------------------------------------------------\n");
+        printf("elector <%d> no encontrado! \n", elector.dni);
+        return -2;
+    }
+
+    printf("------------------------------------------------------------\n");
+    printf("DNI:\t%d\n",e_temp.dni);
+    printf("Nombre:\t%s\n",e_temp.nombreApellido);
+    printf("Domicilio:\t%s\n",e_temp.domicilio);
+    printf("Codigo Postal:\t %d\n",e_temp.cPostal);
+    printf("Mesa de votacion: %d\n",e_temp.mesa);
+    printf("Circuito:\t%d\n",e_temp.circuito);
+
+    return 0;
+}
 
 #endif // LSO_H_INCLUDED

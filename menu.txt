@@ -1,3 +1,7 @@
+==========MIEMBROS==========
+Grupo nro 41
+Lin Franco
+Correa Perez Valentin
 ==========ANALISIS==========
 =========ESTRUCTORAS========
 1. Mostrar estructura: LSOBB
