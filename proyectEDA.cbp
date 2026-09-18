@@ -32,7 +32,6 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="LSOBB.h" />
-		<Unit filename="leearch.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
