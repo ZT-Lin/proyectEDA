@@ -4,6 +4,7 @@
 #include <malloc.h>
 
 #include "LSOBB.h"
+#include "ABB.h"
 
 void mostrar_menu(void);
 void enter(void);
@@ -18,6 +19,9 @@ int main(){
     // estructuras
     LSOBB lista_secuencial_ordenada;
     initLSOBB(&lista_secuencial_ordenada);
+
+    ABB arbol_binario_busqueda;
+    initABB(&arbol_binario_busqueda);
 
     // precargas
     preload(&lista_secuencial_ordenada);

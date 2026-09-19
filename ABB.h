@@ -41,9 +41,8 @@ bool vacioABB(const ABB abb){
     return (abb.raiz == NULL);
 }
 
-NodoABB* localizarABB(const ABB *abb, const elector Elector, int *costo) {
-    (*costo)=0;
-    if (abb == NULL || abb->raiz == NULL) {
+NodoABB* localizarABB(const ABB *abb, const elector Elector, float *costo) {
+    if (abb == NULL || vacioABB(*abb)) {
         return NULL;
     }
 
@@ -52,7 +51,7 @@ NodoABB* localizarABB(const ABB *abb, const elector Elector, int *costo) {
     NodoABB *hijo = abb->raiz;
 
     while (hijo != NULL) {
-        (*costo)++;
+        (*costo)+=1.0;
 
         if (dni == hijo->Elector.dni) {
             return hijo; // v == x? -> encontrado
@@ -75,7 +74,7 @@ float altaABB(ABB *abb, const elector Elector){
     if (nuevo == NULL) {return -1.0;} //espacio insuficiente
 
      // arbol vacio
-    if (abb->raiz == NULL) {
+    if ( abb == NULL || vacioABB( *abb) ) {
         abb->raiz = nuevo;
         costo += 0.5;
         return costo;
@@ -101,5 +100,45 @@ float altaABB(ABB *abb, const elector Elector){
 }
 
 float bajaABB(ABB *abb, const elector Elector){}
-float evocarABB(ABB *abb, const elector Elector){}
+
+float evocarABB(ABB *abb, const elector Elector){
+    float costo = 0.0;
+
+    // si el arbol es vacio
+    if ( abb == NULL || vacioABB(*abb) ) {
+            printf("------------------------------------------------------------\n");
+            printf("elector <%d> no encontrado! \n", Elector.dni);
+            return costo;
+    }// entonces, es arbol no vacio
+
+
+    // no vacio => si es el mismo elector?
+    NodoABB *actual = localizarABB(abb, Elector, &costo);
+    if( elector_sonIguales(actual->Elector, Elector) ){
+        elector e_temp = actual->Elector;
+        printf("------------------------------------------------------------\n");
+        printf("DNI:\t%d\n",e_temp.dni);
+        printf("Nombre:\t%s\n",e_temp.nombreApellido);
+        printf("Domicilio:\t%s\n",e_temp.domicilio);
+        printf("Codigo Postal:\t %d\n",e_temp.cPostal);
+        printf("Mesa de votacion: %d\n",e_temp.mesa);
+        printf("Circuito:\t%d\n",e_temp.circuito);
+        if (actual->izq != NULL){
+            printf("hijo izquierdo: %d\n", actual->izq->Elector.dni);
+        }else{
+            printf("hijo izquierdo: no tiene\n");
+        }
+
+        if (actual->der != NULL){
+            printf("hijo derecho: %d\n", actual->der->Elector.dni);
+        }else{
+            printf("hijo derecho: no tiene\n");
+        }
+        return costo;
+    }
+
+    printf("------------------------------------------------------------\n");
+    printf("elector <%d> no encontrado! \n", Elector.dni);
+    return costo;
+}
 #endif // ABB_H_INCLUDED
