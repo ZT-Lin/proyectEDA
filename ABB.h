@@ -11,7 +11,7 @@ typedef struct nodoABB{
 } NodoABB;
 
 void initNodoABB(NodoABB *nodo){
-    inicializarElector( &nodo->Elector );
+    initElector( &nodo->Elector );
     nodo->der = NULL;
     nodo->izq = NULL;
 }
@@ -41,13 +41,13 @@ bool vacioABB(const ABB abb){
     return (abb.raiz == NULL);
 }
 
-NodoABB* localizarABB(const ABB *abb, const elector Elector, float *costo) {
+NodoABB* localizarABB(const ABB *abb, const elector Elector, float *costo, NodoABB **padre) {
     if (abb == NULL || vacioABB(*abb)) {
         return NULL;
     }
 
     int dni = Elector.dni;
-    NodoABB *padre = abb->raiz;
+    *padre = NULL;
     NodoABB *hijo = abb->raiz;
 
     while (hijo != NULL) {
@@ -57,15 +57,15 @@ NodoABB* localizarABB(const ABB *abb, const elector Elector, float *costo) {
             return hijo; // v == x? -> encontrado
         }
 
-        padre = hijo;
+        *padre = hijo;
         if (dni < hijo->Elector.dni) {
-            hijo = hijo->izq; // v < x? -> - A1 menor
+            hijo = hijo->izq; // v < x? ->  A1 - menor
         } else {
             hijo = hijo->der; // v > x? -> A2 - mayor
         }
     }
 
-    return padre;
+    return *padre;
 }
 
 float altaABB(ABB *abb, const elector Elector){
@@ -81,8 +81,9 @@ float altaABB(ABB *abb, const elector Elector){
     }
 
     // si el elector que me devuelve tiene mismo dni
-    int costoBusqueda = 0;
-    NodoABB *interno = localizarABB(abb, Elector, &costoBusqueda);
+    float costoBusqueda = 0;
+    NodoABB *padre;
+    NodoABB *interno = localizarABB(abb, Elector, &costoBusqueda, &padre);
     if( interno->Elector.dni == nuevo->Elector.dni ) {
             free(nuevo);
             return -2.0;
@@ -99,7 +100,57 @@ float altaABB(ABB *abb, const elector Elector){
     return costo;
 }
 
-float bajaABB(ABB *abb, const elector Elector){}
+float bajaABB(ABB *abb, const elector Elector){
+    float costo = 0.0;
+
+   // si el arbol es vacio
+    if ( abb == NULL || vacioABB(*abb) ) {
+            printf("------------------------------------------------------------\n");
+            printf("elector <%d> no encontrado! \n", Elector.dni);
+            return costo;
+    }// entonces, es arbol no vacio
+
+    // arbol con mas de un nodo; *padre nunca devuelve NULL por localizarABB
+    NodoABB *padre = NULL;
+    NodoABB *actual = localizarABB(abb, Elector, &costo, &padre);
+    if( elector_sonIguales(actual->Elector, Elector) ){// dar baja si son iguales
+        //caso 1: padre -> actual (sin hijos)
+        //entonces: padre -> null
+        if (actual->izq == NULL && actual->der == NULL) {
+            if (padre == NULL) {
+                abb->raiz = NULL;
+            } else if (padre->izq == actual) {
+                padre->izq = NULL;
+            } else {
+                padre->der = NULL;
+            }
+            free(actual);
+            costo += 0.5;
+            return costo;
+        }// if falla -> mas de 0 hijo =>caso 2 o caso 3
+        //caso 2: padre -> actual ( un solo hijo)
+        //entonces: padre -> hijo
+        if (actual->izq == NULL) {
+            if (padre == NULL) {
+                abb->raiz = actual->der;
+            } else if (padre->izq == actual) {
+                padre->izq = actual->der;
+            } else {
+                padre->der = actual->der;
+            }
+            free(actual);
+            costo += 0.5;
+            return costo;
+        }
+        //case 3:
+
+    }
+
+    //arbol no vacio, no encontro el mismo elector, no se da la baja
+    printf("------------------------------------------------------------\n");
+    printf("elector <%d> no encontrado! \n", Elector.dni);
+    return costo;
+}
 
 float evocarABB(ABB *abb, const elector Elector){
     float costo = 0.0;
@@ -113,7 +164,8 @@ float evocarABB(ABB *abb, const elector Elector){
 
 
     // no vacio => si es el mismo elector?
-    NodoABB *actual = localizarABB(abb, Elector, &costo);
+    NodoABB *padre;
+    NodoABB *actual = localizarABB(abb, Elector, &costo, &padre);
     if( elector_sonIguales(actual->Elector, Elector) ){
         elector e_temp = actual->Elector;
         printf("------------------------------------------------------------\n");
