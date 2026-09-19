@@ -37,12 +37,12 @@ int getCircuito( const elector Elector) {
     return Elector.circuito;
 }
 
-char* getNombreApellido( const elector Elector) {
-    return Elector.nombreApellido;
+void getNombreApellido( const elector Elector, char *destino) {
+    strcpy(destino, Elector.nombreApellido);
 }
 
-char* getDomicilio( const elector Elector) {
-    return Elector.domicilio;
+void getDomicilio( const elector Elector, char *destino) {
+    strcpy(destino, Elector.domicilio);
 }
 
 // ============ SETTERS ============
