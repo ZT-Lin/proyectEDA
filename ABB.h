@@ -29,7 +29,7 @@ NodoABB* crearNodoABB(elector E){
 }
 
 // arbol ABB
-typedef struct abb{
+typedef struct{
     NodoABB *raiz;
 } ABB;
 
@@ -51,7 +51,7 @@ NodoABB* localizarABB(const ABB *abb, const elector Elector, float *costo, NodoA
     NodoABB *hijo = abb->raiz;
 
     while (hijo != NULL) {
-        (*costo)+=1.0;
+        (*costo)+=1.0f;
 
         if (dni == hijo->Elector.dni) {
             return hijo; // v == x? -> encontrado
@@ -69,14 +69,14 @@ NodoABB* localizarABB(const ABB *abb, const elector Elector, float *costo, NodoA
 }
 
 float altaABB(ABB *abb, const elector Elector){
-    float costo = 0.0;
+    float costo = 0.0f;
     NodoABB *nuevo = crearNodoABB(Elector);
-    if (nuevo == NULL) {return -1.0;} //espacio insuficiente
+    if (nuevo == NULL) {return -1.0f;} //espacio insuficiente
 
      // arbol vacio
     if ( abb == NULL || vacioABB( *abb) ) {
         abb->raiz = nuevo;
-        costo += 0.5;
+        costo += 0.5f;
         return costo;
     }
 
@@ -96,54 +96,89 @@ float altaABB(ABB *abb, const elector Elector){
         interno->der = nuevo;
     }
 
-    costo += 0.5;
+    costo += 0.5f;
     return costo;
 }
 
-float bajaABB(ABB *abb, const elector Elector){
-    float costo = 0.0;
+bool bajaABB(ABB *abb, const elector Elector, float *costo){
+    if(costo!=NULL) (*costo) = 0.0f;
 
    // si el arbol es vacio
-    if ( abb == NULL || vacioABB(*abb) ) {
-            printf("------------------------------------------------------------\n");
-            printf("elector <%d> no encontrado! \n", Elector.dni);
-            return costo;
-    }// entonces, es arbol no vacio
+    if ( abb == NULL || vacioABB(*abb) ) return false;
+    // entonces, es arbol no vacio
 
     // arbol con mas de un nodo; *padre nunca devuelve NULL por localizarABB
     NodoABB *padre = NULL;
-    NodoABB *actual = localizarABB(abb, Elector, &costo, &padre);
+    float *costoBusqueda = (float*)malloc(sizeof(float));
+    NodoABB *actual = localizarABB(abb, Elector, costoBusqueda, &padre);
+    free(costoBusqueda);//aca no se usa
     if( elector_sonIguales(actual->Elector, Elector) ){// dar baja si son iguales
-        //caso 1: padre -> actual (sin hijos)
-        //entonces: padre -> null
-        if (actual->izq == NULL && actual->der == NULL) {
-            if (padre == NULL) {
-                abb->raiz = NULL;
-            } else if (padre->izq == actual) {
-                padre->izq = NULL;
-            } else {
-                padre->der = NULL;
+            // copiar el menor de los mayores
+            // casos que cubre: 1 nodo(derecho) y 2 nodos
+            if (actual->der != NULL) {
+                NodoABB *padreMin = actual;
+                NodoABB *mini = actual->der;
+                costo += 1.0f;//modif puntero *2
+
+                while (mini->izq != NULL) {//buscando
+                    padreMin = mini;
+                    mini = mini->izq;
+                    costo += 1.0f;//modif puntero *2
+                }
+                //copia de datos
+                elector_copiar(&actual->Elector, mini->Elector);
+                costo += 1.0f;//copia dato
+
+                if (padreMin == actual)
+                    padreMin->der = mini->der;
+                else
+                    padreMin->izq = mini->der;
+
+                free(mini);
+                costo += 0.5f;//modif puntero
+                return costo;
             }
-            free(actual);
-            costo += 0.5;
-            return costo;
-        }// if falla -> mas de 0 hijo =>caso 2 o caso 3
-        //caso 2: padre -> actual ( un solo hijo)
-        //entonces: padre -> hijo
-        if (actual->izq == NULL) {
-            if (padre == NULL) {
-                abb->raiz = actual->der;
-            } else if (padre->izq == actual) {
-                padre->izq = actual->der;
-            } else {
-                padre->der = actual->der;
+
+            // copiar el mayor de los menores
+            // casos que cubre: 1 nodo(izquierdo)
+            // aclaracion: caso de 2 nodos esta en arriba
+            if (actual->izq != NULL) {
+                NodoABB *padreMax = actual;
+                NodoABB *maxi = actual->izq;
+                costo += 1.0f;//modif puntero*2
+
+            while (maxi->der != NULL) {
+                padreMax = maxi;
+                maxi = maxi->der;
+                costo += 1.0f;//modif puntero *2
             }
-            free(actual);
-            costo += 0.5;
+
+            elector_copiar(&actual->Elector, maxi->Elector);
+            costo += 1.0f;//copia de datos
+
+            if (padreMax == actual){
+                padreMax->izq = maxi->izq;
+            }else{
+                padreMax->der = maxi->izq;
+            }
+
+            free(maxi);
+            costo += 0.5f;
             return costo;
         }
-        //case 3:
 
+        // no tiene hijos
+        if (padre == NULL){
+            abb->raiz = NULL;
+        }else if (padre->izq == actual){
+            padre->izq = NULL;
+        }else{
+            padre->der = NULL;
+        }
+
+        free(actual);
+        costo += 0.5f;
+        return costo;
     }
 
     //arbol no vacio, no encontro el mismo elector, no se da la baja
@@ -152,45 +187,20 @@ float bajaABB(ABB *abb, const elector Elector){
     return costo;
 }
 
-float evocarABB(ABB *abb, const elector Elector){
-    float costo = 0.0;
+bool evocarABB(ABB *abb, const elector Elector, float *costo){
+    if(costo!=NULL) (*costo)=0;
 
     // si el arbol es vacio
-    if ( abb == NULL || vacioABB(*abb) ) {
-            printf("------------------------------------------------------------\n");
-            printf("elector <%d> no encontrado! \n", Elector.dni);
-            return costo;
-    }// entonces, es arbol no vacio
-
+    if ( abb == NULL || vacioABB(*abb) ) return false;
+    // sino, es arbol no vacio
 
     // no vacio => si es el mismo elector?
     NodoABB *padre;
-    NodoABB *actual = localizarABB(abb, Elector, &costo, &padre);
-    if( elector_sonIguales(actual->Elector, Elector) ){
-        elector e_temp = actual->Elector;
-        printf("------------------------------------------------------------\n");
-        printf("DNI:\t%d\n",e_temp.dni);
-        printf("Nombre:\t%s\n",e_temp.nombreApellido);
-        printf("Domicilio:\t%s\n",e_temp.domicilio);
-        printf("Codigo Postal:\t %d\n",e_temp.cPostal);
-        printf("Mesa de votacion: %d\n",e_temp.mesa);
-        printf("Circuito:\t%d\n",e_temp.circuito);
-        if (actual->izq != NULL){
-            printf("hijo izquierdo: %d\n", actual->izq->Elector.dni);
-        }else{
-            printf("hijo izquierdo: no tiene\n");
-        }
+    NodoABB *actual = localizarABB(abb, Elector, costo, &padre);
+    if( actual->Elector.dni == Elector.dni) return true;
+    // encontrado
 
-        if (actual->der != NULL){
-            printf("hijo derecho: %d\n", actual->der->Elector.dni);
-        }else{
-            printf("hijo derecho: no tiene\n");
-        }
-        return costo;
-    }
-
-    printf("------------------------------------------------------------\n");
-    printf("elector <%d> no encontrado! \n", Elector.dni);
-    return costo;
+    return false;
+    // no encontrado
 }
 #endif // ABB_H_INCLUDED

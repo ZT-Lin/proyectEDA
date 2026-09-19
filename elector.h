@@ -81,5 +81,13 @@ bool elector_sonIguales(const elector a, const elector b) {
     return true;
 }
 
+bool elector_copiar(elector *destino, const elector origen){
+    setDNI( destino, origen.dni );
+    setNombreApellido( destino, origen.nombreApellido );
+    setDomicilio( destino, origen.domicilio);
+    setCPostal( destino, origen.cPostal);
+    setCircuito( destino, origen.circuito);
+    return elector_sonIguales(*destino, origen);
+}
 
 #endif // ELECTOR_H_INCLUDED

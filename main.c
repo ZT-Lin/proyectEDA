@@ -6,7 +6,7 @@
 #include "LSOBB.h"
 #include "ABB.h"
 
-void mostrar_menu(void);
+int mostrar_menu(void);
 void enter(void);
 
 int preload(LSOBB *); // esperando mas estructuras @Alts
@@ -24,85 +24,83 @@ int main(){
     initABB(&arbol_binario_busqueda);
 
     // precargas
-    preload(&lista_secuencial_ordenada);
+    if( preload(&lista_secuencial_ordenada) ==-1 ){
+        printf("============================================================\n");
+        printf("\tError: archivo \"Operaciones_Padron.txt\" no encontrado.\n");
+        enter();
+        return -1;
+    }
     enter();
 
     while (SISTEMA)
     {
         system("cls");
-        mostrar_menu();
+        if( mostrar_menu() == -1 ){
+            printf("============================================================\n");
+            printf("\tError: archivo \"Operaciones_Padron.txt\" no encontrado.\n");
+            enter();
+            return -1;
+        }
         scanf("%99s", comando_user);
         getchar();
-        if (strlen(comando_user) != 1)
-        {
+        if (strlen(comando_user) != 1){
             printf("============================================================\n");
-            printf("\t\t opcion invalido\n");
+            printf("\t Error: opcion invalido\n");
             enter();
             continue;
         }
 
-        switch (comando_user[0])
-        {
-        case '1':
-        {
-            int *i = (int *)malloc(sizeof(int));
-            elector *e_temp = (elector*)malloc(sizeof(elector));
+        switch (comando_user[0]){
+            case '1':{
+                int i;
+                elector e_temp;
 
-            for ((*i) = 0; (*i) < lista_secuencial_ordenada.cantidad; (*i)++)
-            {
-                initElector(e_temp);
-                *e_temp = lista_secuencial_ordenada.datos[*i];
-
+                for (i = 0; i < lista_secuencial_ordenada.cantidad; i++){
+                    initElector(&e_temp);
+                    e_temp = lista_secuencial_ordenada.datos[i];
+                    printf("------------------------------------------------------------\n");
+                    printf("DNI:\t%d\n", e_temp.dni);
+                    printf("Nombre:\t%s\n", e_temp.nombreApellido);
+                    printf("Domicilio:\t%s\n", e_temp.domicilio);
+                    printf("Codigo Postal:\t %d\n", e_temp.cPostal);
+                    printf("Mesa de votacion: %d\n", e_temp.mesa);
+                    printf("Circuito:\t%d\n", e_temp.circuito);
+                    if( ((i+1) % 20) == 0) enter();
+                }
                 printf("------------------------------------------------------------\n");
-                printf("DNI:\t%d\n", e_temp->dni);
-                printf("Nombre:\t%s\n", e_temp->nombreApellido);
-                printf("Domicilio:\t%s\n", e_temp->domicilio);
-                printf("Codigo Postal:\t %d\n", e_temp->cPostal);
-                printf("Mesa de votacion: %d\n", e_temp->mesa);
-                printf("Circuito:\t%d\n", e_temp->circuito);
+                printf("Total: %d electores\n", lista_secuencial_ordenada.cantidad);
+                enter();
+                break;
+            } // mostrar estructura LSOBB
+            case '2':{
+                break;
+            } // mostrar estructura LVO
+            case '3':{
+                break;
+            } // mostrar estructura ABB
+            case '4':{
+                break;
+            } // comparar estructuras
+            case '0':{
+                SISTEMA = false;
+                break;
             }
-            printf("------------------------------------------------------------\n");
-            printf("Total: %d electores\n", lista_secuencial_ordenada.cantidad);
-            enter();
-            free(i);
-            free(e_temp);
-            break;
-        } // mostrar estructura LSOBB
-        case '2':
-        {
-            break;
-        } // mostrar estructura LVO
-        case '3':
-        {
-            break;
-        } // mostrar estructura ABB
-        case '4':
-        {
-            break;
-        } // comparar estructuras
-        case '0':
-        {
-            SISTEMA = false;
-            break;
-        }
-        default:
-        {
-            printf("============================================================\n");
-            printf("\t\t opcion invalido\n");
-            enter();
-            continue;
-        }
+            default:{
+                printf("============================================================\n");
+                printf("\t Error: opcion invalido\n");
+                enter();
+                continue;
+            }
         } // switch
-
     } // while
     return 0;
 } // main
 
-void mostrar_menu(void)
+int mostrar_menu(void)
 {
     FILE *menu = fopen("menu.txt", "r");
     if (menu == NULL)
-        return;
+        return -1;
 
     char buffer[100];
     while (fgets(buffer, sizeof(buffer), menu) != NULL)
@@ -110,6 +108,7 @@ void mostrar_menu(void)
         printf("%s", buffer);
     }
     fclose(menu);
+    return 0;
 }
 
 void enter(){
@@ -122,8 +121,7 @@ void enter(){
 int preload(LSOBB *lsobb)
 {
     FILE *operaciones = fopen("Operaciones_Padron.txt", "r");
-    if (operaciones == NULL)
-        return -1; // archivo no encontrado
+    if (operaciones == NULL) return -1; // archivo no encontrado
 
     //variables
     elector e_temp;
@@ -145,61 +143,67 @@ int preload(LSOBB *lsobb)
         // resetear el elector
 
         switch (comando){
-        case 1:{
-            fscanf(operaciones, "%d", &itemp);
-            setDNI(&e_temp, itemp);
-            fscanf(operaciones, " %[^\n]", nam);
-            setNombreApellido(&e_temp, nam);
-            fscanf(operaciones, " %[^\n]", dom);
-            setDomicilio(&e_temp, dom);
-            fscanf(operaciones, "%d", &itemp);
-            setCPostal(&e_temp, itemp);
-            fscanf(operaciones, "%d", &itemp);
-            setMesa(&e_temp, itemp);
-            fscanf(operaciones, "%d", &itemp);
-            setCircuito(&e_temp, itemp);
-            // orden segun pdf del proyecto
-            /*test / debug
-            printf("------------------------------------------------------------\n");
-            printf("\t dar alta al elector con DNI: <%d>\n", getDNI(e_temp));
-            getchar();*/
+            case 1:{
+                fscanf(operaciones, "%d", &itemp);
+                setDNI(&e_temp, itemp);
+                fscanf(operaciones, " %[^\n]", nam);
+                setNombreApellido(&e_temp, nam);
+                fscanf(operaciones, " %[^\n]", dom);
+                setDomicilio(&e_temp, dom);
+                fscanf(operaciones, "%d", &itemp);
+                setCPostal(&e_temp, itemp);
+                fscanf(operaciones, "%d", &itemp);
+                setMesa(&e_temp, itemp);
+                fscanf(operaciones, "%d", &itemp);
+                setCircuito(&e_temp, itemp);
+                // orden segun pdf del proyecto
+                /*  test / debug
+                printf("------------------------------------------------------------\n");
+                printf("\t dar alta al elector con DNI: <%d>\n", getDNI(e_temp));
+                getchar();*/
 
-            // dar de alta en las estructuras
-            altaLSO(lsobb, e_temp);
-            break;
-            }
-        case 2:{
-            fscanf(operaciones, "%d", &itemp);
-            setDNI(&e_temp, itemp);
-            fscanf(operaciones, " %[^\n]", nam);
-            setNombreApellido(&e_temp, nam);
-            fscanf(operaciones, " %[^\n]", dom);
-            setDomicilio(&e_temp, dom);
-            fscanf(operaciones, "%d", &itemp);
-            setCPostal(&e_temp, itemp);
-            fscanf(operaciones, "%d", &itemp);
-            setMesa(&e_temp, itemp);
-            fscanf(operaciones, "%d", &itemp);
-            setCircuito(&e_temp, itemp);
-            // orden segun pdf del proyecto
-            /*test / debug
-            printf("------------------------------------------------------------\n");
-            printf("\t dar baja al elector con DNI: <%d>\n", getDNI(e_temp));
-            getchar();*/
+                // dar de alta en las estructuras
+                altaLSO(lsobb, e_temp);
+                break;
+                }
+            case 2:{
+                fscanf(operaciones, "%d", &itemp);
+                setDNI(&e_temp, itemp);
+                fscanf(operaciones, " %[^\n]", nam);
+                setNombreApellido(&e_temp, nam);
+                fscanf(operaciones, " %[^\n]", dom);
+                setDomicilio(&e_temp, dom);
+                fscanf(operaciones, "%d", &itemp);
+                setCPostal(&e_temp, itemp);
+                fscanf(operaciones, "%d", &itemp);
+                setMesa(&e_temp, itemp);
+                fscanf(operaciones, "%d", &itemp);
+                setCircuito(&e_temp, itemp);
+                // orden segun pdf del proyecto
+                /*test / debug
+                printf("------------------------------------------------------------\n");
+                printf("\t dar baja al elector con DNI: <%d>\n", getDNI(e_temp));
+                getchar();*/
 
-            // dar de baja en las estructuras
-            bajaLSO(lsobb, e_temp);
-            break;
+                // dar de baja en las estructuras
+                bajaLSO(lsobb, e_temp);
+                break;
             }
-        case 3:{
-            fscanf(operaciones, "%d", &itemp);
-            setDNI(&e_temp, itemp);
-            /*test / debug
-            printf("------------------------------------------------------------\n");
-            printf("\t evocar al elector con DNI: <%d>\n", itemp);
-            getchar();*/
-            evocarLSO(*lsobb, e_temp);
-            break;
+            case 3:{
+                fscanf(operaciones, "%d", &itemp);
+                setDNI(&e_temp, itemp);
+                /*test / debug
+                printf("------------------------------------------------------------\n");
+                printf("\t evocar al elector con DNI: <%d>\n", itemp);
+                getchar();*/
+                if ( evocarLSO(*lsobb, e_temp) == -1){
+                    printf("------------------------------------------------------------\n");
+                    printf("Error: elector <%d> no encontrado en LSOBB! \n", e_temp.dni);
+                }else{
+                    printf("------------------------------------------------------------\n");
+                    printf("\t elector <%d> encontrado en LSOBB! \n", e_temp.dni);
+                }
+                break;
             }
         }
     }

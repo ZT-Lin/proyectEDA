@@ -26,99 +26,83 @@ bool llenaLSO(const LSOBB lsobb){
     return (lsobb.cantidad >= LSOMAX);
 }
 
-int localizarLSO(const LSOBB lsobb, const elector Elector, int *posicion){
-    if ( vacioLSO(lsobb) ){return 0;}//lista vacia
+int localizarLSO(const LSOBB lsobb, const elector Elector, int *costo){
+    if ( costo != NULL ) (*costo) = 0;
+    if ( vacioLSO(lsobb) ) return 0;//lista vacia
 
     int li = 0; //inclusivo
     int ls = lsobb.cantidad-1; //inclusivo
     int medio;
     int dni = getDNI(Elector);
-    int costo=0;
 
     while(li<ls){
             medio = (li+ls)/2;
+            if (costo != NULL) (*costo)++;
             if( getDNI(lsobb.datos[medio]) < dni ){
                 li = medio+1;
             }else{
                 ls = medio;
             }
-            costo++;//consulta 1 celda por iteracion
     }
-    (*posicion) = li;
-    return costo;
+
+    return li;
     // retornar costo de localizacion
 }
 
-int altaLSO(LSOBB *lsobb, const elector Elector){
-    if ( llenaLSO(*lsobb) ) { return -1;}
+bool altaLSO(LSOBB *lsobb, const elector Elector, int *costo){
+    if ( costo != NULL ) (*costo)=0;
+    if ( llenaLSO(*lsobb) ) return false;
     // lista llena
 
-    int posicion=0;
-    localizarLSO(*lsobb,Elector,&posicion);
-    if ( elector_sonIguales( lsobb->datos[posicion], Elector) ) { return -2;}
+
+    int costoBusqueda = 0; //aca no se usa
+    int posicion = localizarLSO(*lsobb, Elector, &costoBusqueda);
+
+    if ( elector_sonIguales( lsobb->datos[posicion], Elector) ) return false;
     // son iguales, no se da la alta
 
-    // dar alta en posicion x
-    // mover elementos para hacer lugar
-    int costo = 0;
+    // dar alta en posicion x, mover elementos para hacer lugar
     int mov = 0;
     for (mov = lsobb->cantidad; mov>posicion; mov--){
         lsobb->datos[mov] = lsobb->datos[mov-1];
-        costo++;
+        if (costo != NULL) (*costo)++;
     }
     // dar alta, aumentar cantidad almacenada
     lsobb->datos[posicion] = Elector;
     lsobb->cantidad++;
-    return costo;
+    return true;
 }
 
-int bajaLSO(LSOBB *lsobb, const elector Elector){
-    if ( vacioLSO(*lsobb) ) { return -1;}
-    // lista vacia
+bool bajaLSO(LSOBB *lsobb, const elector Elector, int *costo){
+    if ( costo != NULL ) (*costo)=0;
+    if ( vacioLSO(*lsobb) ) return false;
 
-    int posicion=0;
-    localizarLSO(*lsobb,Elector,&posicion);
+    int costoBusqueda = 0; //aca no se usa
+    int posicion = localizarLSO(*lsobb, Elector, &costoBusqueda);
 
-    if ( elector_sonIguales(lsobb->datos[posicion],Elector) ){
-        //debe ser iguales para dar de baja
-        int costo = 0;
-        int mov=0;
-        for (mov = posicion; mov < lsobb->cantidad; mov++){
-            lsobb->datos[mov] = lsobb->datos[mov+1];
-            costo++;
-        }
+    if ( ! elector_sonIguales(lsobb->datos[posicion], Elector) ) return false;
+    //debe ser iguales para dar de baja
 
-        lsobb->cantidad--;
-        return costo;
+    int mov=0;
+    for (mov = posicion; mov < lsobb->cantidad-1; mov++){
+        lsobb->datos[mov] = lsobb->datos[mov+1];
+        if (costo != NULL) (*costo)++;
     }
-    return -1;
-    // no se encuentra elector para dar de baja
+    lsobb->cantidad--;
+    return true;
 }
 
-int evocarLSO(const LSOBB lsobb, const elector Elector){
+bool evocarLSO(const LSOBB lsobb, const elector Elector, int *costo){
+    if( costo!=NULL) (*costo)=0;
 
-    int posicion=0;
-    int costo = localizarLSO(lsobb,Elector,&posicion);
+    int costoBusqueda=0;
+    int posicion = localizarLSO(lsobb, Elector, &costoBusqueda);
+    if (costo != NULL) (*costo) = costoBusqueda;
 
-    elector e_temp;
-    e_temp = lsobb.datos[posicion];
-    costo++;
-    if( getDNI(e_temp)!= getDNI(Elector) ){
-        // segun pdf, nos da nada mas que dni, no se controla que todo sea igual
-        printf("------------------------------------------------------------\n");
-        printf("elector <%d> no encontrado! \n", Elector.dni);
-        return -1;
-    }
+    if ( lsobb.datos[posicion].dni != Elector.dni ) return false;
+    // segun pdf, nos da nada mas que dni, no se controla que todo sea igual
 
-    printf("------------------------------------------------------------\n");
-    printf("DNI:\t%d\n",e_temp.dni);
-    printf("Nombre:\t%s\n",e_temp.nombreApellido);
-    printf("Domicilio:\t%s\n",e_temp.domicilio);
-    printf("Codigo Postal:\t %d\n",e_temp.cPostal);
-    printf("Mesa de votacion: %d\n",e_temp.mesa);
-    printf("Circuito:\t%d\n",e_temp.circuito);
-
-    return costo;
+    return true;
 }
 
 #endif // LSO_H_INCLUDED
