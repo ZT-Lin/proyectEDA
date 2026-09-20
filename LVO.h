@@ -10,7 +10,7 @@ Elector res;
 consultarLVO(*lvo, e_temp.dni, &res, &cLVO->costoConsultas);
 
 case 0 liberarLVO(lista_lvo);
-
+.
 */
 
 
