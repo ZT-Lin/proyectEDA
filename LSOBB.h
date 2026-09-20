@@ -27,7 +27,7 @@ bool llenaLSO(const LSOBB lsobb){
 }
 
 int localizarLSO(const LSOBB lsobb, const elector Elector, int *costo){
-    if ( costo != NULL ) (*costo) = 0;
+    (*costo) = 0;
     if ( vacioLSO(lsobb) ) return 0;//lista vacia
 
     int li = 0; //inclusivo
@@ -37,7 +37,7 @@ int localizarLSO(const LSOBB lsobb, const elector Elector, int *costo){
 
     while(li<ls){
             medio = (li+ls)/2;
-            if (costo != NULL) (*costo)++;
+            (*costo)++;
             if( getDNI(lsobb.datos[medio]) < dni ){
                 li = medio+1;
             }else{
@@ -50,7 +50,7 @@ int localizarLSO(const LSOBB lsobb, const elector Elector, int *costo){
 }
 
 bool altaLSO(LSOBB *lsobb, const elector Elector, int *costo){
-    if ( costo != NULL ) (*costo)=0;
+    (*costo)=0;
     if ( llenaLSO(*lsobb) ) return false;
     // lista llena
 
@@ -58,14 +58,14 @@ bool altaLSO(LSOBB *lsobb, const elector Elector, int *costo){
     int costoBusqueda = 0; //aca no se usa
     int posicion = localizarLSO(*lsobb, Elector, &costoBusqueda);
 
-    if ( elector_sonIguales( lsobb->datos[posicion], Elector) ) return false;
-    // son iguales, no se da la alta
+    if ( lsobb->datos[posicion].dni == Elector.dni ) return false;
+    // sus dni son iguales, no se da la alta
 
     // dar alta en posicion x, mover elementos para hacer lugar
     int mov = 0;
     for (mov = lsobb->cantidad; mov>posicion; mov--){
         lsobb->datos[mov] = lsobb->datos[mov-1];
-        if (costo != NULL) (*costo)++;
+        (*costo)++;
     }
     // dar alta, aumentar cantidad almacenada
     lsobb->datos[posicion] = Elector;
@@ -74,7 +74,7 @@ bool altaLSO(LSOBB *lsobb, const elector Elector, int *costo){
 }
 
 bool bajaLSO(LSOBB *lsobb, const elector Elector, int *costo){
-    if ( costo != NULL ) (*costo)=0;
+    (*costo)=0;
     if ( vacioLSO(*lsobb) ) return false;
 
     int costoBusqueda = 0; //aca no se usa
@@ -86,21 +86,22 @@ bool bajaLSO(LSOBB *lsobb, const elector Elector, int *costo){
     int mov=0;
     for (mov = posicion; mov < lsobb->cantidad-1; mov++){
         lsobb->datos[mov] = lsobb->datos[mov+1];
-        if (costo != NULL) (*costo)++;
+        (*costo)++;
     }
     lsobb->cantidad--;
     return true;
 }
 
 bool evocarLSO(const LSOBB lsobb, const elector Elector, int *costo, elector *resultado){
+    if(vacioLSO(lsobb)) return false;// no hay resultado para lista vacia
     if( costo!=NULL) (*costo)=0;
 
     int costoBusqueda=0;
     int posicion = localizarLSO(lsobb, Elector, &costoBusqueda);
-    if (costo != NULL) (*costo) = costoBusqueda;
+    (*costo) = costoBusqueda;
 
     (*resultado) = lsobb.datos[posicion];
-    (*costo)++;
+    // copir datos[posicion] de la lista != consultar
     if ( (*resultado).dni != Elector.dni ) return false;
     // segun pdf, nos da nada mas que dni, no se controla que todo sea igual
     return true;

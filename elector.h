@@ -87,6 +87,7 @@ bool elector_copiar(elector *destino, const elector origen){
     setDomicilio( destino, origen.domicilio);
     setCPostal( destino, origen.cPostal);
     setCircuito( destino, origen.circuito);
+    setMesa( destino, origen.mesa);
     return elector_sonIguales(*destino, origen);
 }
 

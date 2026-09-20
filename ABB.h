@@ -43,7 +43,7 @@ bool vacioABB(const ABB abb){
 }
 
 NodoABB* localizarABB(const ABB abb, const elector Elector, float *costo, NodoABB **padre){
-    if (costo != NULL) (*costo) = 0.0f;
+    (*costo) = 0.0f;
     if (padre != NULL) (*padre) = NULL;
     if (abb.raiz == NULL) return NULL;
 
@@ -87,6 +87,7 @@ bool altaABB( ABB *abb, const elector Elector, float *costo){
     NodoABB *encontrado = localizarABB(*abb, Elector, &costoBusqueda, &padre);
 
      if (encontrado != NULL && encontrado->root.dni == Elector.dni)  {
+            free(nuevo);
             return false;
     }// no se da alta al elector del mismo dni
 
@@ -142,13 +143,13 @@ bool bajaABB(ABB *abb, const elector Elector, float *costo){
         // caso 3: dos hijos
         // politica de reemplazo
         NodoABB *padreMin = encontrado;
-        NodoABB *menor = encontrado->der; //modificacion de puntero en arbol
-        (*costo)+= 0.5f;
+        NodoABB *menor = encontrado->der;
+        //modificacion de puntero externo del arbol
 
         while (menor->izq != NULL) {
             padreMin = menor;
-            menor = menor->izq; //modificacion de puntero en arbol
-            (*costo)+= 0.5f;
+            menor = menor->izq;
+            //modificacion de puntero externo del arbol
         }
 
         // copia de datos
@@ -182,7 +183,7 @@ bool evocarABB(ABB *abb, const elector Elector, float *costo, elector *resultado
     NodoABB *encontrado = localizarABB(*abb, Elector, costo, &padre);
     if (encontrado != NULL && encontrado->root.dni == Elector.dni) {
             *resultado = encontrado->root;
-            (*costo)+=0.5f;// consultar al nodo encontrado
+            (*costo)+=1.0f;// consultar al nodo encontrado
             return true;
     }// encontrado, exportar al <resultado>
     return false;
