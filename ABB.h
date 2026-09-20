@@ -112,23 +112,62 @@ bool bajaABB(ABB *abb, const elector Elector, float *costo){
      if ( encontrado != NULL && elector_sonIguales(encontrado->root, Elector) ){
         // caso 1: sin hijos
         // padre->encontrado => padre->null
-        if( padre->der == encontrado){
-            padre->der = NULL;
-            (*costo)+=0.5f;
-            return true
-        }else{
-            padre->izq = NULL;
-            (*costo)+=0.5f;
-            return true
+        if (encontrado->izq == NULL && encontrado->der == NULL) {
+            if (padre == NULL){
+                    (abb->raiz) = NULL;              // eliminar la raiz
+            }else if (padre->izq == encontrado){
+                padre->izq = NULL;
+            }else{
+                padre->der = NULL;
+            }//modificar puntero en arbol
+            (*costo) += 0.5f;
+            free(encontrado);
+            return true;
         }
         // caso 2: un hijo
         // padre->encontrado => padre->rama correspondiente
+        if (encontrado->izq == NULL || encontrado->der == NULL) {
+            NodoABB *hijo = (encontrado->izq != NULL) ? encontrado->izq : encontrado->der;
+            if (padre == NULL){
+                    abb->raiz = hijo;
+            }else if (padre->izq == encontrado){
+                padre->izq = hijo;
+            }else{
+                padre->der = hijo;
+            }// modificacion de puntero en arbol
+            (*costo) += 0.5f;
+            free(encontrado);
+            return true;
+        }
         // caso 3: dos hijos
         // politica de reemplazo
-     }
-    // encontrado-> se baja al elector del mismo nupla
+        NodoABB *padreMin = encontrado;
+        NodoABB *menor = encontrado->der; //modificacion de puntero en arbol
+        (*costo)+= 0.5f;
 
-    return false;
+        while (menor->izq != NULL) {
+            padreMin = menor;
+            menor = menor->izq; //modificacion de puntero en arbol
+            (*costo)+= 0.5f;
+        }
+
+        // copia de datos
+        elector_copiar(&encontrado->root, menor->root);
+        (*costo)+= 1.0f;
+
+    // eliminar menor y sus hijos
+        if (padreMin == encontrado){
+                padreMin->der = menor->der;
+        }else{
+            padreMin->izq = menor->der;
+        }// modificacion punteor en arbol
+        (*costo)+= 0.5f;
+
+        free(menor);
+        return true;
+        }// encontrado-> se baja al elector del mismo nupla
+
+    return false;//no encontrado
 }
 
 bool evocarABB(ABB *abb, const elector Elector, float *costo, elector *resultado){
@@ -143,11 +182,9 @@ bool evocarABB(ABB *abb, const elector Elector, float *costo, elector *resultado
     NodoABB *encontrado = localizarABB(*abb, Elector, costo, &padre);
     if (encontrado != NULL && encontrado->root.dni == Elector.dni) {
             *resultado = encontrado->root;
+            (*costo)+=0.5f;// consultar al nodo encontrado
             return true;
     }// encontrado, exportar al <resultado>
-
-
-
     return false;
 }
 #endif // ABB_H_INCLUDED

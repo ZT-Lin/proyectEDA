@@ -46,7 +46,7 @@ int localizarLSO(const LSOBB lsobb, const elector Elector, int *costo){
     }
 
     return li;
-    // retornar costo de localizacion
+    // retornar posicion
 }
 
 bool altaLSO(LSOBB *lsobb, const elector Elector, int *costo){
@@ -100,6 +100,7 @@ bool evocarLSO(const LSOBB lsobb, const elector Elector, int *costo, elector *re
     if (costo != NULL) (*costo) = costoBusqueda;
 
     (*resultado) = lsobb.datos[posicion];
+    (*costo)++;
     if ( (*resultado).dni != Elector.dni ) return false;
     // segun pdf, nos da nada mas que dni, no se controla que todo sea igual
     return true;
