@@ -268,6 +268,47 @@ NodoLVO *crearLVO(void){
 }
 
 
+
+
+/*Cositas generales y funciones funcionales y utilidades utiles*/
+
+
+
+
+//Comparar si es el mismo elector
+int mismoElector(const Elector *a, const Elector *b){
+    return a->dni == b->dni &&
+    strcasecmp(a->nombreApellido, b->nombreApellido) == 0 &&
+    strcasecmp(a->domicilio, b->domicilio) == 0 &&
+    a-> cp == b -> cp &&
+    a->mesa == b -> mesa &&
+    a->circuito == b -> circuito;
+}
+//Imprimir los datos del Elector
+void imprimirElector(const Elector e){
+    printf("DNI: %-9ld | %-30s | %-30s |CP:%-5d |Mesa: %.4d |Circuito: %-4\n", e->dni,e->nombre,e->domicilio,e->cp,e->mesa,e->circuito);
+}
+
+//Para comparar strings
+int strcasecmp(const char *a, const char *b){
+    while (*a !=  '\0' && *b != '\0'){
+        int ca = tolower((unsigned char) *a);
+        int cb = tolower((unsigned char) *b);
+        if (ca != cb) {
+            return ca-cb
+        }
+    }
+    return (unsigned char) *a - (unsigned char) *b;
+}
+
+
+/*Añadir mas cositas xd*/
+
+
+
+
+
+
 /*Lista Secuencial Ordenada con b´usqueda binaria (LSOBB)*/
 typedef struct {
     Elector electores[EST_ELECTORES];
@@ -304,47 +345,69 @@ typedef struct {
     }
     (costo*) += 0.5;
 
-    
+    return 1;
+
  }
 
- void bajaLVO(Elector e){
-    NodoLVO *actual = lvo_head, *ant = NULL;
-    while (actual ->elector.dni < e.dni){
-        ant = actual;
-        actual = actual->sig;
-    }
-    if (actual->elector.dni == e.dni && son_iguales(actual->elector, e)){
-        if (ant == NULL) lvo_head = actual ->sig;
-        else ant -> sig = actual ->sig;
+ void bajaLVO(Elector e, NodoLVO lista,){
+    NodoLVO *ant = NULL;
+    NodoLVO *act = *lista;
 
-        costo_bajas_lvo += 0.5;
-        free(actual)
+    while(act->dato.dni < e.dni){
+        ant = act;
+        act = act->sig;
     }
+    if (act->dato.dni != e.dni || !mismoElector(&act->dato, &e)){
+        return 0;
+    }
+
+    if (ant == NULL){
+        *lista = act->sig;
+    } else {
+        ant->sig = act->sig;
+    }
+    (*costo) += 0.5;
+
+    free(act);
+    return 1;
+        
  }
 
- void evocarLVO(int dni){
-    NodoLV* actual = lvo_head;
-    while (actual->elector.dni < dni){
-        costo_consultas_lvo += 1.0;
-        actual = actual->sig;
+ int consultarLVO(NodoLVO *lista, long dni, Elector *resultado, double *costo){
+    NodoLVO *act = lista;
+    while (act!=NULL){
+        (*costo) += 1;
+        if (adc->dato.dni == dni){
+            *resultado = adc->dato;
+            return 1;
+        }
+        if(adc->dato.dni >dni){
+            return 0;
+        }
+        act = act->sig;
     }
-    costo_consultas_lvo += 1.0;
+    return 0;
  }
 
+void mostrarLVO(NodoLVO lista){
+    printf("--Padron - Lista Vinculada Ordenada (LVO\n ");
+    NodoLVO *act = lista;
+    int cont = 0;
+    while (act !=NULL && act ->dato.dni != INFINITO_LVO){
+        imprimirElector(&act->dato);
+        act = act->sig;
+        cont++;
+    }
+    printf("Total de electores en LVO: %d\n", cont);
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+void liberarLVO(NodoLVO *lista){
+    while (lista!=NULL){
+        NodoLVO *tmp = lista;
+        lista = lista->sig;
+        free(tmp);
+    }
+}
 
 
 
@@ -353,11 +416,139 @@ typedef struct {
 typedef struct NodoABB{
     Elector elector;
     struct NodoABB *izq; 
-    struct NodoABB *dere;
+    struct NodoABB *der;
 } NodoABB;
 
- float costo_altas_lvo = 0, costo_bajas_lvo= 0, costo_consulta_lvo = 0;
- float costo_altas_lsobb = 0, costo_bajas_lsobb= 0, costo_consulta_lsobb = 0;
- float costo_altas_abb = 0, costo_bajas_abb= 0, costo_consulta_abb = 0;
+NodoABB crearNodoABB(Elector e){
+    NodoABB *n = (NodoABB *)malloc(sizeof(NodoABB))
+    n->dato = e;
+    n->izq = NULL;
+    n->der = NULL;
+    return n;
+}
 
- /*Hacer el coso para que no se repitan los dni. Acordate Valen o Lin*/
+
+//Lo hago recursivo como recomendacion del Tansi
+int insertarABB(NodoABB raiz, Elector e, double costo){
+    if(*raiz == NULL){
+        *raiz = crearNodoABB(e);
+        (*costo) += 0.5;
+        return 1; //SI se inserto bien, da 1
+    }
+    if (e.dni == (*raiz)->dato.dni){
+        return 0; //Devuelve 0 si esta DUPLICADO
+    } else if (e.dni < (*raiz)->dato.dni){
+        return insertarABB(&(*raiz)->izq,e,costo);
+    }else {
+        return insertarABB(&(*raiz)->der,e,costo);
+    }
+}
+
+
+//Me ayudo gemini en este porque se me trabo el cerebro kkk
+int bajaABB(NodoABB **raiz, Elector e, double *costo) {
+    if (*raiz == NULL)
+        return 0;
+ 
+    if (e.dni < (*raiz)->dato.dni)
+        return bajaABB(&(*raiz)->izq, e, costo);
+    if (e.dni > (*raiz)->dato.dni)
+        return bajaABB(&(*raiz)->der, e, costo);
+ 
+    /* encontramos el DNI, confirmamos con toda la tupla */
+    if (!esMismoElector((*raiz)->dato, e))
+        return 0;
+ 
+    NodoABB *borrar = *raiz;
+ 
+    if ((*raiz)->izq == NULL && (*raiz)->der == NULL) {
+        *raiz = NULL;
+        *costo += 0.5;
+        free(borrar);
+    } else if ((*raiz)->izq == NULL) {
+        *raiz = (*raiz)->der;
+        *costo += 0.5;
+        free(borrar);
+    } else if ((*raiz)->der == NULL) {
+        *raiz = (*raiz)->izq;
+        *costo += 0.5;
+        free(borrar);
+    } else {
+        /* dos hijos: buscamos el menor de los mayores */
+        NodoABB *padre = *raiz;
+        NodoABB *sucesor = (*raiz)->der;
+        while (sucesor->izq != NULL) {
+            padre = sucesor;
+            sucesor = sucesor->izq;
+        }
+        (*raiz)->dato = sucesor->dato;
+        *costo += 1; /* copia de datos */
+ 
+        if (padre == *raiz)
+            padre->der = sucesor->der;
+        else
+            padre->izq = sucesor->der;
+        *costo += 0.5;
+ 
+        free(sucesor);
+    }
+    return 1;
+}
+
+int consultaABB(NodoABB *raiz, long dni, Elector *result, double *costo) {
+    NodoABB *act = raiz;
+    while (act != NULL) {
+        *costo += 1;
+        if (dni == act->dato.dni) {
+            *result = act->dato;
+            return 1;
+        }
+        if (dni < act->dato.dni)
+            act = act->izq;
+        else
+            act = act->der;
+    }
+    return 0;
+}
+void mostrarABBrecursi(NodoABB *raiz, int *cant) {
+    if (raiz == NULL)
+        return;
+ 
+    imprimirElector(raiz->dato);
+    (*cant)++;
+ 
+    if (raiz->izq == NULL && raiz->der == NULL) {
+        printf("sin hijos\n");
+    } else {
+        if (raiz->izq != NULL)
+            printf("hijo izq: %ld\n", raiz->izq->dato.dni);
+        else
+            printf("sin hijo izq\n");
+ 
+        if (raiz->der != NULL)
+            printf("hijo der: %ld\n", raiz->der->dato.dni);
+        else
+            printf("sin hijo der\n");
+    }
+ 
+    mostrarABBrecursi(raiz->izq, cant);
+    mostrarABBrecursi(raiz->der, cant);
+}
+ 
+void mostrarABB(NodoABB *raiz) {
+    printf("\n-- ABB  --\n");
+    int cant = 0;
+    mostrarABBrec(raiz, &cant);
+    printf("Total: %d\n", cant);
+}
+ 
+void liberarABB(NodoABB *raiz) {
+    if (raiz == NULL) return;
+    liberarABB(raiz->izq);
+    liberarABB(raiz->der);
+    free(raiz);
+}
+
+
+
+
