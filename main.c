@@ -163,7 +163,7 @@ int preload(LSOBB *lsobb)
                 getchar();*/
 
                 // dar de alta en las estructuras
-                altaLSO(lsobb, e_temp);
+                //altaLSO(lsobb, e_temp);
                 break;
                 }
             case 2:{
@@ -186,7 +186,7 @@ int preload(LSOBB *lsobb)
                 getchar();*/
 
                 // dar de baja en las estructuras
-                bajaLSO(lsobb, e_temp);
+                //bajaLSO(lsobb, e_temp);
                 break;
             }
             case 3:{
@@ -196,13 +196,13 @@ int preload(LSOBB *lsobb)
                 printf("------------------------------------------------------------\n");
                 printf("\t evocar al elector con DNI: <%d>\n", itemp);
                 getchar();*/
-                if ( evocarLSO(*lsobb, e_temp) == -1){
+/*                if ( evocarLSO(*lsobb, e_temp) ){
                     printf("------------------------------------------------------------\n");
-                    printf("Error: elector <%d> no encontrado en LSOBB! \n", e_temp.dni);
+                    printf("elector <%d>  encontrado en LSOBB! \n", e_temp.dni);
                 }else{
                     printf("------------------------------------------------------------\n");
-                    printf("\t elector <%d> encontrado en LSOBB! \n", e_temp.dni);
-                }
+                    printf("\t Error: elector <%d> no encontrado en LSOBB! \n", e_temp.dni);
+                }*/
                 break;
             }
         }

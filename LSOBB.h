@@ -92,16 +92,16 @@ bool bajaLSO(LSOBB *lsobb, const elector Elector, int *costo){
     return true;
 }
 
-bool evocarLSO(const LSOBB lsobb, const elector Elector, int *costo){
+bool evocarLSO(const LSOBB lsobb, const elector Elector, int *costo, elector *resultado){
     if( costo!=NULL) (*costo)=0;
 
     int costoBusqueda=0;
     int posicion = localizarLSO(lsobb, Elector, &costoBusqueda);
     if (costo != NULL) (*costo) = costoBusqueda;
 
-    if ( lsobb.datos[posicion].dni != Elector.dni ) return false;
+    (*resultado) = lsobb.datos[posicion];
+    if ( (*resultado).dni != Elector.dni ) return false;
     // segun pdf, nos da nada mas que dni, no se controla que todo sea igual
-
     return true;
 }
 
