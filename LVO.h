@@ -15,169 +15,132 @@ case 0 liberarLVO(lista_lvo);
 
 
 
-
+#ifndef LVO_H_INCLUDED
+#define LVO_H_INCLUDED
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
+#include "elector.h"
 
-#define MAX_NOMBRE      51
-#define MAX_DOM         81
-#define INFINITO_LVO    999999999L
+#define VALOR_INFINITO 999999999L
 
-typedef struct {
-    long dni;
-    char nombreApellido[MAX_NOMBRE];
-    char domicilio[MAX_DOM];
-    int cp;
-    int mesa;
-    int circuito;
-} Elector;
-
-typedef struct {
-    double costoAlta;
-    double costoBaja;
-    double costoConsultas;
-    int altasBien, altasMal;
-    int bajasBien, bajasMal;
-    int consultasBien, consultasMal;
-} Costos;
-
-//Utilidades utiles, cositas cositosas y funciones funcionales 
-int miStrcasecmp(const char *a, const char *b) {
-    while (*a != '\0' && *b != '\0') {
-        int ca = tolower((unsigned char)*a);
-        int cb = tolower((unsigned char)*b);
-        if (ca != cb) {
-            return ca - cb;
-        }
-        a++;
-        b++;
-    }
-    return (unsigned char)*a - (unsigned char)*b;
-}
-
-int mismoElector(const Elector *a, const Elector *b) {
-    return a->dni == b->dni &&
-           miStrcasecmp(a->nombreApellido, b->nombreApellido) == 0 &&
-           miStrcasecmp(a->domicilio, b->domicilio) == 0 &&
-           a->cp == b->cp &&
-           a->mesa == b->mesa &&
-           a->circuito == b->circuito;
-}
-
-void imprimirElector(const Elector *e) {
-    printf("DNI: %-9ld | %-30s | %-30s | CP: %-5d | Mesa: %-4d | Circuito: %-4d\n",
-           e->dni, e->nombreApellido, e->domicilio, e->cp, e->mesa, e->circuito);
-}
-
-//Aca empieza lo de LVO
-
-typedef struct NodoLVO {
-    Elector dato;
-    struct NodoLVO *sig;
+typedef struct celda_padron {
+    Elector persona;
+    struct celda_padron *siguiente;
 } NodoLVO;
 
-NodoLVO *crearLVO(void) {
-    NodoLVO *centinela = (NodoLVO *)malloc(sizeof(NodoLVO));
-    centinela->dato.dni = INFINITO_LVO;
-    centinela->dato.nombreApellido[0] = '\0';
-    centinela->dato.domicilio[0] = '\0';
-    centinela->dato.cp = 0;
-    centinela->dato.mesa = 0;
-    centinela->dato.circuito = 0;
-    centinela->sig = NULL;
+NodoLVO *inicializar_lvo(void) {
+    NodoLVO *centinela = (NodoLVO *) malloc(sizeof(NodoLVO));
+    if (centinela == NULL) return NULL;
+
+    centinela->persona.dni = VALOR_INFINITO;
+    centinela->persona.nombreApellido[0] = '\0';
+    centinela->persona.domicilio[0] = '\0';
+    centinela->persona.cp = 0;
+    centinela->persona.mesa = 0;
+    centinela->persona.circuito = 0;
+    centinela->siguiente = NULL;
+
     return centinela;
 }
 
+int insertar_en_lvo(NodoLVO **cab, Elector e, double *costo_operacion) {
+    NodoLVO *anterior = NULL;
+    NodoLVO *actual = *cab;
 
-int altaLVO(NodoLVO **lista, Elector e, double *costo) {
-    NodoLVO *ant = NULL;
-    NodoLVO *act = *lista;
-
-    while (act->dato.dni < e.dni) {
-        ant = act;
-        act = act->sig;
+    while (actual->persona.dni < e.dni) {
+        anterior = actual;
+        actual = actual->siguiente;
     }
 
-    if (act->dato.dni == e.dni) {
-        return 0; //Dni dupeado
+    if (actual->persona.dni == e.dni) {
+        return 0; // ya registrado
     }
 
-    NodoLVO *nuevo = (NodoLVO *)malloc(sizeof(NodoLVO));
-    nuevo->dato = e;
-    nuevo->sig = act;
+    NodoLVO *item = (NodoLVO *) malloc(sizeof(NodoLVO));
+    if (!item) return 0;
 
-    if (ant == NULL) {
-        *lista = nuevo;
+    item->persona = e;
+    item->siguiente = actual;
+
+    if (anterior == NULL) {
+        *cab = item;
     } else {
-        ant->sig = nuevo;
+        anterior->siguiente = item;
     }
-    (*costo) += 0.5;
 
+    *costo_operacion += 0.5;
     return 1;
 }
 
+int eliminar_de_lvo(NodoLVO **cab, Elector e, double *costo_operacion) {
+    NodoLVO *anterior = NULL;
+    NodoLVO *actual = *cab;
 
-int bajaLVO(NodoLVO **lista, Elector e, double *costo) {
-    NodoLVO *ant = NULL;
-    NodoLVO *act = *lista;
-
-    while (act->dato.dni < e.dni) {
-        ant = act;
-        act = act->sig;
+    while (actual->persona.dni < e.dni) {
+        anterior = actual;
+        actual = actual->siguiente;
     }
 
-    if (act->dato.dni != e.dni || !mismoElector(&act->dato, &e)) {
-        return 0; // DNI(o dupla) incorrecto/a
+    if (actual->persona.dni != e.dni || !mismoElector(&(actual->persona), &e)) {
+        return 0;
     }
 
-    if (ant == NULL) {
-        *lista = act->sig;
+    if (anterior == NULL) {
+        *cab = actual->siguiente;
     } else {
-        ant->sig = act->sig;
+        anterior->siguiente = actual->siguiente;
     }
-    (*costo) += 0.5;
 
-    free(act);
+    *costo_operacion += 0.5;
+    free(actual);
     return 1;
 }
 
-int consultarLVO(NodoLVO *lista, long dni, Elector *resultado, double *costo) {
-    NodoLVO *act = lista;
-    while (act != NULL) {
-        (*costo) += 1;
-        if (act->dato.dni == dni) {
-            *resultado = act->dato;
-            return 1;
+int buscar_en_lvo(NodoLVO *cab, long dni, Elector *encontrado, double *costo_evocacion) {
+    NodoLVO *recorrer = cab;
+    int ok = 0;
+
+    while (recorrer != NULL) {
+        *costo_evocacion += 1.0;
+
+        if (recorrer->persona.dni == dni) {
+            *encontrado = recorrer->persona;
+            ok = 1;
+            break;
         }
-        if (act->dato.dni > dni) {
-            return 0; 
+
+        if (recorrer->persona.dni > dni) {
+            break;
         }
-        act = act->sig;
+
+        recorrer = recorrer->siguiente;
     }
-    return 0;
+
+    return ok;
 }
 
+void mostrar_lista_lvo(NodoLVO *cab) {
+    NodoLVO *aux = cab;
+    int electores = 0;
 
-void mostrarLVO(NodoLVO *lista) {
-    printf("\n-- Padron - Lista Vinculada Ordenada (LVO)---\n");
-    NodoLVO *act = lista;
-    int cont = 0;
-    while (act != NULL && act->dato.dni != INFINITO_LVO) {
-        imprimirElector(&act->dato);
-        act = act->sig;
-        cont++;
+    printf("\n--- Padron Electoral - LVO ---\n");
+    while (aux != NULL && aux->persona.dni != VALOR_INFINITO) {
+        imprimirElector(&(aux->persona));
+        aux = aux->siguiente;
+        electores++;
     }
-    printf("Total de electores en LVO: %d\n", cont);
+    printf("Total de registros mostrados: %d\n", electores);
 }
 
-
-void liberarLVO(NodoLVO *lista) {
-    while (lista != NULL) {
-        NodoLVO *tmp = lista;
-        lista = lista->sig;
-        free(tmp);
+void vaciar_lvo(NodoLVO *cab) {
+    NodoLVO *borrador;
+    while (cab != NULL) {
+        borrador = cab;
+        cab = cab->siguiente;
+        free(borrador);
     }
 }
+
+#endif

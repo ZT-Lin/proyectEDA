@@ -22,211 +22,174 @@ y al salir poner liberarABB(arbol_abb); para liberar anashe
 */
 
 
+#ifndef ABB_H_INCLUDED
+#define ABB_H_INCLUDED
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include "elector.h"
 
-#define MAX_NOMBRE      51
-#define MAX_DOM         81
-
-
-typedef struct {
-    long dni;
-    char nombreApellido[MAX_NOMBRE];
-    char domicilio[MAX_DOM];
-    int cp;
-    int mesa;
-    int circuito;
-} Elector;
-
-typedef struct {
-    double costoAlta;
-    double costoBaja;
-    double costoConsultas;
-    int altasBien, altasMal;
-    int bajasBien, bajasMal;
-    int consultasBien, consultasMal;
-} Costos;
-
-
-//Utilidades utiles, cositas cositosas y funciones funcionales 
-int miStrcasecmp(const char *a, const char *b) {
-    while (*a != '\0' && *b != '\0') {
-        int ca = tolower((unsigned char)*a);
-        int cb = tolower((unsigned char)*b);
-        if (ca != cb) {
-            return ca - cb;
-        }
-        a++;
-        b++;
-    }
-    return (unsigned char)*a - (unsigned char)*b;
-}
-
-int mismoElector(const Elector *a, const Elector *b) {
-    return a->dni == b->dni &&
-           miStrcasecmp(a->nombreApellido, b->nombreApellido) == 0 &&
-           miStrcasecmp(a->domicilio, b->domicilio) == 0 &&
-           a->cp == b->cp &&
-           a->mesa == b->mesa &&
-           a->circuito == b->circuito;
-}
-
-void imprimirElector(const Elector *e) {
-    printf("DNI: %-9ld | %-30s | %-30s | CP: %-5d | Mesa: %-4d | Circuito: %-4d\n",
-           e->dni, e->nombreApellido, e->domicilio, e->cp, e->mesa, e->circuito);
-}
-
-//Aca empieza ABB. Lo hice recursivo porque asi me recomendo el Tansi y creo yo que es lo mas optimo y capaz lo mas limpio
-
-typedef struct NodoABB {
+// Estructura para el arbol de electores
+typedef struct nodo_arbol {
     Elector dato;
-    struct NodoABB *izq;
-    struct NodoABB *der;
+    struct nodo_arbol *sub_izq;
+    struct nodo_arbol *sub_der;
 } NodoABB;
 
-NodoABB *crearNodoABB(Elector e) {
-    NodoABB *n = (NodoABB *)malloc(sizeof(NodoABB));
-    n->dato = e;
-    n->izq = NULL;
-    n->der = NULL;
-    return n;
-}
-
-
-int insertarABB(NodoABB **raiz, Elector e, double *costo) {
+// Alta en el arbol ordenada por DNI
+int insertarABB(NodoABB **raiz, Elector elect, double *costo) {
     if (*raiz == NULL) {
-        *raiz = crearNodoABB(e);
-        (*costo) += 0.5; //Enlace
+        NodoABB *nuevo = (NodoABB *) malloc(sizeof(NodoABB));
+        if (!nuevo) return 0;
+
+        nuevo->dato = elect;
+        nuevo->sub_izq = NULL;
+        nuevo->sub_der = NULL;
+        
+        *raiz = nuevo;
+        *costo += 0.5; // puntero enlazado
         return 1;
     }
-    if (e.dni == (*raiz)->dato.dni) {
-        return 0; //Si esta duplicado significa que hubo un error y da 0
-    } else if (e.dni < (*raiz)->dato.dni) {
-        return insertarABB(&(*raiz)->izq, e, costo);
+
+    if (elect.dni == (*raiz)->dato.dni) {
+        return 0; // dni repetido
+    }
+
+    if (elect.dni < (*raiz)->dato.dni) {
+        return insertarABB(&((*raiz)->sub_izq), elect, costo);
     } else {
-        return insertarABB(&(*raiz)->der, e, costo);
+        return insertarABB(&((*raiz)->sub_der), elect, costo);
     }
 }
 
-
-int bajaABB(NodoABB **raiz, Elector e, double *costo) {
+// Baja con reemplazo por menor de los mayores
+int bajaABB(NodoABB **raiz, Elector elect, double *costo) {
     if (*raiz == NULL) {
-        return 0; //No se encontro
-    }
-
-    if (e.dni < (*raiz)->dato.dni) {
-        return bajaABB(&(*raiz)->izq, e, costo);
-    } else if (e.dni > (*raiz)->dato.dni) {
-        return bajaABB(&(*raiz)->der, e, costo);
-    }
-
-    if (!mismoElector(&(*raiz)->dato, &e)) {
         return 0;
     }
 
-    NodoABB *aBorrar = *raiz;
-
-    if ((*raiz)->izq == NULL && (*raiz)->der == NULL) {
-        //Infertil (0 hijos)
-        *raiz = NULL;
-        (*costo) += 0.5;
-        free(aBorrar);
-    } else if ((*raiz)->izq == NULL) {
-        // Familia con hijo ingeniero(Derecha)
-        *raiz = (*raiz)->der;
-        (*costo) += 0.5;
-        free(aBorrar);
-    } else if ((*raiz)->der == NULL) {
-        // Familia con hijo de humanidades (zurdo)(Izquierda)
-        *raiz = (*raiz)->izq;
-        (*costo) += 0.5;
-        free(aBorrar);
-    } else {
-        // Familia tipo
-        NodoABB *padreSucesor = *raiz;
-        NodoABB *sucesor = (*raiz)->der;
-
-        while (sucesor->izq != NULL) {
-            padreSucesor = sucesor;
-            sucesor = sucesor->izq;
-        }
-
-        //Al ser una copia de datos, el costo es 1
-        (*raiz)->dato = sucesor->dato;
-        (*costo) += 1.0;
-
-        //Dada en adopcion del nodo. Costo 0,5
-        if (padreSucesor == *raiz) {
-            padreSucesor->der = sucesor->der;
-        } else {
-            padreSucesor->izq = sucesor->der;
-        }
-        (*costo) += 0.5;
-
-        free(sucesor);
+    if (elect.dni < (*raiz)->dato.dni) {
+        return bajaABB(&((*raiz)->sub_izq), elect, costo);
+    } else if (elect.dni > (*raiz)->dato.dni) {
+        return bajaABB(&((*raiz)->sub_der), elect, costo);
     }
 
+    // DNI encontrado, validar todos los campos del elector
+    if (!mismoElector(&((*raiz)->dato), &elect)) {
+        return 0;
+    }
+
+    NodoABB *nodo_elim = *raiz;
+
+    // Caso 1: hoja
+    if ((*raiz)->sub_izq == NULL && (*raiz)->sub_der == NULL) {
+        *raiz = NULL;
+        *costo += 0.5;
+        free(nodo_elim);
+        return 1;
+    }
+
+    // Caso 2: un solo hijo
+    if ((*raiz)->sub_izq == NULL) {
+        *raiz = (*raiz)->sub_der;
+        *costo += 0.5;
+        free(nodo_elim);
+        return 1;
+    }
+    if ((*raiz)->sub_der == NULL) {
+        *raiz = (*raiz)->sub_izq;
+        *costo += 0.5;
+        free(nodo_elim);
+        return 1;
+    }
+
+    // Caso 3: dos hijos, busca al sucesor
+    NodoABB *p_padre = *raiz;
+    NodoABB *sucesor = (*raiz)->sub_der;
+
+    while (sucesor->sub_izq != NULL) {
+        p_padre = sucesor;
+        sucesor = sucesor->sub_izq;
+    }
+
+    // Copiamos datos (costo 1)
+    (*raiz)->dato = sucesor->dato;
+    *costo += 1.0;
+
+    // Desenganche del sucesor (costo 0.5)
+    if (p_padre == *raiz) {
+        p_padre->sub_der = sucesor->sub_der;
+    } else {
+        p_padre->sub_izq = sucesor->sub_der;
+    }
+    *costo += 0.5;
+
+    free(sucesor);
     return 1;
 }
 
-// Consulta por DNI, costo += 1 por cada nodo visto
-int consultarABB(NodoABB *raiz, long dni, Elector *resultado, double *costo) {
-    NodoABB *act = raiz;
-    while (act != NULL) {
-        (*costo) += 1;
-        if (dni == act->dato.dni) {
-            *resultado = act->dato;
+// Busqueda / evocacion por clave DNI
+int consultarABB(NodoABB *raiz, long dni_buscado, Elector *encontrado, double *costo) {
+    NodoABB *p_act = raiz;
+
+    while (p_act != NULL) {
+        *costo += 1.0;
+
+        if (p_act->dato.dni == dni_buscado) {
+            *encontrado = p_act->dato;
             return 1;
-        } else if (dni < act->dato.dni) {
-            act = act->izq;
+        }
+
+        if (dni_buscado < p_act->dato.dni) {
+            p_act = p_act->sub_izq;
         } else {
-            act = act->der;
+            p_act = p_act->sub_der;
         }
     }
+
     return 0;
 }
 
-// Hace recorrido pre orden difiniendo hijos derechos e izquierdos
-void mostrarABBPreorden(NodoABB *raiz, int *contador) {
+// Barrido preorden detallando hijos
+void barridoPreordenABB(NodoABB *raiz, int *cant) {
     if (raiz == NULL) return;
 
-    imprimirElector(&raiz->dato);
-    (*contador)++;
+    imprimirElector(&(raiz->dato));
+    (*cant)++;
 
-    if (raiz->izq == NULL && raiz->der == NULL) {
-        printf("      -> No tiene hijos.\n");
+    if (raiz->sub_izq == NULL && raiz->sub_der == NULL) {
+        printf("      -> Sin hijos.\n");
     } else {
-        if (raiz->izq != NULL) {
-            printf("      -> Hijo izquierdo: DNI %ld\n", raiz->izq->dato.dni);
+        if (raiz->sub_izq != NULL) {
+            printf("      -> Hijo izq: DNI %ld\n", raiz->sub_izq->dato.dni);
         } else {
-            printf("      -> No tiene hijo izquierdo.\n");
+            printf("      -> Sin hijo izquierdo.\n");
         }
 
-        if (raiz->der != NULL) {
-            printf("      -> Hijo derecho: DNI %ld\n", raiz->der->dato.dni);
+        if (raiz->sub_der != NULL) {
+            printf("      -> Hijo der: DNI %ld\n", raiz->sub_der->dato.dni);
         } else {
-            printf("      -> No tiene hijo derecho.\n");
+            printf("      -> Sin hijo derecho.\n");
         }
     }
 
-    mostrarABBPreorden(raiz->izq, contador);
-    mostrarABBPreorden(raiz->der, contador);
+    barridoPreordenABB(raiz->sub_izq, cant);
+    barridoPreordenABB(raiz->sub_der, cant);
 }
 
 void mostrarABB(NodoABB *raiz) {
-    printf("\n--- Padron - Arbol Binario de Busqueda (ABB) - Recorrido Preorden ---\n");
-    int total = 0;
-    mostrarABBPreorden(raiz, &total);
-    printf("Total de electores en ABB: %d\n", total);
+    int total_elect = 0;
+    printf("\n--- Padron - Arbol Binario de Busqueda (ABB) - Barrido Preorden ---\n");
+    barridoPreordenABB(raiz, &total_elect);
+    printf("Total de electores en ABB: %d\n", total_elect);
 }
 
-// Libera la memoria en postorden
-void liberarABB(NodoABB *raiz) {
+// Liberar memoria del arbol
+void destruirABB(NodoABB *raiz) {
     if (raiz == NULL) return;
-    liberarABB(raiz->izq);
-    liberarABB(raiz->der);
+    destruirABB(raiz->sub_izq);
+    destruirABB(raiz->sub_der);
     free(raiz);
 }
+
+#endif
