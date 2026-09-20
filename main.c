@@ -232,41 +232,6 @@ int preload(LSOBB *lsobb)
 
 
 
-typedef struct {
-    long dni;
-    char nombreApellido[MAX_NOMBRE];
-    char domicilio[MAX_DOM];
-    int cp;
-    int mesa;
-    int circuito;
-} Elector;
-
-typedef struct {
-    double costoAlta;
-    double costoBaja;
-    double costoConsultas;
-    int altasBien, altasMal, BajarBien, BajasMal, ConsultasBien, ConsultasMal;
-} Costos;
-
-/*Lista Vinculada Ordenada con terminaci´on dada por contenido (+ infinito) (LVO)*/
-
-typedef struct NodoLVO{
-    Elector dato;
-    struct NodoLVO *sig;
-} NodoLVO;
-
-NodoLVO *crearLVO(void){
-    NodoLVO *centinela = (NodoLVO*)malloc(sizeof(NodoLVO));
-    centinela ->dato.dni = INFINITO_LVO;
-    centinela->dato.nombreApellido = /*buscar que caracter poner aca*/
-    centinela->dato.domicilio = /*same*/
-    centinela->dato.cp = 0;
-    centinela->dato.mesa = 0;
-    centinela->dato.circuito = 0;
-    centinela->sig = NULL;
-    return centinela;
-}
-
 
 
 
@@ -309,104 +274,10 @@ int strcasecmp(const char *a, const char *b){
 
 
 
-/*Lista Secuencial Ordenada con b´usqueda binaria (LSOBB)*/
+/*Lista Secuencial Ordenada con b´usqueda binaria (LVO)*/
 typedef struct {
     Elector electores[EST_ELECTORES];
     int cant;
-}
-
-
-
- void initLVO() {
-    lvo_head = (NodoLVO*)malloc(sizeof(NodoLVO));
-    lvo_head->elector.dni = INFINITO_LVO;
-    lvo_head->sig = NULL;
- }
-
- void altaLVO(NodoLVO lista, Elector e, double *costo) {
-    NodoLVO *ant = NULL;
-    NodoLVO *act = *lista;
-     
-    while (act ->dato.dni == e.dni)
-    {
-        return 0;
-    }
-
-    NodoLVO *nuevo = (NodoLVO*) malloc(sizeof(NodoLVO))
-    nuevo->dato = e;
-
-    nuevo -> sig = act;
-    (*costo) += 0.5;
-
-    if(ant == NULL){
-        *lista = nuevo;
-    } else {
-        ant ->sig = nuevo;
-    }
-    (costo*) += 0.5;
-
-    return 1;
-
- }
-
- void bajaLVO(Elector e, NodoLVO lista,){
-    NodoLVO *ant = NULL;
-    NodoLVO *act = *lista;
-
-    while(act->dato.dni < e.dni){
-        ant = act;
-        act = act->sig;
-    }
-    if (act->dato.dni != e.dni || !mismoElector(&act->dato, &e)){
-        return 0;
-    }
-
-    if (ant == NULL){
-        *lista = act->sig;
-    } else {
-        ant->sig = act->sig;
-    }
-    (*costo) += 0.5;
-
-    free(act);
-    return 1;
-        
- }
-
- int consultarLVO(NodoLVO *lista, long dni, Elector *resultado, double *costo){
-    NodoLVO *act = lista;
-    while (act!=NULL){
-        (*costo) += 1;
-        if (adc->dato.dni == dni){
-            *resultado = adc->dato;
-            return 1;
-        }
-        if(adc->dato.dni >dni){
-            return 0;
-        }
-        act = act->sig;
-    }
-    return 0;
- }
-
-void mostrarLVO(NodoLVO lista){
-    printf("--Padron - Lista Vinculada Ordenada (LVO\n ");
-    NodoLVO *act = lista;
-    int cont = 0;
-    while (act !=NULL && act ->dato.dni != INFINITO_LVO){
-        imprimirElector(&act->dato);
-        act = act->sig;
-        cont++;
-    }
-    printf("Total de electores en LVO: %d\n", cont);
-}
-
-void liberarLVO(NodoLVO *lista){
-    while (lista!=NULL){
-        NodoLVO *tmp = lista;
-        lista = lista->sig;
-        free(tmp);
-    }
 }
 
 
