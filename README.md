@@ -1,13 +1,13 @@
 - [x] Crear padron.h
-- [ ] Crear LVO.h
+- [x] Crear LVO.h
 - [x] Crear LSO.h
 - [x] Crear ABB.h
 - [x] Crear archivos `.txt` para registrar las personas a precargar
 - [x] Menu
 - [x] precarga en LSO
-- [ ] precarga en LVO
+- [x] precarga en LVO
 - [x] precarga en ABB
-- [ ] comparacion de estructuras
+- [x] comparacion de estructuras
 - [x] mostrar LSO
-- [ ] mostrar LVO
+- [x] mostrar LVO
 - [x] mostrar ABB
