@@ -20,7 +20,6 @@ NodoABB *crearNodoABB(elector E){
     NodoABB *nuevo = (NodoABB *)malloc(sizeof(NodoABB));
     if (nuevo == NULL)
     {
-        printf("Error: sin memoria\n");
         return NULL;
     }
     nuevo->root = E;
@@ -90,7 +89,7 @@ float altaABB( ABB *abb, const elector Elector, bool *exito){
 
     NodoABB *posicion;
     bool exitoL;
-    localizarABB(*abb, Elector, &exitoL, &posicion);
+    costo = localizarABB(*abb, Elector, &exitoL, &posicion);
 
      if (exitoL)  {// encuentra un elector con mismo dni
         free(nuevo);
@@ -118,7 +117,7 @@ float bajaABB(ABB *abb, const elector Elector, bool *exito){
 
     bool exitoL = false;
     NodoABB *encontrado;
-    localizarABB(*abb, Elector, &exitoL, &encontrado);
+    costo = localizarABB(*abb, Elector, &exitoL, &encontrado);
 
      if (!exitoL || !elector_sonIguales(encontrado->root, Elector)) return costo;//no encontro
 
@@ -190,7 +189,7 @@ float bajaABB(ABB *abb, const elector Elector, bool *exito){
         return costo;
         // encontrado-> se baja al elector del mismo nupla
 
-    return false;//no encontrado
+    return costo;
 }
 
 float evocarABB(ABB *abb, const elector Elector, bool *exito, elector *resultado){

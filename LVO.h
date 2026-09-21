@@ -32,11 +32,14 @@ NodoLVO *inicializar_lvo(void) {
 float altaLVO(NodoLVO **cab, elector e, int *exito) {
     NodoLVO *anterior = NULL;
     NodoLVO *actual = *cab;
+    float costo = 0.0f;
 
     while (actual->persona.dni < e.dni) {
+        costo += 1.0f;
         anterior = actual;
         actual = actual->siguiente;
     }
+    costo += 1.0f;
 
     if (actual->persona.dni == e.dni) {
         if (exito) *exito = 0; // DNI repetido
@@ -59,21 +62,24 @@ float altaLVO(NodoLVO **cab, elector e, int *exito) {
     }
 
     if (exito) *exito = 1;
-    return 0.5f; // Costo por enlazar
+    return costo + 0.5f; // Costo por enlazar
 }
 
 float bajaLVO(NodoLVO **cab, elector e, int *exito) {
     NodoLVO *anterior = NULL;
     NodoLVO *actual = *cab;
+    float costo = 0.0f;
 
     while (actual->persona.dni < e.dni) {
+        costo += 1.0f;
         anterior = actual;
         actual = actual->siguiente;
     }
+    costo += 1.0f;
 
     if (actual->persona.dni != e.dni || !elector_sonIguales(actual->persona, e)) {
         if (exito) *exito = 0; // Fracaso
-        return 0.0f;
+        return costo;
     }
 
     if (anterior == NULL) {
@@ -84,7 +90,7 @@ float bajaLVO(NodoLVO **cab, elector e, int *exito) {
 
     free(actual);
     if (exito) *exito = 1;
-    return 0.5f; // Costo por desenganchar
+    return costo + 0.5f; // Costo por desenganchar
 }
 
 float evocarLVO(NodoLVO *cab, long dni, elector *encontrado, int *exito) {
