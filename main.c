@@ -28,17 +28,17 @@ ALTA:
         - El problema es que arrastra todo el costo de la busqueda lineal previa, por eso la media
         se nos va a 417 y en el peor escenario recorre toda la lista hasta el centinela (1978).
         => Pertenece a O(n).
-        
-        
-        
+
+
+
     ABB:
         -Al hacer la busqueda vertical comparando el DNI con la funcion localizar, una vez encuentra al nodo padre, crea al nodo y lo engancha
         como un hijo izquierdo o derecho (Costo 0,5)
         -Al estar bien balanceado con los datos cargados, la altura se mantiene baja y el costo promedio es de 11.8 comparaciones
         mas el enlace, con un maximo de 21,5
         => Pertenece a O(log2 n).
-    
-    
+
+
 
 BAJA
     LSOBB:
@@ -67,15 +67,15 @@ EVOCAR
         => Pertenece a O(n).
     ABB:
         - Va comparando por rama izquierda o derecha segun el DNI.
-        - Da casi los mismos numeros que la busqueda binaria del LSOBB (medias de ~12 y picos de 21-23).
+        - Da casi los mismos numeros que la busqueda binaria del LSOBB (medias de 12 y picos de 21-23).
         => Pertenece a O(log2 n).
 
 ==================== CONCLUSION ====================
 LSOBB es buenisima para buscar (O(log2 n)), pero para un sistema real con altas y bajas no sirve
 por el costo enorme de correr celdas en memoria contigua cada dos por tres.
 
-LVO zafa con la memoria dinamica y enlazar nodos es barato (0.5), pero se vuelve inviable a medida que
-crece el padron porque la busqueda lineal O(n) te frena todo.
+LVO funciona correctamente con la memoria dinamica y enlazar nodos es barato (0.5), pero se vuelve inviable a medida que
+crece el padron porque la busqueda lineal O(n) puede relentizar el proceso
 
 ABB es claramente la mejor opcion de las tres para el padron: empata la velocidad de busqueda del LSOBB
 y permite meter y sacar electores al toque sin tener que desplazar nada, manteniendo los costos siempre bajos.
@@ -288,45 +288,68 @@ int main(){
                 break;
             } // mostrar estructura ABB
             case '4': {
-                system("cls");
-                promedio(&cAlta_lsobb_ex);   promedio(&cAlta_lsobb_fr);
-                promedio(&cBaja_lsobb_ex);   promedio(&cBaja_lsobb_fr);
-                promedio(&cEvocar_lsobb_ex); promedio(&cEvocar_lsobb_fr);
+    system("cls");
+    promedio(&cAlta_lsobb_ex);   promedio(&cAlta_lsobb_fr);
+    promedio(&cBaja_lsobb_ex);   promedio(&cBaja_lsobb_fr);
+    promedio(&cEvocar_lsobb_ex); promedio(&cEvocar_lsobb_fr);
 
-                promedio(&cAlta_lvo_ex);     promedio(&cAlta_lvo_fr);
-                promedio(&cBaja_lvo_ex);     promedio(&cBaja_lvo_fr);
-                promedio(&cEvocar_lvo_ex);   promedio(&cEvocar_lvo_fr);
+    promedio(&cAlta_lvo_ex);     promedio(&cAlta_lvo_fr);
+    promedio(&cBaja_lvo_ex);     promedio(&cBaja_lvo_fr);
+    promedio(&cEvocar_lvo_ex);   promedio(&cEvocar_lvo_fr);
 
-                promedio(&cAlta_abb_ex);     promedio(&cAlta_abb_fr);
-                promedio(&cBaja_abb_ex);     promedio(&cBaja_abb_fr);
-                promedio(&cEvocar_abb_ex);   promedio(&cEvocar_abb_fr);
+    promedio(&cAlta_abb_ex);     promedio(&cAlta_abb_fr);
+    promedio(&cBaja_abb_ex);     promedio(&cBaja_abb_fr);
+    promedio(&cEvocar_abb_ex);   promedio(&cEvocar_abb_fr);
 
-                printf("\n================================== COMPARACION DE ESTRUCTURAS ==================================\n");
-                printf("%-20s | %-22s | %-22s | %-22s\n", "Operacion", "LSOBB (Med / Max)", "LVO (Med / Max)", "ABB (Med / Max)");
-                printf("---------------------+------------------------+------------------------+------------------------\n");
+    printf("\n");
+    printf("  ============================================================================\n");
+    printf("                          COMPARACION DE ESTRUCTURAS\n");
+    printf("  ============================================================================\n\n");
 
-                printf("%-20s | %8.2f / %-8.1f | %8.2f / %-8.1f | %8.2f / %-8.1f\n",
-                    "Alta (Exito)",cAlta_lsobb_ex.promedio, cAlta_lsobb_ex.mayor, cAlta_lvo_ex.promedio,cAlta_lvo_ex.mayor,cAlta_abb_ex.promedio,cAlta_abb_ex.mayor);
+    printf("  %-18s   %-20s   %-20s   %-20s\n", "", "LSOBB", "LVO", "ABB");
+    printf("  %-18s   %-20s   %-20s   %-20s\n", "Operacion", "(Media / Maximo)", "(Media / Maximo)", "(Media / Maximo)");
+    printf("  ----------------------------------------------------------------------------\n\n");
 
-                printf("%-20s | %8.2f / %-8.1f | %8.2f / %-8.1f | %8.2f / %-8.1f\n",
-                    "Alta (Fracaso)",cAlta_lsobb_fr.promedio, cAlta_lsobb_fr.mayor,cAlta_lvo_fr.promedio,cAlta_lvo_fr.mayor, cAlta_abb_fr.promedio,cAlta_abb_fr.mayor);
+    printf("  -- ALTAS --\n");
+    printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n",
+        "Exito",
+        cAlta_lsobb_ex.promedio, cAlta_lsobb_ex.mayor,
+        cAlta_lvo_ex.promedio,   cAlta_lvo_ex.mayor,
+        cAlta_abb_ex.promedio,   cAlta_abb_ex.mayor);
+    printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n\n",
+        "Fracaso",
+        cAlta_lsobb_fr.promedio, cAlta_lsobb_fr.mayor,
+        cAlta_lvo_fr.promedio,   cAlta_lvo_fr.mayor,
+        cAlta_abb_fr.promedio,   cAlta_abb_fr.mayor);
 
-                printf("%-20s | %8.2f / %-8.1f | %8.2f / %-8.1f | %8.2f / %-8.1f\n",
-                    "Baja (Exito)",cBaja_lsobb_ex.promedio, cBaja_lsobb_ex.mayor,cBaja_lvo_ex.promedio,cBaja_lvo_ex.mayor,cBaja_abb_ex.promedio,cBaja_abb_ex.mayor);
+    printf("  -- BAJAS --\n");
+    printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n",
+        "Exito",
+        cBaja_lsobb_ex.promedio, cBaja_lsobb_ex.mayor,
+        cBaja_lvo_ex.promedio,   cBaja_lvo_ex.mayor,
+        cBaja_abb_ex.promedio,   cBaja_abb_ex.mayor);
+    printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n\n",
+        "Fracaso",
+        cBaja_lsobb_fr.promedio, cBaja_lsobb_fr.mayor,
+        cBaja_lvo_fr.promedio,   cBaja_lvo_fr.mayor,
+        cBaja_abb_fr.promedio,   cBaja_abb_fr.mayor);
 
-                printf("%-20s | %8.2f / %-8.1f | %8.2f / %-8.1f | %8.2f / %-8.1f\n",
-                    "Baja (Fracaso)", cBaja_lsobb_fr.promedio, cBaja_lsobb_fr.mayor,cBaja_lvo_fr.promedio,cBaja_lvo_fr.mayor,cBaja_abb_fr.promedio,cBaja_abb_fr.mayor);
+    printf("  -- EVOCACION --\n");
+    printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n",
+        "Exito",
+        cEvocar_lsobb_ex.promedio, cEvocar_lsobb_ex.mayor,
+        cEvocar_lvo_ex.promedio,   cEvocar_lvo_ex.mayor,
+        cEvocar_abb_ex.promedio,   cEvocar_abb_ex.mayor);
+    printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n",
+        "Fracaso",
+        cEvocar_lsobb_fr.promedio, cEvocar_lsobb_fr.mayor,
+        cEvocar_lvo_fr.promedio,   cEvocar_lvo_fr.mayor,
+        cEvocar_abb_fr.promedio,   cEvocar_abb_fr.mayor);
 
-                printf("%-20s | %8.2f / %-8.1f | %8.2f / %-8.1f | %8.2f / %-8.1f\n",
-                    "Evocacion (Exito)",cEvocar_lsobb_ex.promedio,cEvocar_lsobb_ex.mayor,cEvocar_lvo_ex.promedio,cEvocar_lvo_ex.mayor,cEvocar_abb_ex.promedio,   cEvocar_abb_ex.mayor);
-
-                printf("%-20s | %8.2f / %-8.1f | %8.2f / %-8.1f | %8.2f / %-8.1f\n",
-                    "Evocacion (Fracaso)",cEvocar_lsobb_fr.promedio,cEvocar_lsobb_fr.mayor,cEvocar_lvo_fr.promedio,cEvocar_lvo_fr.mayor,cEvocar_abb_fr.promedio,cEvocar_abb_fr.mayor);
-
-                printf("================================================================================================\n");
-                enter();
-                break;
-            } // comparar estructuras
+    printf("\n  ============================================================================\n");
+    enter();
+    break;
+} // comparar estructuras
             case '0':{
                 SISTEMA = false;
                 break;
@@ -358,9 +381,9 @@ int mostrar_menu(void){
 }
 
 void enter(){
-    printf("============================================================\n");
-    printf("\tPresionar \"enter\" para continuar\n");
-    printf("============================================================\n");
+    printf("  ============================================================================\n");
+    printf("                        Presionar \"enter\" para continuar\n");
+    printf("  ============================================================================\n");
     getchar();
 }
 
