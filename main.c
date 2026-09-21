@@ -84,7 +84,7 @@ int main(){
     initLSOBB(&lista_secuencial_ordenada);
 
     lista_lvo = inicializar_lvo();
-    
+
     ABB arbol_binario_busqueda;
     initABB(&arbol_binario_busqueda);
 
@@ -202,6 +202,7 @@ int main(){
                 break;
             } // mostrar estructura ABB
             case '4': {
+                system("cls");
                 promedio(&cAlta_lsobb_ex);   promedio(&cAlta_lsobb_fr);
                 promedio(&cBaja_lsobb_ex);   promedio(&cBaja_lsobb_fr);
                 promedio(&cEvocar_lsobb_ex); promedio(&cEvocar_lsobb_fr);
@@ -433,6 +434,7 @@ void mostrarABB(NodoABB *nodo, int *mostrados, int total, int *pagina){
     if (nodo == NULL) return;
 
     // nodo actual
+    // valor
     printf("------------------------------------------------------------\n");
     printf("DNI:\t\t%d\n", nodo->root.dni);
     printf("Nombre:\t\t%s\n", nodo->root.nombreApellido);
@@ -466,8 +468,8 @@ void mostrarABB(NodoABB *nodo, int *mostrados, int total, int *pagina){
         system("cls");
     }
 
-    // preorden: izquierdo, luego derecho
+    // preorden: valor(mostrado anteriormente) -> izquierdo -> derecho
     // avanzar
     mostrarABB(nodo->izq, mostrados, total, pagina);
     mostrarABB(nodo->der, mostrados, total, pagina);
-}   
+}
