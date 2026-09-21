@@ -29,20 +29,37 @@ NodoLVO *inicializar_lvo(void) {
     return centinela;
 }
 
+float localizarLVO(NodoLVO *cab, long dni, int *exito, NodoLVO **ant, NodoLVO **pos) {
+    float costo = 0.0f;
+    *exito = 0;
+    *ant = NULL;
+    *pos = cab;
+
+    while (*pos != NULL && (*pos)->persona.dni < dni) {
+        costo += 1.0f;
+        *ant = *pos;
+        *pos = (*pos)->siguiente;
+    }
+
+    if (*pos != NULL) {
+        costo += 1.0f; 
+        if ((*pos)->persona.dni == dni) {
+            *exito = 1;
+        }
+    }
+
+    return costo;
+}
+
 float altaLVO(NodoLVO **cab, elector e, int *exito) {
     NodoLVO *anterior = NULL;
-    NodoLVO *actual = *cab;
-    float costo = 0.0f;
+    NodoLVO *actual = NULL;
+    int exitoL = 0;
 
-    while (actual->persona.dni < e.dni) {
-        costo += 1.0f;
-        anterior = actual;
-        actual = actual->siguiente;
-    }
-    costo += 1.0f;
+    localizarLVO(*cab, e.dni, &exitoL, &anterior, &actual);
 
-    if (actual->persona.dni == e.dni) {
-        if (exito) *exito = 0; // DNI repetido
+    if (exitoL) {
+        if (exito) *exito = 0;
         return 0.0f;
     }
 
@@ -53,67 +70,58 @@ float altaLVO(NodoLVO **cab, elector e, int *exito) {
     }
 
     nuevo->persona = e;
-    nuevo->siguiente = actual;
+    nuevo->siguiente = actual; 
 
     if (anterior == NULL) {
-        *cab = nuevo;
+        *cab = nuevo;           
     } else {
-        anterior->siguiente = nuevo;
+        anterior->siguiente = nuevo; 
     }
 
     if (exito) *exito = 1;
-    return costo + 0.5f; // Costo por enlazar
+    return 1.0f; 
 }
 
 float bajaLVO(NodoLVO **cab, elector e, int *exito) {
-    NodoLVO *anterior = NULL;
-    NodoLVO *actual = *cab;
-    float costo = 0.0f;
-
-    while (actual->persona.dni < e.dni) {
-        costo += 1.0f;
-        anterior = actual;
-        actual = actual->siguiente;
+    if (cab == NULL || *cab == NULL) {
+        if (exito) *exito = 0;
+        return 0.0f;
     }
-    costo += 1.0f;
 
-    if (actual->persona.dni != e.dni || !elector_sonIguales(actual->persona, e)) {
-        if (exito) *exito = 0; // Fracaso
-        return costo;
+    NodoLVO *anterior = NULL;
+    NodoLVO *actual = NULL;
+    int exitoL = 0;
+
+    localizarLVO(*cab, e.dni, &exitoL, &anterior, &actual);
+
+    // Si no encontro el DNI o la tupla entera no coincide
+    if (!exitoL || !elector_sonIguales(actual->persona, e)) {
+        if (exito) *exito = 0;
+        return 0.0f;
     }
 
     if (anterior == NULL) {
         *cab = actual->siguiente;
     } else {
-        anterior->siguiente = actual->siguiente;
+        anterior->siguiente = actual->siguiente; 
     }
 
     free(actual);
     if (exito) *exito = 1;
-    return costo + 0.5f; // Costo por desenganchar
+    return 0.5f; 
 }
 
 float evocarLVO(NodoLVO *cab, long dni, elector *encontrado, int *exito) {
-    NodoLVO *act = cab;
-    float costo = 0.0f;
+    NodoLVO *anterior = NULL;
+    NodoLVO *actual = NULL;
 
-    while (act != NULL) {
-        costo += 1.0f;
+    // Evocar devuelve el costo exacto medido por localizar
+    float costo = localizarLVO(cab, dni, exito, &anterior, &actual);
 
-        if (act->persona.dni == dni) {
-            if (encontrado) *encontrado = act->persona;
-            if (exito) *exito = 1;
-            return costo;
-        }
-
-        if (act->persona.dni > dni) {
-            break;
-        }
-
-        act = act->siguiente;
+    if (*exito && encontrado != NULL) {
+        *encontrado = actual->persona;
     }
 
-    if (exito) *exito = 0; // Fracaso
     return costo;
 }
 
