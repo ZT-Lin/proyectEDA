@@ -33,6 +33,7 @@
 		</Compiler>
 		<Unit filename="ABB.h" />
 		<Unit filename="LSOBB.h" />
+		<Unit filename="LVO.h" />
 		<Unit filename="elector.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />

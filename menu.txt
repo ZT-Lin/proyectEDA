@@ -2,7 +2,6 @@
 Grupo nro 41
 Lin Franco
 Correa Perez Valentin
-==========================ANALISIS==========================
 ========================ESTRUCTURAS=========================
 1. Mostrar estructura: LSOBB
 2. Mostrar estructura: LVO
