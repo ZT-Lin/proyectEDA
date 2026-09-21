@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
+#include <stdbool.h>
 
 #include "LSOBB.h"
 #include "ABB.h"
+#include "LVO.h"
 
 int mostrar_menu(void);
 void enter(void);
@@ -32,6 +34,8 @@ Costo cAlta_lvo_ex, cBaja_lvo_ex, cEvocar_lvo_ex;
 Costo cAlta_lvo_fr, cBaja_lvo_fr, cEvocar_lvo_fr;
 Costo cAlta_abb_ex, cBaja_abb_ex, cEvocar_abb_ex;
 Costo cAlta_abb_fr, cBaja_abb_fr, cEvocar_abb_fr;
+
+NodoLVO *lista_lvo = NULL;
 
 //==========acumular costos==========
 void acumular(Costo *c, float valor){
@@ -79,6 +83,8 @@ int main(){
     LSOBB lista_secuencial_ordenada;
     initLSOBB(&lista_secuencial_ordenada);
 
+    lista_lvo = inicializar_lvo();
+    
     ABB arbol_binario_busqueda;
     initABB(&arbol_binario_busqueda);
 
@@ -147,9 +153,38 @@ int main(){
                 enter();
                 break;
             } // mostrar estructura LSOBB
-            case '2':{
+            case '2': {
+                NodoLVO *aux = lista_lvo;
+                int cant = 0, en_pag = 0;
+                pagina = 0;
+                system("cls");
+
+                while (aux != NULL && aux->persona.dni != VALOR_INFINITO) {
+                    printf("------------------------------------------------------------\n");
+                    printf("DNI:\t%d\n", aux->persona.dni);
+                    printf("Nombre:\t%s\n", aux->persona.nombreApellido);
+                    printf("Domicilio:\t%s\n", aux->persona.domicilio);
+                    printf("Codigo Postal:\t %d\n", aux->persona.cPostal);
+                    printf("Mesa de votacion: %d\n", aux->persona.mesa);
+                    printf("Circuito:\t%d\n", aux->persona.circuito);
+                    cant++;
+                    en_pag++;
+
+                    if (en_pag == 20) {
+                        pagina++;
+                        printf("------------------------------------------------------------\n");
+                        printf("pagina %d ( %d registros mostrados)\n", pagina, cant);
+                        enter();
+                        system("cls");
+                        en_pag = 0;
+                    }
+                    aux = aux->siguiente;
+                }
+                printf("------------------------------------------------------------\n");
+                printf("Total: %d electores en LVO\n", cant);
+                enter();
                 break;
-            } // mostrar estructura LVO
+            }// mostrar estructura LVO
             case '3':{
                 system("cls");
                 pagina = 0;
@@ -166,7 +201,43 @@ int main(){
                 enter();
                 break;
             } // mostrar estructura ABB
-            case '4':{
+            case '4': {
+                promedio(&cAlta_lsobb_ex);   promedio(&cAlta_lsobb_fr);
+                promedio(&cBaja_lsobb_ex);   promedio(&cBaja_lsobb_fr);
+                promedio(&cEvocar_lsobb_ex); promedio(&cEvocar_lsobb_fr);
+
+                promedio(&cAlta_lvo_ex);     promedio(&cAlta_lvo_fr);
+                promedio(&cBaja_lvo_ex);     promedio(&cBaja_lvo_fr);
+                promedio(&cEvocar_lvo_ex);   promedio(&cEvocar_lvo_fr);
+
+                promedio(&cAlta_abb_ex);     promedio(&cAlta_abb_fr);
+                promedio(&cBaja_abb_ex);     promedio(&cBaja_abb_fr);
+                promedio(&cEvocar_abb_ex);   promedio(&cEvocar_abb_fr);
+
+                printf("\n================================== COMPARACION DE ESTRUCTURAS ==================================\n");
+                printf("%-20s | %-22s | %-22s | %-22s\n", "Operacion", "LSOBB (Med / Max)", "LVO (Med / Max)", "ABB (Med / Max)");
+                printf("---------------------+------------------------+------------------------+------------------------\n");
+
+                printf("%-20s | %8.2f / %-8.1f | %8.2f / %-8.1f | %8.2f / %-8.1f\n",
+                    "Alta (Exito)",cAlta_lsobb_ex.promedio, cAlta_lsobb_ex.mayor, cAlta_lvo_ex.promedio,cAlta_lvo_ex.mayor,cAlta_abb_ex.promedio,cAlta_abb_ex.mayor);
+
+                printf("%-20s | %8.2f / %-8.1f | %8.2f / %-8.1f | %8.2f / %-8.1f\n",
+                    "Alta (Fracaso)",cAlta_lsobb_fr.promedio, cAlta_lsobb_fr.mayor,cAlta_lvo_fr.promedio,cAlta_lvo_fr.mayor, cAlta_abb_fr.promedio,cAlta_abb_fr.mayor);
+
+                printf("%-20s | %8.2f / %-8.1f | %8.2f / %-8.1f | %8.2f / %-8.1f\n",
+                    "Baja (Exito)",cBaja_lsobb_ex.promedio, cBaja_lsobb_ex.mayor,cBaja_lvo_ex.promedio,cBaja_lvo_ex.mayor,cBaja_abb_ex.promedio,cBaja_abb_ex.mayor);
+
+                printf("%-20s | %8.2f / %-8.1f | %8.2f / %-8.1f | %8.2f / %-8.1f\n",
+                    "Baja (Fracaso)", cBaja_lsobb_fr.promedio, cBaja_lsobb_fr.mayor,cBaja_lvo_fr.promedio,cBaja_lvo_fr.mayor,cBaja_abb_fr.promedio,cBaja_abb_fr.mayor);
+
+                printf("%-20s | %8.2f / %-8.1f | %8.2f / %-8.1f | %8.2f / %-8.1f\n",
+                    "Evocacion (Exito)",cEvocar_lsobb_ex.promedio,cEvocar_lsobb_ex.mayor,cEvocar_lvo_ex.promedio,cEvocar_lvo_ex.mayor,cEvocar_abb_ex.promedio,   cEvocar_abb_ex.mayor);
+
+                printf("%-20s | %8.2f / %-8.1f | %8.2f / %-8.1f | %8.2f / %-8.1f\n",
+                    "Evocacion (Fracaso)",cEvocar_lsobb_fr.promedio,cEvocar_lsobb_fr.mayor,cEvocar_lvo_fr.promedio,cEvocar_lvo_fr.mayor,cEvocar_abb_fr.promedio,cEvocar_abb_fr.mayor);
+
+                printf("================================================================================================\n");
+                enter();
                 break;
             } // comparar estructuras
             case '0':{
@@ -181,6 +252,7 @@ int main(){
             }
         } // switch
     } // while
+    vaciar_lvo(lista_lvo);
     return 0;
 } // main
 
@@ -258,6 +330,15 @@ int preload(LSOBB *lsobb, ABB *abb){
                     acumular(&cAlta_lsobb_fr, costo);
                 }
 
+                //lvo alta
+                int ok_lvo = 0;
+                float costo_lvo = altaLVO(&lista_lvo, e_temp, &ok_lvo);
+                if (ok_lvo) {
+                    acumular(&cAlta_lvo_ex, costo_lvo);
+                } else {
+                    acumular(&cAlta_lvo_fr, costo_lvo);
+                }
+
                 // abb alta
                 costo = altaABB(abb, e_temp, &exito);
                 if (exito){
@@ -276,6 +357,16 @@ int preload(LSOBB *lsobb, ABB *abb){
                     acumular(&cBaja_lsobb_fr, costo);
                 }
 
+                //lvo baja
+                int ok_lvo = 0;
+                float costo_lvo = bajaLVO(&lista_lvo, e_temp, &ok_lvo);
+                if (ok_lvo) {
+                    acumular(&cBaja_lvo_ex, costo_lvo);
+                } else {
+                    acumular(&cBaja_lvo_fr, costo_lvo);
+                }
+
+
                 //abb baja
                 costo = bajaABB(abb, e_temp, &exito);
                 if (exito){
@@ -293,6 +384,17 @@ int preload(LSOBB *lsobb, ABB *abb){
                 }else{
                     acumular(&cEvocar_lsobb_fr, costo);
                 }
+
+                //LVO evocar
+                int ok_lvo = 0;
+                elector res_lvo;
+                float costo_lvo = evocarLVO(lista_lvo, e_temp.dni, &res_lvo, &ok_lvo);
+                if (ok_lvo) {
+                    acumular(&cEvocar_lvo_ex, costo_lvo);
+                } else {
+                    acumular(&cEvocar_lvo_fr, costo_lvo);
+                }
+
 
                 // lso evocar
                 costo = evocarABB(abb, e_temp, &exito, &e_result);
@@ -368,4 +470,4 @@ void mostrarABB(NodoABB *nodo, int *mostrados, int total, int *pagina){
     // avanzar
     mostrarABB(nodo->izq, mostrados, total, pagina);
     mostrarABB(nodo->der, mostrados, total, pagina);
-}
+}   
