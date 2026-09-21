@@ -42,20 +42,25 @@ bool vacioABB(const ABB abb){
     return (abb.raiz == NULL);
 }
 
-NodoABB* localizarABB(const ABB abb, const elector Elector, float *costo, NodoABB **padre){
-    (*costo) = 0.0f;
-    if (padre != NULL) (*padre) = NULL;
-    if (abb.raiz == NULL) return NULL;
-
+float localizarABB(const ABB abb, const elector Elector, bool *exito, NodoABB **posicion){
+    float costo = 0.0f;
+    (*exito) = false;
     NodoABB *actual = abb.raiz;
     NodoABB *previo = NULL;
 
+    if (abb.raiz == NULL) { //arbol vacio
+        (*posicion) = NULL;
+        (*exito) = false;
+        return costo;
+    }
+
     while (actual != NULL){
-        (*costo) += 1.0f;
+        costo += 1.0f;
 
         if (actual->root.dni == Elector.dni){ // si el valor == buscado
-            (*padre) = previo;
-            return actual;
+            (*posicion) = actual;
+            (*exito) = true;
+            return costo;
         }
 
         previo = actual; // guardar nodo padre y avanzar
@@ -65,52 +70,66 @@ NodoABB* localizarABB(const ABB abb, const elector Elector, float *costo, NodoAB
             actual = actual->der;
         }
     }
-
-    (*padre) = previo;
-    return NULL;
+    (*posicion) = previo;
+    return costo;
 }
 
-bool altaABB( ABB *abb, const elector Elector, float *costo){
-     (*costo) = 0.0f;
+float altaABB( ABB *abb, const elector Elector, bool *exito){
+     float costo = 0.0f;
+     (*exito) = false;
      NodoABB *nuevo = crearNodoABB( Elector );
-     if( nuevo == NULL) return false;
+     if( nuevo == NULL) return costo;
 
     // si el arbol es vacio, dar alta en raiz
     if (vacioABB(*abb)) {
             abb->raiz = nuevo;
-            (*costo) += 0.5;
-            return true;
+            costo += 0.5;
+            (*exito) = true;
+            return costo;
     }
 
-    NodoABB *padre = NULL;
-    float costoBusqueda = 0; //no se usa en esta funcion
-    NodoABB *encontrado = localizarABB(*abb, Elector, &costoBusqueda, &padre);
+    NodoABB *posicion;
+    bool exitoL;
+    localizarABB(*abb, Elector, &exitoL, &posicion);
 
-     if (encontrado != NULL && encontrado->root.dni == Elector.dni)  {
-            free(nuevo);
-            return false;
-    }// no se da alta al elector del mismo dni
-
-    if( padre->root.dni > Elector.dni){
-        padre->izq = nuevo;
-    }else{
-        padre->der = nuevo;
+     if (exitoL)  {// encuentra un elector con mismo dni
+        free(nuevo);
+        (*exito) = false;
+        return costo;
     }
-    (*costo) +=0.5;
-    return true;
+
+    if (Elector.dni < posicion->root.dni) {// el posicion es el ultimo nodo
+        posicion->izq = nuevo;
+    } else {
+        posicion->der = nuevo;
+    }
+
+    costo += 0.5f;
+    (*exito) = true;
+    return costo;
 }
 
-bool bajaABB(ABB *abb, const elector Elector, float *costo){
-    (*costo) = 0.0f;
+float bajaABB(ABB *abb, const elector Elector, bool *exito){
+    (*exito)=false;
+    float costo= 0.0f;
 
     // si el arbol es vacio, no se puede dar baja
-    if (vacioABB(*abb)) return false;
+    if (vacioABB(*abb)) return costo;
 
-    NodoABB *padre = NULL;
-    float costoBusqueda = 0; //no se usa en esta funcion
-    NodoABB *encontrado = localizarABB(*abb, Elector, &costoBusqueda, &padre);
+    bool exitoL = false;
+    NodoABB *encontrado;
+    localizarABB(*abb, Elector, &exitoL, &encontrado);
 
-     if ( encontrado != NULL && elector_sonIguales(encontrado->root, Elector) ){
+     if (!exitoL || !elector_sonIguales(encontrado->root, Elector)) return costo;//no encontro
+
+     //si encontro, recorrer hasta "encontrado"
+     NodoABB *padre = NULL;
+     NodoABB *p = abb->raiz;
+     while (p != NULL && p != encontrado) {
+        padre = p;
+        p = (Elector.dni < p->root.dni) ? p->izq : p->der;
+    }
+
         // caso 1: sin hijos
         // padre->encontrado => padre->null
         if (encontrado->izq == NULL && encontrado->der == NULL) {
@@ -121,13 +140,14 @@ bool bajaABB(ABB *abb, const elector Elector, float *costo){
             }else{
                 padre->der = NULL;
             }//modificar puntero en arbol
-            (*costo) += 0.5f;
+            costo+= 0.5f;
             free(encontrado);
-            return true;
+            (*exito) = true;
+            return costo;
         }
         // caso 2: un hijo
         // padre->encontrado => padre->rama correspondiente
-        if (encontrado->izq == NULL || encontrado->der == NULL) {
+        if (encontrado->izq != NULL || encontrado->der != NULL) {
             NodoABB *hijo = (encontrado->izq != NULL) ? encontrado->izq : encontrado->der;
             if (padre == NULL){
                     abb->raiz = hijo;
@@ -136,9 +156,10 @@ bool bajaABB(ABB *abb, const elector Elector, float *costo){
             }else{
                 padre->der = hijo;
             }// modificacion de puntero en arbol
-            (*costo) += 0.5f;
+            costo+= 0.5f;
             free(encontrado);
-            return true;
+            (*exito) = true;
+            return costo;
         }
         // caso 3: dos hijos
         // politica de reemplazo
@@ -154,38 +175,42 @@ bool bajaABB(ABB *abb, const elector Elector, float *costo){
 
         // copia de datos
         elector_copiar(&encontrado->root, menor->root);
-        (*costo)+= 1.0f;
+        costo+= 1.0f;
 
-    // eliminar menor y sus hijos
+        // eliminar menor y sus hijos
         if (padreMin == encontrado){
                 padreMin->der = menor->der;
         }else{
             padreMin->izq = menor->der;
         }// modificacion punteor en arbol
-        (*costo)+= 0.5f;
+        costo+= 0.5f;
 
         free(menor);
-        return true;
-        }// encontrado-> se baja al elector del mismo nupla
+        (*exito) = true;
+        return costo;
+        // encontrado-> se baja al elector del mismo nupla
 
     return false;//no encontrado
 }
 
-bool evocarABB(ABB *abb, const elector Elector, float *costo, elector *resultado){
-    (*costo) = 0.0f;
+float evocarABB(ABB *abb, const elector Elector, bool *exito, elector *resultado){
+    float costo = 0.0f;
+    initElector(resultado);
+    (*exito) = false;
 
     // si el arbol es vacio
-    if (abb == NULL || vacioABB(*abb)) return false;
-    // sino, es arbol no vacio
+    if (abb == NULL || vacioABB(*abb)) return costo;
 
-    // no vacio => si es el mismo elector?
-    NodoABB *padre = NULL;
-    NodoABB *encontrado = localizarABB(*abb, Elector, costo, &padre);
-    if (encontrado != NULL && encontrado->root.dni == Elector.dni) {
+    // sino, es arbol no vacio
+    // no vacio => si es el mismo elector?;
+    NodoABB *encontrado;
+    costo += localizarABB(*abb, Elector, exito, &encontrado);
+
+    if (*exito) {
             *resultado = encontrado->root;
-            (*costo)+=1.0f;// consultar al nodo encontrado
-            return true;
+            costo+=1.0f;// consultar al nodo encontrado
+            return costo;
     }// encontrado, exportar al <resultado>
-    return false;
+    return costo;
 }
 #endif // ABB_H_INCLUDED

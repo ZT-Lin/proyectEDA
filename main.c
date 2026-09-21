@@ -9,22 +9,52 @@
 int mostrar_menu(void);
 void enter(void);
 
-int preload(LSOBB *); // esperando mas estructuras @Alts
+int preload(LSOBB*, ABB*); // esperando mas estructuras @Alts
+
+//===========definicion de estructura costo====
+
+typedef struct{
+    float mayor, promedio;
+    float tR;/*total_operacion_realizado*/
+    float tA;/*total_acumulado*/
+}costo;
+
+void initCosto(costo *l){
+    l->mayor=0.0f;
+    l->promedio=0.0f;
+    l->tA=0.0f;
+    l->tR=0.0f;
+}
+//==========costos de cada una==========
+costo cAlta_lsobb, cBaja_lsobb, cEvocar_lsobb;
+costo cAlta_lvo, cBaja_lvo, cEvocar_lvo;
+costo cAlta_abb, cBaja_abb, cEvocar_abb;
 
 int main(){
     // menu
     bool SISTEMA = true;
     char comando_user[100];
 
-    // estructuras
+    //==========init costos==========
+    initCosto(&cAlta_lsobb);
+    initCosto(&cAlta_lvo);
+    initCosto(&cAlta_abb);
+    initCosto(&cBaja_lsobb);
+    initCosto(&cBaja_lvo);
+    initCosto(&cBaja_abb);
+    initCosto(&cEvocar_lsobb);
+    initCosto(&cEvocar_lvo);
+    initCosto(&cEvocar_abb);
+
+    //==========estructuras==========
     LSOBB lista_secuencial_ordenada;
     initLSOBB(&lista_secuencial_ordenada);
 
     ABB arbol_binario_busqueda;
     initABB(&arbol_binario_busqueda);
 
-    // precargas
-    if( preload(&lista_secuencial_ordenada) ==-1 ){
+    //==========precargas==========
+    if( preload(&lista_secuencial_ordenada,&arbol_binario_busqueda) ==-1 ){
         printf("============================================================\n");
         printf("\tError: archivo \"Operaciones_Padron.txt\" no encontrado.\n");
         enter();
@@ -96,8 +126,7 @@ int main(){
     return 0;
 } // main
 
-int mostrar_menu(void)
-{
+int mostrar_menu(void){
     FILE *menu = fopen("menu.txt", "r");
     if (menu == NULL)
         return -1;
@@ -118,8 +147,7 @@ void enter(){
     getchar();
 }
 
-int preload(LSOBB *lsobb)
-{
+int preload(LSOBB *lsobb, ABB *abb){
     FILE *operaciones = fopen("Operaciones_Padron.txt", "r");
     if (operaciones == NULL) return -1; // archivo no encontrado
 
@@ -129,80 +157,65 @@ int preload(LSOBB *lsobb)
     // guarda los DNI, codigo postal, etc.
     char nam[51], dom[81];
     // guarda nombre y domicilio
+    bool exito;
 
-    // leer el comando: 1-alta, 2-baja, 3-evocacion
+
     int comando = 0;
-    while (fscanf(operaciones, "%d", &comando) == 1)
-    {
-        // asegurado que empieza con comando 1 2 3
-        /*test / debug
-        printf("------------------------------------------------------------\n");
-        printf("Comando<%d>\n", comando);
-        getchar();
-        inicializarP(&e_temp);*/
-        // resetear el elector
+    while (fscanf(operaciones, "%d", &comando) == 1){
+            // reset estado de variables necesarios
+            initElector( &e_temp);
+            exito = false;
+
+            // cargar datos
+            if( (comando==1) || (comando == 2) ){
+                fscanf(operaciones, "%d", &itemp);
+                setDNI(&e_temp, itemp);
+                fscanf(operaciones, " %[^\n]", nam);
+                setNombreApellido(&e_temp, nam);
+                fscanf(operaciones, " %[^\n]", dom);
+                setDomicilio(&e_temp, dom);
+                fscanf(operaciones, "%d", &itemp);
+                setCPostal(&e_temp, itemp);
+                fscanf(operaciones, "%d", &itemp);
+                setMesa(&e_temp, itemp);
+                fscanf(operaciones, "%d", &itemp);
+                setCircuito(&e_temp, itemp);
+            }else{
+                fscanf(operaciones, "%d", &itemp);
+                setDNI(&e_temp, itemp);
+            }
 
         switch (comando){
             case 1:{
-                fscanf(operaciones, "%d", &itemp);
-                setDNI(&e_temp, itemp);
-                fscanf(operaciones, " %[^\n]", nam);
-                setNombreApellido(&e_temp, nam);
-                fscanf(operaciones, " %[^\n]", dom);
-                setDomicilio(&e_temp, dom);
-                fscanf(operaciones, "%d", &itemp);
-                setCPostal(&e_temp, itemp);
-                fscanf(operaciones, "%d", &itemp);
-                setMesa(&e_temp, itemp);
-                fscanf(operaciones, "%d", &itemp);
-                setCircuito(&e_temp, itemp);
-                // orden segun pdf del proyecto
-                /*  test / debug
-                printf("------------------------------------------------------------\n");
-                printf("\t dar alta al elector con DNI: <%d>\n", getDNI(e_temp));
-                getchar();*/
 
-                // dar de alta en las estructuras
-                //altaLSO(lsobb, e_temp);
+                // LSOBB
+                float costo = altaLSO(lsobb, e_temp, &exito);
+                cAlta_lsobb.tR += 1.0f;
+                cAlta_lsobb.tA += costo;
+                if (costo > cAlta_lsobb.mayor) cAlta_lsobb.mayor = costo;
+
+    // ABB
+    costo = altaABB(abb, e_temp, &exito);
+    cAlta_abb.tR += 1.0f;
+    cAlta_abb.tA += costo;
+    if (costo > cAlta_abb.mayor) cAlta_abb.mayor = costo;
+
                 break;
                 }
             case 2:{
-                fscanf(operaciones, "%d", &itemp);
-                setDNI(&e_temp, itemp);
-                fscanf(operaciones, " %[^\n]", nam);
-                setNombreApellido(&e_temp, nam);
-                fscanf(operaciones, " %[^\n]", dom);
-                setDomicilio(&e_temp, dom);
-                fscanf(operaciones, "%d", &itemp);
-                setCPostal(&e_temp, itemp);
-                fscanf(operaciones, "%d", &itemp);
-                setMesa(&e_temp, itemp);
-                fscanf(operaciones, "%d", &itemp);
-                setCircuito(&e_temp, itemp);
-                // orden segun pdf del proyecto
-                /*test / debug
-                printf("------------------------------------------------------------\n");
-                printf("\t dar baja al elector con DNI: <%d>\n", getDNI(e_temp));
-                getchar();*/
+                cBaja_lsobb.tR+=1.0f;
+                cBaja_lvo.tR+=1.0f;
+                cBaja_abb.tR+=1.0f;
 
-                // dar de baja en las estructuras
-                //bajaLSO(lsobb, e_temp);
+
                 break;
             }
             case 3:{
-                fscanf(operaciones, "%d", &itemp);
-                setDNI(&e_temp, itemp);
-                /*test / debug
-                printf("------------------------------------------------------------\n");
-                printf("\t evocar al elector con DNI: <%d>\n", itemp);
-                getchar();*/
-/*                if ( evocarLSO(*lsobb, e_temp) ){
-                    printf("------------------------------------------------------------\n");
-                    printf("elector <%d>  encontrado en LSOBB! \n", e_temp.dni);
-                }else{
-                    printf("------------------------------------------------------------\n");
-                    printf("\t Error: elector <%d> no encontrado en LSOBB! \n", e_temp.dni);
-                }*/
+                cEvocar_lsobb.tR+=1.0f;
+                cEvocar_lvo.tR+=1.0f;
+                cEvocar_abb.tR+=1.0f;
+
+
                 break;
             }
         }
