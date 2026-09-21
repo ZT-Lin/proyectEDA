@@ -62,6 +62,12 @@ float altaLSO(LSOBB *lsobb, const elector Elector, bool *exito){
 
     int posicion=0;
     bool exitoL=false;
+    if( vacioLSO(*lsobb) ){
+        lsobb->datos[0] = Elector;
+        lsobb->cantidad++;
+        (*exito) = true;
+        return costo;
+    }
     localizarLSO(*lsobb, Elector, &posicion, &exitoL);
 
     if ( exitoL ) return costo;
@@ -72,7 +78,7 @@ float altaLSO(LSOBB *lsobb, const elector Elector, bool *exito){
     if (getDNI(lsobb->datos[posicion]) < Elector.dni) posicion = posicion + 1;
     // posicion esta dentro de [0,cantidad-1], el dni debe ser mayor o igual
     // si es menor, por orden creciente, debe insertar despues del posicion
-    // arbol vacio solucionado anteriormente
+    // lista vacio solucionado anteriormente
 
     int mov = 0;
     for (mov = lsobb->cantidad; mov>posicion; mov--){

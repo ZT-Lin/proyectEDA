@@ -6,5 +6,8 @@
 - [x] Menu
 - [x] precarga en LSO
 - [ ] precarga en LVO
-- [ ] precarga en ABB
+- [x] precarga en ABB
 - [ ] comparacion de estructuras
+- [x] mostrar LSO
+- [ ] mostrar LVO
+- [x] mostrar ABB

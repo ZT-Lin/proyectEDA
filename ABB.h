@@ -213,4 +213,10 @@ float evocarABB(ABB *abb, const elector Elector, bool *exito, elector *resultado
     }// encontrado, exportar al <resultado>
     return costo;
 }
+
+//==========funcion auxiliar==========
+int contarNodosABB(NodoABB *nodo){
+    if (nodo == NULL) return 0;
+    return 1 + contarNodosABB(nodo->izq) + contarNodosABB(nodo->der);
+}
 #endif // ABB_H_INCLUDED

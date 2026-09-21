@@ -10,25 +10,45 @@ int mostrar_menu(void);
 void enter(void);
 
 int preload(LSOBB*, ABB*); // esperando mas estructuras @Alts
+void mostrarABB(NodoABB*, int*, int, int*);
 
 //===========definicion de estructura costo====
-
 typedef struct{
     float mayor, promedio;
-    float tR;/*total_operacion_realizado*/
-    float tA;/*total_acumulado*/
-}costo;
+    float realizado;/*total_operacion_realizado*/
+    float acumulado;/*total_acumulado*/
+}Costo;
 
-void initCosto(costo *l){
+void initCosto(Costo *l){
     l->mayor=0.0f;
     l->promedio=0.0f;
-    l->tA=0.0f;
-    l->tR=0.0f;
+    l->acumulado=0.0f;
+    l->realizado=0.0f;
 }
 //==========costos de cada una==========
-costo cAlta_lsobb, cBaja_lsobb, cEvocar_lsobb;
-costo cAlta_lvo, cBaja_lvo, cEvocar_lvo;
-costo cAlta_abb, cBaja_abb, cEvocar_abb;
+Costo cAlta_lsobb_ex, cBaja_lsobb_ex, cEvocar_lsobb_ex;
+Costo cAlta_lsobb_fr, cBaja_lsobb_fr, cEvocar_lsobb_fr;
+Costo cAlta_lvo_ex, cBaja_lvo_ex, cEvocar_lvo_ex;
+Costo cAlta_lvo_fr, cBaja_lvo_fr, cEvocar_lvo_fr;
+Costo cAlta_abb_ex, cBaja_abb_ex, cEvocar_abb_ex;
+Costo cAlta_abb_fr, cBaja_abb_fr, cEvocar_abb_fr;
+
+//==========acumular costos==========
+void acumular(Costo *c, float valor){
+    c->realizado += 1.0f;
+    c->acumulado += valor;
+    if (valor > c->mayor)
+        c->mayor = valor;
+}
+
+//==========calcular medio==========
+void promedio(Costo *c){
+    if(c->realizado !=0) {
+            c->promedio = c->acumulado / c->realizado;
+    }else{
+        c->promedio = 0;
+    }
+}
 
 int main(){
     // menu
@@ -36,15 +56,24 @@ int main(){
     char comando_user[100];
 
     //==========init costos==========
-    initCosto(&cAlta_lsobb);
-    initCosto(&cAlta_lvo);
-    initCosto(&cAlta_abb);
-    initCosto(&cBaja_lsobb);
-    initCosto(&cBaja_lvo);
-    initCosto(&cBaja_abb);
-    initCosto(&cEvocar_lsobb);
-    initCosto(&cEvocar_lvo);
-    initCosto(&cEvocar_abb);
+    initCosto(&cAlta_lsobb_ex);
+    initCosto(&cAlta_lvo_ex);
+    initCosto(&cAlta_abb_ex);
+    initCosto(&cBaja_lsobb_ex);
+    initCosto(&cBaja_lvo_ex);
+    initCosto(&cBaja_abb_ex);
+    initCosto(&cEvocar_lsobb_ex);
+    initCosto(&cEvocar_lvo_ex);
+    initCosto(&cEvocar_abb_ex);
+    initCosto(&cAlta_lsobb_fr);
+    initCosto(&cAlta_lvo_fr);
+    initCosto(&cAlta_abb_fr);
+    initCosto(&cBaja_lsobb_fr);
+    initCosto(&cBaja_lvo_fr);
+    initCosto(&cBaja_abb_fr);
+    initCosto(&cEvocar_lsobb_fr);
+    initCosto(&cEvocar_lvo_fr);
+    initCosto(&cEvocar_abb_fr);
 
     //==========estructuras==========
     LSOBB lista_secuencial_ordenada;
@@ -61,6 +90,12 @@ int main(){
         return -1;
     }
     enter();
+
+    //==========variables==========
+    int total = 0;
+    int pagina = 1;
+    int i;
+    elector e_temp;
 
     while (SISTEMA)
     {
@@ -82,8 +117,9 @@ int main(){
 
         switch (comando_user[0]){
             case '1':{
-                int i;
-                elector e_temp;
+                system("cls");
+                pagina = 0;
+                total = lista_secuencial_ordenada.cantidad;
 
                 for (i = 0; i < lista_secuencial_ordenada.cantidad; i++){
                     initElector(&e_temp);
@@ -95,10 +131,19 @@ int main(){
                     printf("Codigo Postal:\t %d\n", e_temp.cPostal);
                     printf("Mesa de votacion: %d\n", e_temp.mesa);
                     printf("Circuito:\t%d\n", e_temp.circuito);
-                    if( ((i+1) % 20) == 0) enter();
+                    if( ((i+1) % 20) == 0) {
+                            pagina++;
+                            printf("------------------------------------------------------------\n");
+                            printf("pagina %d ( %d/%d)\n",pagina,i+1,total);
+                            enter();
+                            system("cls");
+                    }
                 }
-                printf("------------------------------------------------------------\n");
-                printf("Total: %d electores\n", lista_secuencial_ordenada.cantidad);
+                if (i % 20 != 0) {
+                    printf("------------------------------------------------------------\n");
+                    printf("Pagina %d | Mostrados: %d / %d\n", pagina, i, total);
+                }
+                printf("Total: %d electores\n", total);
                 enter();
                 break;
             } // mostrar estructura LSOBB
@@ -106,6 +151,19 @@ int main(){
                 break;
             } // mostrar estructura LVO
             case '3':{
+                system("cls");
+                pagina = 0;
+                i = 0;
+                total = contarNodosABB(arbol_binario_busqueda.raiz);
+
+                mostrarABB(arbol_binario_busqueda.raiz, &i, total, &pagina);
+                if (i % 20 != 0) {
+                    printf("------------------------------------------------------------\n");
+                    printf("Pagina %d | Mostrados: %d / %d\n", pagina, i, total);
+                }
+
+                printf("Total: %d electores\n", total);
+                enter();
                 break;
             } // mostrar estructura ABB
             case '4':{
@@ -152,7 +210,12 @@ int preload(LSOBB *lsobb, ABB *abb){
     if (operaciones == NULL) return -1; // archivo no encontrado
 
     //variables
+    float costo=0.0f;
+    // resultado de cada operacion
     elector e_temp;
+    // elector reutilizable
+    elector e_result;
+    // elector para evocar
     int itemp = 0;
     // guarda los DNI, codigo postal, etc.
     char nam[51], dom[81];
@@ -187,39 +250,122 @@ int preload(LSOBB *lsobb, ABB *abb){
 
         switch (comando){
             case 1:{
-
-                // LSOBB
-                float costo = altaLSO(lsobb, e_temp, &exito);
-                cAlta_lsobb.tR += 1.0f;
-                cAlta_lsobb.tA += costo;
-                if (costo > cAlta_lsobb.mayor) cAlta_lsobb.mayor = costo;
-
-    // ABB
-    costo = altaABB(abb, e_temp, &exito);
-    cAlta_abb.tR += 1.0f;
-    cAlta_abb.tA += costo;
-    if (costo > cAlta_abb.mayor) cAlta_abb.mayor = costo;
-
-                break;
+                // lso alta
+                costo = altaLSO(lsobb, e_temp, &exito);
+                if (exito){
+                        acumular(&cAlta_lsobb_ex, costo);
+                }else{
+                    acumular(&cAlta_lsobb_fr, costo);
                 }
+
+                // abb alta
+                costo = altaABB(abb, e_temp, &exito);
+                if (exito){
+                        acumular(&cAlta_abb_ex, costo);
+                }else{
+                    acumular(&cAlta_abb_fr, costo);
+                }
+                break;
+            }
             case 2:{
-                cBaja_lsobb.tR+=1.0f;
-                cBaja_lvo.tR+=1.0f;
-                cBaja_abb.tR+=1.0f;
+                //lso baja
+                costo = bajaLSO(lsobb, e_temp, &exito);
+                if (exito){
+                        acumular(&cBaja_lsobb_ex, costo);
+                }else{
+                    acumular(&cBaja_lsobb_fr, costo);
+                }
 
-
+                //abb baja
+                costo = bajaABB(abb, e_temp, &exito);
+                if (exito){
+                        acumular(&cBaja_abb_ex, costo);
+                }else{
+                    acumular(&cBaja_abb_fr, costo);
+                }
                 break;
             }
             case 3:{
-                cEvocar_lsobb.tR+=1.0f;
-                cEvocar_lvo.tR+=1.0f;
-                cEvocar_abb.tR+=1.0f;
+                // lso evocar
+                costo = evocarLSO(*lsobb, e_temp, &exito, &e_result);
+                if (exito){
+                        acumular(&cEvocar_lsobb_ex, costo);
+                }else{
+                    acumular(&cEvocar_lsobb_fr, costo);
+                }
 
-
+                // lso evocar
+                costo = evocarABB(abb, e_temp, &exito, &e_result);
+                if (exito){
+                        acumular(&cEvocar_abb_ex, costo);
+                }else{
+                    acumular(&cEvocar_abb_fr, costo);
+                }
                 break;
             }
         }
     }
+    promedio(&cAlta_lsobb_ex);
+    promedio(&cAlta_lvo_ex);
+    promedio(&cAlta_abb_ex);
+    promedio(&cBaja_lsobb_ex);
+    promedio(&cBaja_lvo_ex);
+    promedio(&cBaja_abb_ex);
+    promedio(&cEvocar_lsobb_ex);
+    promedio(&cEvocar_lvo_ex);
+    promedio(&cEvocar_abb_ex);
+    promedio(&cAlta_lsobb_fr);
+    promedio(&cAlta_lvo_fr);
+    promedio(&cAlta_abb_fr);
+    promedio(&cBaja_lsobb_fr);
+    promedio(&cBaja_lvo_fr);
+    promedio(&cBaja_abb_fr);
+    promedio(&cEvocar_lsobb_fr);
+    promedio(&cEvocar_lvo_fr);
+    promedio(&cEvocar_abb_fr);
     fclose(operaciones);
     return 0;
+}
+
+void mostrarABB(NodoABB *nodo, int *mostrados, int total, int *pagina){
+    if (nodo == NULL) return;
+
+    // nodo actual
+    printf("------------------------------------------------------------\n");
+    printf("DNI:\t\t%d\n", nodo->root.dni);
+    printf("Nombre:\t\t%s\n", nodo->root.nombreApellido);
+    printf("Domicilio:\t%s\n", nodo->root.domicilio);
+    printf("Codigo Postal:\t%d\n", nodo->root.cPostal);
+    printf("Mesa:\t\t%d\n", nodo->root.mesa);
+    printf("Circuito:\t%d\n", nodo->root.circuito);
+
+    // print nodos
+    if (nodo->izq == NULL && nodo->der == NULL) {
+        printf("Hijos:\t\tno tiene hijos\n");
+    } else {
+        if (nodo->izq != NULL)
+            printf("Hijo izquierdo:\tDNI %d\n", nodo->izq->root.dni);
+        else
+            printf("Hijo izquierdo:\tno tiene\n");
+
+        if (nodo->der != NULL)
+            printf("Hijo derecho:\tDNI %d\n", nodo->der->root.dni);
+        else
+            printf("Hijo derecho:\tno tiene\n");
+    }
+    (*mostrados)++;
+
+    // cada pagina contiene 20 electores
+    if ((*mostrados) % 20 == 0) {
+        (*pagina)++;
+        printf("------------------------------------------------------------\n");
+        printf("Pagina %d | Mostrados: %d / %d\n", *pagina, *mostrados, total);
+        enter();
+        system("cls");
+    }
+
+    // preorden: izquierdo, luego derecho
+    // avanzar
+    mostrarABB(nodo->izq, mostrados, total, pagina);
+    mostrarABB(nodo->der, mostrados, total, pagina);
 }
