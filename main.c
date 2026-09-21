@@ -1,3 +1,37 @@
+/*
+Funcion de costo:
+    alta y baja:
+        LSOBB: cantidad de corrimiento de la celda, costo = 1.
+        ABB y LVO: modificacion de punteros, costo = 0.5
+
+        La politica de reemplazo en la baja de los Árboles:
+            cuando el nodo tiene dos hijos es el menor de los mayores y el
+            reemplazo deberá realizarse con copia de datos. se deberá sumar
+            un costo más (1).
+
+     evocar:
+        todos: cantidad total de celdas consultadas, un punto (1) por cada celda.
+
+====================ANALISIS====================
+ALTA:
+    LSOBB: una vez encontrado la posicion a insertar segun funcion LOCALIZAR,
+        se realiza n veces el corrimiento de atras hacia adelante hasta el posicion
+        que corresponde con FOR(iteracion). Luego, copia los datos.
+        => pertenece a O(n)
+
+    ABB:
+        una vez encontrado el nodo segun LOCALIZAR,
+
+BAJA
+
+
+EVOCAR
+
+==============================================
+*/
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
