@@ -58,13 +58,28 @@ BAJA
 
 EVOCAR
     LSOBB:
+        -Como es una biseccion pura, tiene limites inclusivos y el segmento mayor esta a la izquierda
+        -No se pasa nunca de 13 comparaciones
+        => Pertenece a O(log2 n)
     LVO:
-        - Busqueda secuencial: camina celda a celda hasta encontrarlo o hasta que el DNI sea mayor (centinela).
-        - Rendimiento muy flojo para consultar: promedios de ~566 y picos de casi 2000 celdas.
+        - Tiene una busqueda secuencial, recorre celda a celda hasta encontrar el DNI que sea mayor(Que el centinela)
+        - Tiene un redimiento bastante pobre, tiene un promedio de 566 y el maximo es casi 2000
         => Pertenece a O(n).
     ABB:
+        - Va comparando por rama izquierda o derecha segun el DNI.
+        - Da casi los mismos numeros que la busqueda binaria del LSOBB (medias de ~12 y picos de 21-23).
+        => Pertenece a O(log2 n).
 
-==============================================
+==================== CONCLUSION ====================
+LSOBB es buenisima para buscar (O(log2 n)), pero para un sistema real con altas y bajas no sirve
+por el costo enorme de correr celdas en memoria contigua cada dos por tres.
+
+LVO zafa con la memoria dinamica y enlazar nodos es barato (0.5), pero se vuelve inviable a medida que
+crece el padron porque la busqueda lineal O(n) te frena todo.
+
+ABB es claramente la mejor opcion de las tres para el padron: empata la velocidad de busqueda del LSOBB
+y permite meter y sacar electores al toque sin tener que desplazar nada, manteniendo los costos siempre bajos.
+==================================================
 */
 
 
