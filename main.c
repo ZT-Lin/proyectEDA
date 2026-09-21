@@ -1,15 +1,15 @@
 /*
 Funcion de costo:
-    alta y baja:
+    Alta y Baja:
         LSOBB: cantidad de corrimiento de la celda, costo = 1.
         ABB y LVO: modificacion de punteros, costo = 0.5
 
-        La politica de reemplazo en la baja de los Árboles:
+        La politica de reemplazo en la baja de los Arboles:
             cuando el nodo tiene dos hijos es el menor de los mayores y el
-            reemplazo deberá realizarse con copia de datos. se deberá sumar
-            un costo más (1).
+            reemplazo debera realizarse con copia de datos. se debera sumar
+            un costo mas (1) por la copia de la tupla mas 0.5 por reenganchar.
 
-     evocar:
+    Evocar:
         todos: cantidad total de celdas consultadas, un punto (1) por cada celda.
 
 ====================ANALISIS====================
@@ -17,15 +17,52 @@ ALTA:
     LSOBB: una vez encontrado la posicion a insertar segun funcion LOCALIZAR,
         se realiza n veces el corrimiento de atras hacia adelante hasta el posicion
         que corresponde con FOR(iteracion). Luego, copia los datos.
+        -En Promedio el alta nos da 413, y en el peor de los casos, 1932 corrimientos, por lo que
+        el costo de este se incrementa demasiado para ser viable en grandes listas
         => pertenece a O(n)
 
+    LVO:
+        - Recorre secuencialmente nodo por nodo con un WHILE comparando DNIs hasta encontrar
+        el lugar que mantenga el orden.
+        - Una vez ubicado, solo se engancha el nodo nuevo modificando punteros (costo 0.5).
+        - El problema es que arrastra todo el costo de la busqueda lineal previa, por eso la media
+        se nos va a 417 y en el peor escenario recorre toda la lista hasta el centinela (1978).
+        => Pertenece a O(n).
+        
+        
+        
     ABB:
-        una vez encontrado el nodo segun LOCALIZAR,
+        -Al hacer la busqueda vertical comparando el DNI con la funcion localizar, una vez encuentra al nodo padre, crea al nodo y lo engancha
+        como un hijo izquierdo o derecho (Costo 0,5)
+        -Al estar bien balanceado con los datos cargados, la altura se mantiene baja y el costo promedio es de 11.8 comparaciones
+        mas el enlace, con un maximo de 21,5
+        => Pertenece a O(log2 n).
+    
+    
 
 BAJA
-
+    LSOBB:
+        - Busca por biseccion y valida con elector_sonIguales
+        - Al igual que con el alta, tiene que hacer muchos corrimientos cuando elimina algo tapandolos con un for
+        lo que da un promedio de 502 y un maximo de 1893 corrimientos
+        => Pertenece a O(n).
+    LVO:
+        - Avanza con el WHILE hasta dar con el DNI y coincidir la tupla.
+        - Desenganchar y liberar el nodo cuesta solo 0.5 de puntero, pero de vuelta se penaliza
+          por todo lo que tuvo que caminar la lista hasta encontrarlo.
+        => Pertenece a O(n).
+    ABB:
+        - Si no tiene hijos o solo tiene uno, se reacomodan con un costo de 0,5
+        - Si tiene hijos, entonces busca al menor de los mayores, copia el registro y lo desengancha. 1(copiar) + 0,5(desenganchar)
+        => Pertenece a O(log2 n).
 
 EVOCAR
+    LSOBB:
+    LVO:
+        - Busqueda secuencial: camina celda a celda hasta encontrarlo o hasta que el DNI sea mayor (centinela).
+        - Rendimiento muy flojo para consultar: promedios de ~566 y picos de casi 2000 celdas.
+        => Pertenece a O(n).
+    ABB:
 
 ==============================================
 */
