@@ -35,17 +35,15 @@ float localizarLVO(NodoLVO *cab, long dni, int *exito, NodoLVO **ant, NodoLVO **
     *ant = NULL;
     *pos = cab;
 
-    while (*pos != NULL && (*pos)->persona.dni < dni) {
+    while ((*pos)->persona.dni < dni) {
         costo += 1.0f;
         *ant = *pos;
         *pos = (*pos)->siguiente;
     }
 
-    if (*pos != NULL) {
-        costo += 1.0f; 
-        if ((*pos)->persona.dni == dni) {
-            *exito = 1;
-        }
+    costo += 1.0f;
+    if ((*pos)->persona.dni == dni) {
+        *exito = true;
     }
 
     return costo;
