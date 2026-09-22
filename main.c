@@ -1,5 +1,5 @@
 /*
-Funcion de costo:
+====================FUNCION DE COSTOS====================
     Alta y Baja:
         LSOBB: cantidad de corrimiento de la celda, costo = 1.
         ABB y LVO: modificacion de punteros, costo = 0.5
@@ -17,7 +17,7 @@ ALTA:
     LSOBB: una vez encontrado la posicion a insertar segun funcion LOCALIZAR,
         se realiza n veces el corrimiento de atras hacia adelante hasta el posicion
         que corresponde con FOR(iteracion). Luego, copia los datos.
-        -En Promedio el alta nos da 413, y en el peor de los casos, 1932 corrimientos, por lo que
+        -En Promedio el alta nos da 413.07, y en el peor de los casos, 1932.0 corrimientos, por lo que
         el costo de este se incrementa demasiado para ser viable en grandes listas
         => pertenece a O(n)
 
@@ -25,8 +25,8 @@ ALTA:
         - Recorre secuencialmente nodo por nodo con un WHILE comparando DNIs hasta encontrar
         el lugar que mantenga el orden.
         - Una vez ubicado, solo se engancha el nodo nuevo modificando punteros (costo 0.5).
-        - El problema es que arrastra todo el costo de la busqueda lineal previa, por eso la media
-        se nos va a 417 y en el peor escenario recorre toda la lista hasta el centinela (1978).
+        - Por eso el costo queda fijo en 1.00 de promedio y 1.0 de maximo, sin importar donde caiga el DNI 
+        dentro de la lista.
         => Pertenece a O(n).
 
 
@@ -34,8 +34,8 @@ ALTA:
     ABB:
         -Al hacer la busqueda vertical comparando el DNI con la funcion localizar, una vez encuentra al nodo padre, crea al nodo y lo engancha
         como un hijo izquierdo o derecho (Costo 0,5)
-        -Al estar bien balanceado con los datos cargados, la altura se mantiene baja y el costo promedio es de 11.8 comparaciones
-        mas el enlace, con un maximo de 21,5
+        -Como el recorrido para ubicar el lugar no suma costo, el resultado nos da fijo 0.50 de promedio
+        y 0.5 de maximo, igual que en la LVO.
         => Pertenece a O(log2 n).
 
 
@@ -44,41 +44,47 @@ BAJA
     LSOBB:
         - Busca por biseccion y valida con elector_sonIguales
         - Al igual que con el alta, tiene que hacer muchos corrimientos cuando elimina algo tapandolos con un for
-        lo que da un promedio de 502 y un maximo de 1893 corrimientos
+        lo que da un promedio de 502.61 y un maximo de 1893.0 corrimientos
         => Pertenece a O(n).
     LVO:
         - Avanza con el WHILE hasta dar con el DNI y coincidir la tupla.
-        - Desenganchar y liberar el nodo cuesta solo 0.5 de puntero, pero de vuelta se penaliza
-          por todo lo que tuvo que caminar la lista hasta encontrarlo.
+        - Desenganchar y liberar el nodo cuesta solo 0.5 de puntero, y ese es el unico costo que queda:
+        promedio en 0.50 y maximo en 0.5.
         => Pertenece a O(n).
     ABB:
         - Si no tiene hijos o solo tiene uno, se reacomodan con un costo de 0,5
-        - Si tiene hijos, entonces busca al menor de los mayores, copia el registro y lo desengancha. 1(copiar) + 0,5(desenganchar)
-        => Pertenece a O(log2 n).
+        - Si tiene dos hijos, entonces busca al menor de los mayores, copia el registro y lo desengancha. 1(copiar) + 0,5(desenganchar)
+        - En esta corrida no se dio ningun caso de nodo con dos hijos (o se conto enlace simple), por eso el promedio dio 0.50 y el maximo 0.5 
+        quedaron en 0.50 (el peor caso teorico seria 1.50 si se diera el reemplazo).
+        => Pertenece a O(1) estructural.
 
 EVOCAR
     LSOBB:
         -Como es una biseccion pura, tiene limites inclusivos y el segmento mayor esta a la izquierda
-        -No se pasa nunca de 13 comparaciones
-        => Pertenece a O(log2 n)
+        -En exito da un promedio de 12.14 y maximo de 13.0, mientras que en fracaso da 10.88 y maximo de 12.0 (no pasa nunca de 13 comparaciones)
+        => Pertenece a O(log2 n),
     LVO:
-        - Tiene una busqueda secuencial, recorre celda a celda hasta encontrar el DNI que sea mayor(Que el centinela)
-        - Tiene un redimiento bastante pobre, tiene un promedio de 566 y el maximo es casi 2000
+        - Tiene una busqueda secuencial, recorre celda por celda hasta encontrar el DNI o cortar por orden con el centinela
+        - Tiene un rendimiento bastante pobre: en exito promedia 566.80 con maximo de 1994.0, y en fracaso 463.47 con maximo de 1206.0
         => Pertenece a O(n).
     ABB:
         - Va comparando por rama izquierda o derecha segun el DNI.
-        - Da casi los mismos numeros que la busqueda binaria del LSOBB (medias de 12 y picos de 21-23).
+        - Da casi los mismos numeros que la busqueda binaria del LSOBB: en exito promedio de 11.84 con maximo de 22.0, y en fracaso 12.03 con maximo de 21.0
         => Pertenece a O(log2 n).
 
 ==================== CONCLUSION ====================
 LSOBB es buenisima para buscar (O(log2 n)), pero para un sistema real con altas y bajas no sirve
 por el costo enorme de correr celdas en memoria contigua cada dos por tres.
 
-LVO funciona correctamente con la memoria dinamica y enlazar nodos es barato (0.5), pero se vuelve inviable a medida que
-crece el padron porque la busqueda lineal O(n) puede relentizar el proceso
+LVO resulta tener costo estructural fijo para meter y sacar electores: enlazar o desenlazar un nodo es siempre barato 
+(costo fijo de 0.5 a 1.0, sin importar el tamaño del padron). El problema aparece al evocar, donde al no
+tener forma de hacer busqueda binaria, tiene que recorrer la lista celda por celda y el costo se dispara
+a un promedio de 566.80 y picos de casi 2000 (1994.0),
 
 ABB es claramente la mejor opcion de las tres para el padron: empata la velocidad de busqueda del LSOBB
-y permite meter y sacar electores al toque sin tener que desplazar nada, manteniendo los costos siempre bajos.
+(evocaciones con promedio 11.84 en exito y 12.03 en fracaso, frente a los 12.14 y 10.88 del LSOBB) 
+y ademas mantiene el costo estructural de alta y baja tan bajo como la LVO (0.50 fijo), sin tener que desplazar nada
+Es la estructura mas equilibrada y eficiente para el padron electoral entre las tres evaluadas.
 ==================================================
 */
 
