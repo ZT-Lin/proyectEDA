@@ -1,4 +1,7 @@
 /*
+==================== GRUPO 41 =======Correa Valentin, Lin Franco. ====================
+
+
 ====================FUNCION DE COSTOS====================
     Alta y Baja:
         LSOBB: cantidad de corrimiento de la celda, costo = 1.
