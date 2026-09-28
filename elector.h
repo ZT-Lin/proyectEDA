@@ -21,56 +21,6 @@ void initElector (elector *Elector){
     Elector->circuito = 0;
 }
 
-// ============ GETTERS ============
-int getDNI( const elector Elector) {
-    return Elector.dni;
-}
-
-int getCPostal( const elector Elector) {
-    return Elector.cPostal;
-}
-
-int getMesa( const elector Elector) {
-    return Elector.mesa;
-}
-
-int getCircuito( const elector Elector) {
-    return Elector.circuito;
-}
-
-void getNombreApellido( const elector Elector, char *destino) {
-    strcpy(destino, Elector.nombreApellido);
-}
-
-void getDomicilio( const elector Elector, char *destino) {
-    strcpy(destino, Elector.domicilio);
-}
-
-// ============ SETTERS ============
-void setDNI(elector *Elector, const int dni) {
-    Elector->dni = dni;
-}
-
-void setCPostal(elector *Elector, const int cPostal) {
-    Elector->cPostal = cPostal;
-}
-
-void setMesa(elector *Elector, const int mesa) {
-    Elector->mesa = mesa;
-}
-
-void setCircuito(elector *Elector, const int circuito) {
-    Elector->circuito = circuito;
-}
-
-void setNombreApellido(elector *Elector, const char *nombre) {
-    strcpy(Elector->nombreApellido, nombre);
-}
-
-void setDomicilio(elector *Elector, const char *domicilio) {
-    strcpy(Elector->domicilio, domicilio);
-}
-
 // ============== PMI ==============
 bool elector_sonIguales(const elector a, const elector b) {
     if (a.dni != b.dni) return false;
