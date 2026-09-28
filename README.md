@@ -1,13 +1,10 @@
-- [x] Crear padron.h
-- [x] Crear LVO.h
-- [x] Crear LSO.h
-- [x] Crear ABB.h
-- [x] Crear archivos `.txt` para registrar las personas a precargar
-- [x] Menu
-- [x] precarga en LSO
-- [x] precarga en LVO
-- [x] precarga en ABB
-- [x] comparacion de estructuras
-- [x] mostrar LSO
-- [x] mostrar LVO
-- [x] mostrar ABB
+RECUPERATORIO
+
+- [ ] sacar precarga automatica y hacer opcion "5.cargar estructura"
+- [ ] sacar vacia() y llena()
+- [ ] sacar get() y set() (Elector.h)
+- [ ] sacar funciones de una sola linea
+- [ ] usar vector flag (LSOBB.h)
+- [ ] arreglar bajaABB() y evocarABB()
+
+*Fecha de Entrega:* iernes 2 de octubre de 2026 (esta semana)

@@ -119,7 +119,6 @@ float evocarLSO(const LSOBB lsobb, const elector Elector, bool *exito, elector *
 
     if((*exito)){
             (*resultado) = lsobb.datos[posicion];
-            costo+=1.0f;
     }
     return costo;
 }
