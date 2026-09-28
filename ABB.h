@@ -38,10 +38,6 @@ void initABB(ABB *abb){
     abb->raiz = NULL;
 }
 
-bool vacioABB(const ABB abb){
-    return (abb.raiz == NULL);
-}
-
 float localizarABB(const ABB abb, const elector Elector, bool *exito, NodoABB **posicion){
     float costo = 0.0f;
     (*exito) = false;
@@ -144,7 +140,7 @@ float bajaABB(ABB *abb, const elector Elector, bool *exito){
         }
         // caso 2: un hijo
         // padre->encontrado => padre->rama correspondiente
-        if (encontrado->izq != NULL || encontrado->der != NULL) {
+        if (encontrado->izq == NULL || encontrado->der == NULL) {
             NodoABB *hijo = (encontrado->izq != NULL) ? encontrado->izq : encontrado->der;
             if (padre == NULL){
                     abb->raiz = hijo;
@@ -186,8 +182,6 @@ float bajaABB(ABB *abb, const elector Elector, bool *exito){
         (*exito) = true;
         return costo;
         // encontrado-> se baja al elector del mismo nupla
-
-    return costo;
 }
 
 float evocarABB(ABB *abb, const elector Elector, bool *exito, elector *resultado){

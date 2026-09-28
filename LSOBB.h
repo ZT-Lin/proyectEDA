@@ -19,14 +19,6 @@ void initLSOBB(LSOBB *lsobb) {
     */
 }
 
-bool vacioLSO(const LSOBB lsobb){
-    return (lsobb.cantidad == 0);
-}
-
-bool llenaLSO(const LSOBB lsobb){
-    return (lsobb.cantidad >= LSOMAX);
-}
-
 float localizarLSO(const LSOBB lsobb, const elector Elector, int *posicion, bool *exito){
     (*exito) = false;
     (*posicion) = 0;
