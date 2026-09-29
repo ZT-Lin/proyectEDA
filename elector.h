@@ -33,12 +33,12 @@ bool elector_sonIguales(const elector a, const elector b) {
 }
 
 bool elector_copiar(elector *destino, const elector origen){
-    setDNI( destino, origen.dni );
-    setNombreApellido( destino, origen.nombreApellido );
-    setDomicilio( destino, origen.domicilio);
-    setCPostal( destino, origen.cPostal);
-    setCircuito( destino, origen.circuito);
-    setMesa( destino, origen.mesa);
+    destino->dni = origen.dni;
+    strcpy(destino->nombreApellido, origen.nombreApellido);
+    strcpy(destino->domicilio, origen.domicilio);
+    destino->cPostal = origen.cPostal;
+    destino->circuito = origen.circuito;
+    destino->mesa = origen.mesa;
     return elector_sonIguales(*destino, origen);
 }
 

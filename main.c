@@ -28,7 +28,7 @@ ALTA:
         - Recorre secuencialmente nodo por nodo con un WHILE comparando DNIs hasta encontrar
         el lugar que mantenga el orden.
         - Una vez ubicado, solo se engancha el nodo nuevo modificando punteros (costo 0.5).
-        - Por eso el costo queda fijo en 1.00 de promedio y 1.0 de maximo, sin importar donde caiga el DNI 
+        - Por eso el costo queda fijo en 1.00 de promedio y 1.0 de maximo, sin importar donde caiga el DNI
         dentro de la lista.
         => Pertenece a O(n).
 
@@ -57,7 +57,7 @@ BAJA
     ABB:
         - Si no tiene hijos o solo tiene uno, se reacomodan con un costo de 0,5
         - Si tiene dos hijos, entonces busca al menor de los mayores, copia el registro y lo desengancha. 1(copiar) + 0,5(desenganchar)
-        - En esta corrida no se dio ningun caso de nodo con dos hijos (o se conto enlace simple), por eso el promedio dio 0.50 y el maximo 0.5 
+        - En esta corrida no se dio ningun caso de nodo con dos hijos (o se conto enlace simple), por eso el promedio dio 0.50 y el maximo 0.5
         quedaron en 0.50 (el peor caso teorico seria 1.50 si se diera el reemplazo).
         => Pertenece a O(1) estructural.
 
@@ -79,13 +79,13 @@ EVOCAR
 LSOBB es buenisima para buscar (O(log2 n)), pero para un sistema real con altas y bajas no sirve
 por el costo enorme de correr celdas en memoria contigua cada dos por tres.
 
-LVO resulta tener costo estructural fijo para meter y sacar electores: enlazar o desenlazar un nodo es siempre barato 
+LVO resulta tener costo estructural fijo para meter y sacar electores: enlazar o desenlazar un nodo es siempre barato
 (costo fijo de 0.5 a 1.0, sin importar el tamaño del padron). El problema aparece al evocar, donde al no
 tener forma de hacer busqueda binaria, tiene que recorrer la lista celda por celda y el costo se dispara
 a un promedio de 566.80 y picos de casi 2000 (1994.0),
 
 ABB es claramente la mejor opcion de las tres para el padron: empata la velocidad de busqueda del LSOBB
-(evocaciones con promedio 11.84 en exito y 12.03 en fracaso, frente a los 12.14 y 10.88 del LSOBB) 
+(evocaciones con promedio 11.84 en exito y 12.03 en fracaso, frente a los 12.14 y 10.88 del LSOBB)
 y ademas mantiene el costo estructural de alta y baja tan bajo como la LVO (0.50 fijo), sin tener que desplazar nada
 Es la estructura mas equilibrada y eficiente para el padron electoral entre las tres evaluadas.
 ==================================================
@@ -423,20 +423,20 @@ int preload(LSOBB *lsobb, ABB *abb){
             // cargar datos
             if( (comando==1) || (comando == 2) ){
                 fscanf(operaciones, "%d", &itemp);
-                setDNI(&e_temp, itemp);
+                e_temp.dni = itemp;
                 fscanf(operaciones, " %[^\n]", nam);
-                setNombreApellido(&e_temp, nam);
-                fscanf(operaciones, " %[^\n]", dom);
-                setDomicilio(&e_temp, dom);
+                strcpy( e_temp.nombreApellido, nam);
+                fscanf(operaciones, " %[^\n]", &dom);
+                strcpy(e_temp.domicilio, dom);
                 fscanf(operaciones, "%d", &itemp);
-                setCPostal(&e_temp, itemp);
+                e_temp.cPostal = itemp;
                 fscanf(operaciones, "%d", &itemp);
-                setMesa(&e_temp, itemp);
+                e_temp.mesa =itemp;
                 fscanf(operaciones, "%d", &itemp);
-                setCircuito(&e_temp, itemp);
+                e_temp.circuito = itemp;
             }else{
                 fscanf(operaciones, "%d", &itemp);
-                setDNI(&e_temp, itemp);
+                e_temp.dni = itemp;
             }
 
         switch (comando){

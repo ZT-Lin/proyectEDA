@@ -76,7 +76,7 @@ float altaABB( ABB *abb, const elector Elector, bool *exito){
      NodoABB *nuevo = crearNodoABB( Elector );
      if( nuevo == NULL) return costo;
 
-    if (vacioABB(*abb)) {
+    if ( abb->raiz==NULL || abb==NULL) {
             abb->raiz = nuevo;
             costo += 0.5f;
             (*exito) = true;
@@ -108,7 +108,7 @@ float bajaABB(ABB *abb, const elector Elector, bool *exito){
     (*exito)=false;
     float costo= 0.0f;
 
-    if (vacioABB(*abb)) return costo;
+    if (abb->raiz==NULL || abb==NULL) return costo;
 
     bool exitoL = false;
     NodoABB *encontrado;
@@ -190,7 +190,7 @@ float evocarABB(ABB *abb, const elector Elector, bool *exito, elector *resultado
     (*exito) = false;
     // si el arbol es vacio
 
-    if (abb == NULL || vacioABB(*abb)) return costo;
+    if (abb->raiz==NULL || abb==NULL) return costo;
     // sino, es arbol no vacio
     // no vacio => si es el mismo elector?;
 
