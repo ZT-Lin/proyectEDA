@@ -106,7 +106,7 @@ Es la estructura mas equilibrada y eficiente para el padron electoral entre las 
 int mostrar_menu(void);
 void enter(void);
 
-int preload(LSOBB*, ABB*); // esperando mas estructuras @Alts
+int preload(LSOBB*, ABB*, NodoLVO**); // esperando mas estructuras @Alts
 void mostrarABB(NodoABB*, int*, int, int*);
 
 //===========definicion de estructura costo====
@@ -152,6 +152,7 @@ void promedio(Costo *c){
 int main(){
     // menu
     bool SISTEMA = true;
+    bool datos_cargados = false;
     char comando_user[100];
 
     //==========init costos==========
@@ -184,13 +185,15 @@ int main(){
     initABB(&arbol_binario_busqueda);
 
     //==========precargas==========
-    if( preload(&lista_secuencial_ordenada,&arbol_binario_busqueda) ==-1 ){
+    /*if( preload(&lista_secuencial_ordenada,&arbol_binario_busqueda) ==-1 ){
         printf("============================================================\n");
         printf("\tError: archivo \"Operaciones_Padron.txt\" no encontrado.\n");
         enter();
         return -1;
     }
-    enter();
+    enter();*/
+
+    //Deberia ir dentro de la opcion 4
 
     //==========variables==========
     int total = 0;
@@ -221,6 +224,14 @@ int main(){
                 system("cls");
                 pagina = 0;
                 total = lista_secuencial_ordenada.cantidad;
+
+                if (total == 0) {
+                    printf("============================================================\n");
+                    printf("\tLSOBB se encuentra vacia (0 electores).\n");
+                    printf("============================================================\n");
+                    enter();
+                    break;
+                }
 
                 for (i = 0; i < lista_secuencial_ordenada.cantidad; i++){
                     initElector(&e_temp);
@@ -254,6 +265,14 @@ int main(){
                 pagina = 0;
                 system("cls");
 
+                if (aux == NULL || aux->persona.dni == VALOR_INFINITO) {
+                    printf("============================================================\n");
+                    printf("\tLVO se encuentra vacia (0 electores).\n");
+                    printf("============================================================\n");
+                    enter();
+                    break;
+                }
+
                 while (aux != NULL && aux->persona.dni != VALOR_INFINITO) {
                     printf("------------------------------------------------------------\n");
                     printf("DNI:\t%d\n", aux->persona.dni);
@@ -286,6 +305,14 @@ int main(){
                 i = 0;
                 total = contarNodosABB(arbol_binario_busqueda.raiz);
 
+                if (total == 0) {
+                    printf("============================================================\n");
+                    printf("\tABB se encuentra vacio (0 electores).\n");
+                    printf("============================================================\n");
+                    enter();
+                    break;
+                }
+
                 mostrarABB(arbol_binario_busqueda.raiz, &i, total, &pagina);
                 if (i % 20 != 0) {
                     printf("------------------------------------------------------------\n");
@@ -297,68 +324,97 @@ int main(){
                 break;
             } // mostrar estructura ABB
             case '4': {
-    system("cls");
-    promedio(&cAlta_lsobb_ex);   promedio(&cAlta_lsobb_fr);
-    promedio(&cBaja_lsobb_ex);   promedio(&cBaja_lsobb_fr);
-    promedio(&cEvocar_lsobb_ex); promedio(&cEvocar_lsobb_fr);
+                system("cls");
+                //carga una sola vez los datos
+                if (!datos_cargados) {
+                    //Resets de structuras y costos
+                    //Resets de structuras y costos
+                    initLSOBB(&lista_secuencial_ordenada);
+                    vaciar_lvo(lista_lvo);
+                    lista_lvo = inicializar_lvo();
+                    initABB(&arbol_binario_busqueda);
+                    //costitos
+                    initCosto(&cAlta_lsobb_ex);   initCosto(&cAlta_lsobb_fr);
+                    initCosto(&cBaja_lsobb_ex);   initCosto(&cBaja_lsobb_fr);
+                    initCosto(&cEvocar_lsobb_ex); initCosto(&cEvocar_lsobb_fr);
+                    initCosto(&cAlta_lvo_ex);     initCosto(&cAlta_lvo_fr);
+                    initCosto(&cBaja_lvo_ex);     initCosto(&cBaja_lvo_fr);
+                    initCosto(&cEvocar_lvo_ex);   initCosto(&cEvocar_lvo_fr);
+                    initCosto(&cAlta_abb_ex);     initCosto(&cAlta_abb_fr);
+                    initCosto(&cBaja_abb_ex);     initCosto(&cBaja_abb_fr);
+                    initCosto(&cEvocar_abb_ex);   initCosto(&cEvocar_abb_fr);
+                    printf("Procesando 'Operaciones_Padron.txt' en las tres estructuras...\n");
+                    if (preload(&lista_secuencial_ordenada, &arbol_binario_busqueda, &lista_lvo) == -1) {
+                        printf("============================================================\n");
+                        printf("\tError: archivo \"Operaciones_Padron.txt\" no encontrado.\n");
+                        enter();
+                        break;
+                    }
+                    datos_cargados = true;
+                    system("cls");
+                }
 
-    promedio(&cAlta_lvo_ex);     promedio(&cAlta_lvo_fr);
-    promedio(&cBaja_lvo_ex);     promedio(&cBaja_lvo_fr);
-    promedio(&cEvocar_lvo_ex);   promedio(&cEvocar_lvo_fr);
+                promedio(&cAlta_lsobb_ex);   promedio(&cAlta_lsobb_fr);
+                promedio(&cBaja_lsobb_ex);   promedio(&cBaja_lsobb_fr);
+                promedio(&cEvocar_lsobb_ex); promedio(&cEvocar_lsobb_fr);
 
-    promedio(&cAlta_abb_ex);     promedio(&cAlta_abb_fr);
-    promedio(&cBaja_abb_ex);     promedio(&cBaja_abb_fr);
-    promedio(&cEvocar_abb_ex);   promedio(&cEvocar_abb_fr);
+                promedio(&cAlta_lvo_ex);     promedio(&cAlta_lvo_fr);
+                promedio(&cBaja_lvo_ex);     promedio(&cBaja_lvo_fr);
+                promedio(&cEvocar_lvo_ex);   promedio(&cEvocar_lvo_fr);
 
-    printf("\n");
-    printf("  ============================================================================\n");
-    printf("                          COMPARACION DE ESTRUCTURAS\n");
-    printf("  ============================================================================\n\n");
+                promedio(&cAlta_abb_ex);     promedio(&cAlta_abb_fr);
+                promedio(&cBaja_abb_ex);     promedio(&cBaja_abb_fr);
+                promedio(&cEvocar_abb_ex);   promedio(&cEvocar_abb_fr);
 
-    printf("  %-18s   %-20s   %-20s   %-20s\n", "", "LSOBB", "LVO", "ABB");
-    printf("  %-18s   %-20s   %-20s   %-20s\n", "Operacion", "(Media / Maximo)", "(Media / Maximo)", "(Media / Maximo)");
-    printf("  ----------------------------------------------------------------------------\n\n");
+                printf("\n");
+                printf("  ============================================================================\n");
+                printf("                          COMPARACION DE ESTRUCTURAS\n");
+                printf("  ============================================================================\n\n");
 
-    printf("  -- ALTAS --\n");
-    printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n",
-        "Exito",
-        cAlta_lsobb_ex.promedio, cAlta_lsobb_ex.mayor,
-        cAlta_lvo_ex.promedio,   cAlta_lvo_ex.mayor,
-        cAlta_abb_ex.promedio,   cAlta_abb_ex.mayor);
-    printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n\n",
-        "Fracaso",
-        cAlta_lsobb_fr.promedio, cAlta_lsobb_fr.mayor,
-        cAlta_lvo_fr.promedio,   cAlta_lvo_fr.mayor,
-        cAlta_abb_fr.promedio,   cAlta_abb_fr.mayor);
+                printf("  %-18s   %-20s   %-20s   %-20s\n", "", "LSOBB", "LVO", "ABB");
+                printf("  %-18s   %-20s   %-20s   %-20s\n", "Operacion", "(Media / Maximo)", "(Media / Maximo)", "(Media / Maximo)");
+                printf("  ----------------------------------------------------------------------------\n\n");
 
-    printf("  -- BAJAS --\n");
-    printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n",
-        "Exito",
-        cBaja_lsobb_ex.promedio, cBaja_lsobb_ex.mayor,
-        cBaja_lvo_ex.promedio,   cBaja_lvo_ex.mayor,
-        cBaja_abb_ex.promedio,   cBaja_abb_ex.mayor);
-    printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n\n",
-        "Fracaso",
-        cBaja_lsobb_fr.promedio, cBaja_lsobb_fr.mayor,
-        cBaja_lvo_fr.promedio,   cBaja_lvo_fr.mayor,
-        cBaja_abb_fr.promedio,   cBaja_abb_fr.mayor);
+                printf("  -- ALTAS --\n");
+                printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n",
+                    "Exito",
+                    cAlta_lsobb_ex.promedio, cAlta_lsobb_ex.mayor,
+                    cAlta_lvo_ex.promedio,   cAlta_lvo_ex.mayor,
+                    cAlta_abb_ex.promedio,   cAlta_abb_ex.mayor);
+                printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n\n",
+                    "Fracaso",
+                    cAlta_lsobb_fr.promedio, cAlta_lsobb_fr.mayor,
+                    cAlta_lvo_fr.promedio,   cAlta_lvo_fr.mayor,
+                    cAlta_abb_fr.promedio,   cAlta_abb_fr.mayor);
 
-    printf("  -- EVOCACION --\n");
-    printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n",
-        "Exito",
-        cEvocar_lsobb_ex.promedio, cEvocar_lsobb_ex.mayor,
-        cEvocar_lvo_ex.promedio,   cEvocar_lvo_ex.mayor,
-        cEvocar_abb_ex.promedio,   cEvocar_abb_ex.mayor);
-    printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n",
-        "Fracaso",
-        cEvocar_lsobb_fr.promedio, cEvocar_lsobb_fr.mayor,
-        cEvocar_lvo_fr.promedio,   cEvocar_lvo_fr.mayor,
-        cEvocar_abb_fr.promedio,   cEvocar_abb_fr.mayor);
+                printf("  -- BAJAS --\n");
+                printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n",
+                    "Exito",
+                    cBaja_lsobb_ex.promedio, cBaja_lsobb_ex.mayor,
+                    cBaja_lvo_ex.promedio,   cBaja_lvo_ex.mayor,
+                    cBaja_abb_ex.promedio,   cBaja_abb_ex.mayor);
+                printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n\n",
+                    "Fracaso",
+                    cBaja_lsobb_fr.promedio, cBaja_lsobb_fr.mayor,
+                    cBaja_lvo_fr.promedio,   cBaja_lvo_fr.mayor,
+                    cBaja_abb_fr.promedio,   cBaja_abb_fr.mayor);
 
-    printf("\n  ============================================================================\n");
-    enter();
-    break;
-} // comparar estructuras
+                printf("  -- EVOCACION --\n");
+                printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n",
+                    "Exito",
+                    cEvocar_lsobb_ex.promedio, cEvocar_lsobb_ex.mayor,
+                    cEvocar_lvo_ex.promedio,   cEvocar_lvo_ex.mayor,
+                    cEvocar_abb_ex.promedio,   cEvocar_abb_ex.mayor);
+                printf("  %-18s   %7.2f / %-9.1f   %7.2f / %-9.1f   %7.2f / %-9.1f\n",
+                    "Fracaso",
+                    cEvocar_lsobb_fr.promedio, cEvocar_lsobb_fr.mayor,
+                    cEvocar_lvo_fr.promedio,   cEvocar_lvo_fr.mayor,
+                    cEvocar_abb_fr.promedio,   cEvocar_abb_fr.mayor);
+
+                printf("\n  ============================================================================\n");
+                enter();
+                break;
+        } // comparar estructuras
             case '0':{
                 SISTEMA = false;
                 break;
@@ -396,11 +452,11 @@ void enter(){
     getchar();
 }
 
-int preload(LSOBB *lsobb, ABB *abb){
+int preload(LSOBB *lsobb, ABB *abb, NodoLVO **lvo){
     FILE *operaciones = fopen("Operaciones_Padron.txt", "r");
-    if (operaciones == NULL) return -1; // archivo no encontrado
+    if (operaciones == NULL) return -1;
 
-    //variables
+   //variables
     float costo=0.0f;
     // resultado de cada operacion
     elector e_temp;
@@ -413,113 +469,108 @@ int preload(LSOBB *lsobb, ABB *abb){
     // guarda nombre y domicilio
     bool exito;
 
-
     int comando = 0;
     while (fscanf(operaciones, "%d", &comando) == 1){
-            // reset estado de variables necesarios
-            initElector( &e_temp);
-            exito = false;
+        initElector(&e_temp);
+        exito = false;
 
-            // cargar datos
-            if( (comando==1) || (comando == 2) ){
-                fscanf(operaciones, "%d", &itemp);
-                e_temp.dni = itemp;
-                fscanf(operaciones, " %[^\n]", nam);
-                strcpy( e_temp.nombreApellido, nam);
-                fscanf(operaciones, " %[^\n]", &dom);
-                strcpy(e_temp.domicilio, dom);
-                fscanf(operaciones, "%d", &itemp);
-                e_temp.cPostal = itemp;
-                fscanf(operaciones, "%d", &itemp);
-                e_temp.mesa =itemp;
-                fscanf(operaciones, "%d", &itemp);
-                e_temp.circuito = itemp;
-            }else{
-                fscanf(operaciones, "%d", &itemp);
-                e_temp.dni = itemp;
-            }
+        if ((comando == 1) || (comando == 2)){
+            fscanf(operaciones, "%d", &itemp);
+            e_temp.dni = itemp;
+            fscanf(operaciones, " %[^\n]", nam);
+            strcpy(e_temp.nombreApellido, nam);
+            fscanf(operaciones, " %[^\n]", dom);
+            strcpy(e_temp.domicilio, dom);
+            fscanf(operaciones, "%d", &itemp);
+            e_temp.cPostal = itemp;
+            fscanf(operaciones, "%d", &itemp);
+            e_temp.mesa = itemp;
+            fscanf(operaciones, "%d", &itemp);
+            e_temp.circuito = itemp;
+        } else {
+            fscanf(operaciones, "%d", &itemp);
+            e_temp.dni = itemp;
+        }
 
         switch (comando){
             case 1:{
-                // lso alta
+                // LSOBB alta
                 costo = altaLSO(lsobb, e_temp, &exito);
                 if (exito){
-                        acumular(&cAlta_lsobb_ex, costo);
-                }else{
+                    acumular(&cAlta_lsobb_ex, costo);
+                } else {
                     acumular(&cAlta_lsobb_fr, costo);
                 }
 
-                //lvo alta
+                // LVO alta
                 int ok_lvo = 0;
-                float costo_lvo = altaLVO(&lista_lvo, e_temp, &ok_lvo);
+                float costo_lvo = altaLVO(lvo, e_temp, &ok_lvo);
                 if (ok_lvo) {
                     acumular(&cAlta_lvo_ex, costo_lvo);
                 } else {
                     acumular(&cAlta_lvo_fr, costo_lvo);
                 }
 
-                // abb alta
+                // ABB alta
                 costo = altaABB(abb, e_temp, &exito);
                 if (exito){
-                        acumular(&cAlta_abb_ex, costo);
-                }else{
+                    acumular(&cAlta_abb_ex, costo);
+                } else {
                     acumular(&cAlta_abb_fr, costo);
                 }
                 break;
             }
             case 2:{
-                //lso baja
+                // LSOBB baja
                 costo = bajaLSO(lsobb, e_temp, &exito);
                 if (exito){
-                        acumular(&cBaja_lsobb_ex, costo);
-                }else{
+                    acumular(&cBaja_lsobb_ex, costo);
+                } else {
                     acumular(&cBaja_lsobb_fr, costo);
                 }
 
-                //lvo baja
+                // LVO baja
                 int ok_lvo = 0;
-                float costo_lvo = bajaLVO(&lista_lvo, e_temp, &ok_lvo);
+                float costo_lvo = bajaLVO(lvo, e_temp, &ok_lvo);
                 if (ok_lvo) {
                     acumular(&cBaja_lvo_ex, costo_lvo);
                 } else {
                     acumular(&cBaja_lvo_fr, costo_lvo);
                 }
 
-
-                //abb baja
+                // ABB baja
                 costo = bajaABB(abb, e_temp, &exito);
                 if (exito){
-                        acumular(&cBaja_abb_ex, costo);
-                }else{
+                    acumular(&cBaja_abb_ex, costo);
+                } else {
                     acumular(&cBaja_abb_fr, costo);
                 }
                 break;
             }
             case 3:{
-                // lso evocar
+                // LSOBB evocar
                 costo = evocarLSO(*lsobb, e_temp, &exito, &e_result);
                 if (exito){
-                        acumular(&cEvocar_lsobb_ex, costo);
-                }else{
+                    acumular(&cEvocar_lsobb_ex, costo);
+                } else {
                     acumular(&cEvocar_lsobb_fr, costo);
                 }
 
-                //LVO evocar
+                // LVO evocar
                 int ok_lvo = 0;
                 elector res_lvo;
-                float costo_lvo = evocarLVO(lista_lvo, e_temp.dni, &res_lvo, &ok_lvo);
+                float costo_lvo = evocarLVO(*lvo, e_temp.dni, &res_lvo, &ok_lvo);
                 if (ok_lvo) {
                     acumular(&cEvocar_lvo_ex, costo_lvo);
                 } else {
                     acumular(&cEvocar_lvo_fr, costo_lvo);
                 }
 
-
-                // lso evocar
+                // ABB evocar
                 costo = evocarABB(abb, e_temp, &exito, &e_result);
                 if (exito){
-                        acumular(&cEvocar_abb_ex, costo);
-                }else{
+                    acumular(&cEvocar_abb_ex, costo);
+                } else {
                     acumular(&cEvocar_abb_fr, costo);
                 }
                 break;
@@ -547,7 +598,6 @@ int preload(LSOBB *lsobb, ABB *abb){
     fclose(operaciones);
     return 0;
 }
-
 void mostrarABB(NodoABB *nodo, int *mostrados, int total, int *pagina){
     if (nodo == NULL) return;
 

@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include "elector.h"
+#include <stdbool.h>
 
 // nodo del arbol
 typedef struct nodoABB{
@@ -38,15 +39,14 @@ void initABB(ABB *abb){
     abb->raiz = NULL;
 }
 
-float localizarABB(const ABB abb, const elector Elector, bool *exito, NodoABB **posicion){
+float localizarABB(const ABB abb, const elector Elector, bool *exito, NodoABB **posicion, NodoABB **padre){
     float costo = 0.0f;
-    (*exito) = false;
+    *exito = false;
+    *posicion = NULL;
+    *padre = NULL;
     NodoABB *actual = abb.raiz;
-    NodoABB *previo = NULL;
 
     if (abb.raiz == NULL) { //arbol vacio
-        (*posicion) = NULL;
-        (*exito) = false;
         return costo;
     }
 
@@ -59,14 +59,14 @@ float localizarABB(const ABB abb, const elector Elector, bool *exito, NodoABB **
             return costo;
         }
 
-        previo = actual; // guardar nodo padre y avanzar
+        *padre = actual; // guardar nodo padre y avanzar
         if (actual->root.dni > Elector.dni){
             actual = actual->izq;
         }else{
             actual = actual->der;
         }
     }
-    (*posicion) = previo;
+    *posicion = *padre;
     return costo;
 }
 
@@ -83,9 +83,10 @@ float altaABB( ABB *abb, const elector Elector, bool *exito){
             return costo;
     }
 
-    NodoABB *posicion;
-    bool exitoL;
-    localizarABB(*abb, Elector, &exitoL, &posicion); // solo para ubicar, no suma costo
+    NodoABB *posicion = NULL;
+    NodoABB *padre = NULL;
+    bool exitoL = false;
+    localizarABB(*abb, Elector, &exitoL, &posicion, &padre); // solo para ubicar, no suma costo
 
      if (exitoL) {
         free(nuevo);
@@ -111,16 +112,15 @@ float bajaABB(ABB *abb, const elector Elector, bool *exito){
     if (abb->raiz==NULL || abb==NULL) return costo;
 
     bool exitoL = false;
-    NodoABB *encontrado;
-    localizarABB(*abb, Elector, &exitoL, &encontrado); // solo para ubicar
+    NodoABB *encontrado = NULL;
+    NodoABB *padre = NULL;
 
-     if (!exitoL || !elector_sonIguales(encontrado->root, Elector)) return 0.0f; // fracaso
+    // Obtiene encontrado Y padre en la misma bajada de localizarABB:
+    localizarABB(*abb, Elector, &exitoL, &encontrado, &padre);
 
-     NodoABB *padre = NULL;
-     NodoABB *p = abb->raiz;
-     while (p != NULL && p != encontrado) {
-        padre = p;
-        p = (Elector.dni < p->root.dni) ? p->izq : p->der;
+    if (!exitoL || !elector_sonIguales(encontrado->root, Elector)) {
+        *exito = false;
+        return 0.0f;
     }
 
         // caso 1: sin hijos
@@ -168,38 +168,30 @@ float bajaABB(ABB *abb, const elector Elector, bool *exito){
 
         // copia de datos
         elector_copiar(&encontrado->root, menor->root);
-        costo+= 1.0f;
 
-        // eliminar menor y sus hijos
         if (padreMin == encontrado){
-                padreMin->der = menor->der;
-        }else{
+            padreMin->der = menor->der;
+        } else {
             padreMin->izq = menor->der;
-        }// modificacion punteor en arbol
-        costo+= 0.5f;
+        }
 
         free(menor);
-        (*exito) = true;
-        return costo;
+        *exito = true;
+        return 1.5f;
         // encontrado-> se baja al elector del mismo nupla
 }
 
 float evocarABB(ABB *abb, const elector Elector, bool *exito, elector *resultado){
-    float costo = 0.0f;
     initElector(resultado);
-    (*exito) = false;
-    // si el arbol es vacio
+    *exito = false;
+    if (abb == NULL || abb->raiz == NULL) return 0.0f;
 
-    if (abb->raiz==NULL || abb==NULL) return costo;
-    // sino, es arbol no vacio
-    // no vacio => si es el mismo elector?;
+    NodoABB *encontrado = NULL;
+    NodoABB *padre = NULL;
+    float costo = localizarABB(*abb, Elector, exito, &encontrado, &padre);
 
-    NodoABB *encontrado;
-    costo += localizarABB(*abb, Elector, exito, &encontrado);
-
-    if (*exito) {
-            *resultado = encontrado->root;
-            // sin +1 extra, localizarABB ya contó esa celda
+    if (*exito && encontrado != NULL) {
+        *resultado = encontrado->root;
     }
     return costo;
 }

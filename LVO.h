@@ -42,8 +42,8 @@ float localizarLVO(NodoLVO *cab, long dni, int *exito, NodoLVO **ant, NodoLVO **
     }
 
     costo += 1.0f;
-    if ((*pos)->persona.dni == dni) {
-        *exito = true;
+    if ((*pos)->persona.dni == dni && dni != VALOR_INFINITO) {
+        *exito = 1;
     }
 
     return costo;
@@ -68,16 +68,16 @@ float altaLVO(NodoLVO **cab, elector e, int *exito) {
     }
 
     nuevo->persona = e;
-    nuevo->siguiente = actual; 
+    nuevo->siguiente = actual;
 
     if (anterior == NULL) {
-        *cab = nuevo;           
+        *cab = nuevo;
     } else {
-        anterior->siguiente = nuevo; 
+        anterior->siguiente = nuevo;
     }
 
     if (exito) *exito = 1;
-    return 1.0f; 
+    return 1.0f;
 }
 
 float bajaLVO(NodoLVO **cab, elector e, int *exito) {
@@ -101,12 +101,12 @@ float bajaLVO(NodoLVO **cab, elector e, int *exito) {
     if (anterior == NULL) {
         *cab = actual->siguiente;
     } else {
-        anterior->siguiente = actual->siguiente; 
+        anterior->siguiente = actual->siguiente;
     }
 
     free(actual);
     if (exito) *exito = 1;
-    return 0.5f; 
+    return 0.5f;
 }
 
 float evocarLVO(NodoLVO *cab, long dni, elector *encontrado, int *exito) {

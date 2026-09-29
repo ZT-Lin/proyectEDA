@@ -1,0 +1,32 @@
+# depslib dependency file v1.0
+1790702457 source:c:\users\admin\desktop\eda\proyecteda-main\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<malloc.h>
+	<stdbool.h>
+	"LSOBB.h"
+	"ABB.h"
+	"LVO.h"
+
+1790703152 c:\users\admin\desktop\eda\proyecteda-main\lsobb.h
+	"elector.h"
+	<math.h>
+
+1790686759 c:\users\admin\desktop\eda\proyecteda-main\elector.h
+	<stdio.h>
+	<string.h>
+	<stdbool.h>
+
+1790702375 c:\users\admin\desktop\eda\proyecteda-main\abb.h
+	<stdlib.h>
+	"elector.h"
+	<stdbool.h>
+
+1790702377 c:\users\admin\desktop\eda\proyecteda-main\lvo.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"elector.h"
+

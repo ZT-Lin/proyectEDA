@@ -1,7 +1,7 @@
 #ifndef LSO_H_INCLUDED
 #define LSO_H_INCLUDED
 
-#define LSOMAX 2000
+#define LSOMAX 2000 //Acordarse de cambiar a 2000. Esta en 10 para testear
 #include "elector.h"
 #include <math.h>
 
@@ -37,7 +37,10 @@ float localizarLSO(const LSOBB lsobb, const elector Elector, int *posicion, bool
 
     while(li<ls){
             medio = (li+ls)/2;
-            if ( !vector_flag[medio] ) costo+=1.0f;
+            if ( !vector_flag[medio] ){
+            vector_flag[medio] = 1;
+            costo+=1.0f;
+            }
             if( lsobb.datos[medio].dni < dni ){
                 li = medio+1;
             }else{
@@ -45,6 +48,12 @@ float localizarLSO(const LSOBB lsobb, const elector Elector, int *posicion, bool
             }
             vector_flag[medio]=1;
     }
+
+    if (!vector_flag[li]) {
+        costo += 1.0f;
+        vector_flag[li] = 1;
+    }
+
     (*exito) = (lsobb.datos[li].dni == dni);
     (*posicion) = li;
     return costo;
@@ -54,7 +63,7 @@ float localizarLSO(const LSOBB lsobb, const elector Elector, int *posicion, bool
 float altaLSO(LSOBB *lsobb, const elector Elector, bool *exito){
     float costo=0.0f;
     (*exito) = false;
-    if ( lsobb->cantidad >= LSOMAX) return costo;
+    if ( lsobb->cantidad >= LSOMAX) return 0.0f;
     // lista llena
 
     int posicion=0;
@@ -67,7 +76,7 @@ float altaLSO(LSOBB *lsobb, const elector Elector, bool *exito){
     }
     localizarLSO(*lsobb, Elector, &posicion, &exitoL);
 
-    if ( exitoL ) return costo;
+    if ( exitoL ) return 0.0f;
     // sus dni son iguales, no se da la alta
 
     //======else======
@@ -77,10 +86,9 @@ float altaLSO(LSOBB *lsobb, const elector Elector, bool *exito){
     // si es menor, por orden creciente, debe insertar despues del posicion
     // lista vacio solucionado anteriormente
 
-    int mov = 0;
-    for (mov = lsobb->cantidad; mov>posicion; mov--){
-        lsobb->datos[mov] = lsobb->datos[mov-1];
-        costo+=1.0f;
+    for (int i = lsobb->cantidad;i>posicion; i--) {
+        lsobb->datos[i] = lsobb->datos[i - 1];
+        costo += 1.0f;
     }
     // dar alta, aumentar cantidad almacenada
     lsobb->datos[posicion] = Elector;
@@ -89,15 +97,28 @@ float altaLSO(LSOBB *lsobb, const elector Elector, bool *exito){
     return costo;
 }
 
-int bajaLSO(LSOBB *lsobb, const elector Elector, bool *exito){
-    int costo=0;
+float bajaLSO(LSOBB *lsobb, const elector Elector, bool *exito){
+    int costo=0.0f;
     (*exito) = false;
-    if ( lsobb->cantidad==0 ) return costo;
+    if ( lsobb->cantidad==0 ) return 0.0f;
 
     int posicion = 0;
     bool exitoL =false;
     localizarLSO(*lsobb, Elector, &posicion, &exitoL);
+    if (!exitoL || !elector_sonIguales(lsobb->datos[posicion], Elector)) {
+        return 0.0f;
+    }
 
+    for (int i = posicion; i < lsobb->cantidad - 1; i++) {
+        lsobb->datos[i] = lsobb->datos[i + 1];
+        costo += 1.0f;
+    }
+
+    lsobb->cantidad--;
+    *exito = true;
+    return costo;
+}
+    /*
     if ( exitoL){
         if( elector_sonIguales( lsobb->datos[posicion], Elector)) {
             //debe ser iguales para dar de baja
@@ -112,7 +133,9 @@ int bajaLSO(LSOBB *lsobb, const elector Elector, bool *exito){
         }
     }
     return costo;
-}
+    }
+    */
+
 
 float evocarLSO(const LSOBB lsobb, const elector Elector, bool *exito, elector *resultado){
     float costo = 0.0f;
