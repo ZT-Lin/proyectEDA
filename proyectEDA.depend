@@ -30,3 +30,34 @@
 	<stdbool.h>
 	"elector.h"
 
+1790805703 source:c:\users\linzh\desktop\proyectoeda\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<malloc.h>
+	<stdbool.h>
+	"LSOBB.h"
+	"ABB.h"
+	"LVO.h"
+
+1790810430 c:\users\linzh\desktop\proyectoeda\lsobb.h
+	"elector.h"
+	<math.h>
+
+1790685995 c:\users\linzh\desktop\proyectoeda\elector.h
+	<stdio.h>
+	<string.h>
+	<stdbool.h>
+
+1790789127 c:\users\linzh\desktop\proyectoeda\abb.h
+	<stdlib.h>
+	"elector.h"
+	<stdbool.h>
+
+1790789127 c:\users\linzh\desktop\proyectoeda\lvo.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"elector.h"
+

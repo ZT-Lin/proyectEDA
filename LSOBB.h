@@ -1,7 +1,7 @@
 #ifndef LSO_H_INCLUDED
 #define LSO_H_INCLUDED
 
-#define LSOMAX 2000 //Acordarse de cambiar a 2000. Esta en 10 para testear
+#define LSOMAX 10 //Acordarse de cambiar a 2000. Esta en 10 para testear
 #include "elector.h"
 #include <math.h>
 
@@ -37,7 +37,7 @@ float localizarLSO(const LSOBB lsobb, const elector Elector, int *posicion, bool
 
     while(li<ls){
             medio = (li+ls)/2;
-            if ( !vector_flag[medio] ){
+            if ( !vector_flag[medio] ){ //es 0 => !false = true => cuenta costo, vector flag en posicion = 1
             vector_flag[medio] = 1;
             costo+=1.0f;
             }
@@ -46,10 +46,9 @@ float localizarLSO(const LSOBB lsobb, const elector Elector, int *posicion, bool
             }else{
                 ls = medio;
             }
-            vector_flag[medio]=1;
     }
 
-    if (!vector_flag[li]) {
+    if (!vector_flag[li]) { // chequeo final
         costo += 1.0f;
         vector_flag[li] = 1;
     }
@@ -98,9 +97,9 @@ float altaLSO(LSOBB *lsobb, const elector Elector, bool *exito){
 }
 
 float bajaLSO(LSOBB *lsobb, const elector Elector, bool *exito){
-    int costo=0.0f;
+    float costo=0.0f;
     (*exito) = false;
-    if ( lsobb->cantidad==0 ) return 0.0f;
+    if ( lsobb->cantidad==0 )return 0.0f;
 
     int posicion = 0;
     bool exitoL =false;
@@ -141,6 +140,7 @@ float evocarLSO(const LSOBB lsobb, const elector Elector, bool *exito, elector *
     float costo = 0.0f;
     (*exito) = false;
     if(lsobb.cantidad == 0) return costo;// no hay resultado para lista vacia
+
 
     int posicion = 0;
     costo += localizarLSO(lsobb, Elector, &posicion, exito);
