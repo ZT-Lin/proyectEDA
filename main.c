@@ -560,10 +560,12 @@ int preload(LSOBB *lsobb, ABB *abb, NodoLVO **lvo){
                 int ok_lvo = 0;
                 elector res_lvo;
                 float costo_lvo = evocarLVO(*lvo, e_temp.dni, &res_lvo, &ok_lvo);
-                if (ok_lvo) {
-                    acumular(&cEvocar_lvo_ex, costo_lvo);
-                } else {
-                    acumular(&cEvocar_lvo_fr, costo_lvo);
+                if(e_temp.dni != VALOR_INFINITO){ //No contar el centinela basicamente
+                    if (ok_lvo) {
+                        acumular(&cEvocar_lvo_ex, costo_lvo);
+                    } else {
+                        acumular(&cEvocar_lvo_fr, costo_lvo);
+                    }
                 }
 
                 // ABB evocar
