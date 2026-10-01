@@ -1,5 +1,7 @@
 /*
-==================== GRUPO 41 =======Correa Valentin, Lin Franco. ====================
+====== GRUPO 41 =======
+Correa Valentin, Lin Franco.
+====================
 
 
 ====================FUNCION DE COSTOS====================
@@ -15,79 +17,87 @@
     Evocar:
         todos: cantidad total de celdas consultadas, un punto (1) por cada celda.
 
+============COMPARACION DE ESTRUCTURAS============
+                            LSOBB                            LVO                               ABB
+  Operacion  (Media / Maximo)       (Media / Maximo)       (Media / Maximo)
+  ----------------------------------------------------------------------------
+
+  -- ALTAS --
+  Exito                 413.07 / 1932.0         1.00 / 1.0            0.50 / 0.5
+  Fracaso                 0.00 / 0.0            0.00 / 0.0            0.00 / 0.0
+
+  -- BAJAS --
+  Exito                 502.61 / 1893.0         0.50 / 0.5            1.02 / 1.5
+  Fracaso                 0.00 / 0.0            0.00 / 0.0            0.00 / 0.0
+
+  -- EVOCACION --
+  Exito                  10.14 / 11.0         566.80 / 1994.0        11.84 / 22.0
+  Fracaso                 9.88 / 11.0         463.47 / 1206.0        12.03 / 21.0
 ====================ANALISIS====================
-ALTA:
-    LSOBB: una vez encontrado la posicion a insertar segun funcion LOCALIZAR,
-        se realiza n veces el corrimiento de atras hacia adelante hasta el posicion
-        que corresponde con FOR(iteracion). Luego, copia los datos.
-        -En Promedio el alta nos da 413.07, y en el peor de los casos, 1932.0 corrimientos, por lo que
-        el costo de este se incrementa demasiado para ser viable en grandes listas
-        => pertenece a O(n)
+LSOBB - ALTA
+    Una vez encontrada la posición a insertar, se realizan corrimientos
+    de atrás hacia adelante. En el peor caso (insertar al inicio) se
+    desplazan n elementos. El valor observado [1932] confirma esto.
+    => Cota superior: O(n)
 
-    LVO:
-        - Recorre secuencialmente nodo por nodo con un WHILE comparando DNIs hasta encontrar
-        el lugar que mantenga el orden.
-        - Una vez ubicado, solo se engancha el nodo nuevo modificando punteros (costo 0.5).
-        - Por eso el costo queda fijo en 1.00 de promedio y 1.0 de maximo, sin importar donde caiga el DNI
-        dentro de la lista.
-        => Pertenece a O(n).
+LVO - ALTA
+    Solo se modifican punteros (nodo anterior y nodo nuevo).
+    El costo es constante, no depende de n.
+    => Cota superior: O(1)
 
-
-
-    ABB:
-        -Al hacer la busqueda vertical comparando el DNI con la funcion localizar, una vez encuentra al nodo padre, crea al nodo y lo engancha
-        como un hijo izquierdo o derecho (Costo 0,5)
-        -Como el recorrido para ubicar el lugar no suma costo, el resultado nos da fijo 0.50 de promedio
-        y 0.5 de maximo, igual que en la LVO.
-        => Pertenece a O(log2 n).
+ABB - ALTA
+    Se enlaza el nuevo nodo como hoja, modificando un único puntero
+    del padre.
+    => Cota superior: O(1)
 
 
+LSOBB - BAJA
+    Similar al alta: en el peor caso (eliminar el primero) se deben
+    desplazar n-1 elementos para compactar la lista.
+    => Cota superior: O(n)
 
-BAJA
-    LSOBB:
-        - Busca por biseccion y valida con elector_sonIguales
-        - Al igual que con el alta, tiene que hacer muchos corrimientos cuando elimina algo tapandolos con un for
-        lo que da un promedio de 502.61 y un maximo de 1893.0 corrimientos
-        => Pertenece a O(n).
-    LVO:
-        - Avanza con el WHILE hasta dar con el DNI y coincidir la tupla.
-        - Desenganchar y liberar el nodo cuesta solo 0.5 de puntero, y ese es el unico costo que queda:
-        promedio en 0.50 y maximo en 0.5.
-        => Pertenece a O(n).
-    ABB:
-        - Si no tiene hijos o solo tiene uno, se reacomodan con un costo de 0,5
-        - Si tiene dos hijos, entonces busca al menor de los mayores, copia el registro y lo desengancha. 1(copiar) + 0,5(desenganchar)
-        - En esta corrida no se dio ningun caso de nodo con dos hijos (o se conto enlace simple), por eso el promedio dio 0.50 y el maximo 0.5
-        quedaron en 0.50 (el peor caso teorico seria 1.50 si se diera el reemplazo).
-        => Pertenece a O(1) estructural.
+LVO - BAJA
+    Solo se redirige el puntero del nodo anterior al siguiente.
+    El costo es constante.
+    => Cota superior: O(1)
 
-EVOCAR
-    LSOBB:
-        -Como es una biseccion pura, tiene limites inclusivos y el segmento mayor esta a la izquierda
-        -En exito da un promedio de 12.14 y maximo de 13.0, mientras que en fracaso da 10.88 y maximo de 12.0 (no pasa nunca de 13 comparaciones)
-        => Pertenece a O(log2 n),
-    LVO:
-        - Tiene una busqueda secuencial, recorre celda por celda hasta encontrar el DNI o cortar por orden con el centinela
-        - Tiene un rendimiento bastante pobre: en exito promedia 566.80 con maximo de 1994.0, y en fracaso 463.47 con maximo de 1206.0
-        => Pertenece a O(n).
-    ABB:
-        - Va comparando por rama izquierda o derecha segun el DNI.
-        - Da casi los mismos numeros que la busqueda binaria del LSOBB: en exito promedio de 11.84 con maximo de 22.0, y en fracaso 12.03 con maximo de 21.0
-        => Pertenece a O(log2 n).
+ABB - BAJA
+    Si el nodo tiene 0 o 1 hijo: solo se modifica un puntero (0.5).
+    Si tiene 2 hijos: se usa el menor de los mayores con copia de
+    datos, sumando 1 por la copia (total 1.5).
+    => Cota superior: O(1) (el costo no depende de n)
 
-==================== CONCLUSION ====================
-LSOBB es buenisima para buscar (O(log2 n)), pero para un sistema real con altas y bajas no sirve
-por el costo enorme de correr celdas en memoria contigua cada dos por tres.
 
-LVO resulta tener costo estructural fijo para meter y sacar electores: enlazar o desenlazar un nodo es siempre barato
-(costo fijo de 0.5 a 1.0, sin importar el tamaño del padron). El problema aparece al evocar, donde al no
-tener forma de hacer busqueda binaria, tiene que recorrer la lista celda por celda y el costo se dispara
-a un promedio de 566.80 y picos de casi 2000 (1994.0),
+LSOBB - EVOCACION
+    Búsqueda binaria: en cada paso se reduce el intervalo a la mitad.
+    Para n = 2000, log2(2000) ≈ 11. El máximo observado [11] coincide.
+    => Cota superior: O(log n)
 
-ABB es claramente la mejor opcion de las tres para el padron: empata la velocidad de busqueda del LSOBB
-(evocaciones con promedio 11.84 en exito y 12.03 en fracaso, frente a los 12.14 y 10.88 del LSOBB)
-y ademas mantiene el costo estructural de alta y baja tan bajo como la LVO (0.50 fijo), sin tener que desplazar nada
-Es la estructura mas equilibrada y eficiente para el padron electoral entre las tres evaluadas.
+LVO - EVOCACION
+    Búsqueda secuencial: en el peor caso se recorre toda la lista.
+    El máximo observado [1994] confirma esto.
+    => Cota superior: O(n)
+
+ABB - EVOCACION
+    En un árbol balanceado se desciende por un camino, comparando
+    en cada nivel. Si el árbol degenera en lista, se recorre todo.
+    El máximo observado [22] indica un árbol razonablemente balanceado.
+    => Cota superior: O(log n) si está balanceado
+    => Peor caso: O(n) en un arbol degenerado
+
+
+====================CONCLUSION====================
+
+    LSOBB: muy buena para consultas (O(log n)), pero muy costosa
+    para altas y bajas (O(n)) por los corrimientos.
+
+    LVO: muy buena para altas y bajas (O(1)), pero muy costosa
+    para consultas (O(n)) por el recorrido secuencial.
+
+    ABB: equilibrada. Altas y bajas en O(1), consultas en O(log n)
+    si el árbol se mantiene balanceado. En el peor caso (árbol
+    degenerado) las consultas pueden llegar a O(n).
+
 ==================================================
 */
 

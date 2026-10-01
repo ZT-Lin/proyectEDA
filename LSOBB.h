@@ -1,7 +1,7 @@
 #ifndef LSO_H_INCLUDED
 #define LSO_H_INCLUDED
 
-#define LSOMAX 10 //Acordarse de cambiar a 2000. Esta en 10 para testear
+#define LSOMAX 2000 //Acordarse de cambiar a 2000. Esta en 10 para testear
 #include "elector.h"
 #include <math.h>
 
