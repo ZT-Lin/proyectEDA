@@ -5,100 +5,12 @@ Correa Valentin, Lin Franco.
 
 
 ====================FUNCION DE COSTOS====================
-    Alta y Baja:
-        LSOBB: cantidad de corrimiento de la celda, costo = 1.
-        ABB y LVO: modificacion de punteros, costo = 0.5
 
-        La politica de reemplazo en la baja de los Arboles:
-            cuando el nodo tiene dos hijos es el menor de los mayores y el
-            reemplazo debera realizarse con copia de datos. se debera sumar
-            un costo mas (1) por la copia de la tupla mas 0.5 por reenganchar.
-
-    Evocar:
-        todos: cantidad total de celdas consultadas, un punto (1) por cada celda.
+cantidad de celdas consultadas para realizar dicha operación en cada una de las estructuras
+un punto (1) por cada celda.
 
 ============COMPARACION DE ESTRUCTURAS============
-                            LSOBB                            LVO                               ABB
-  Operacion  (Media / Maximo)       (Media / Maximo)       (Media / Maximo)
-  ----------------------------------------------------------------------------
-
-  -- ALTAS --
-  Exito                 413.07 / 1932.0         1.00 / 1.0            0.50 / 0.5
-  Fracaso                 0.00 / 0.0            0.00 / 0.0            0.00 / 0.0
-
-  -- BAJAS --
-  Exito                 502.61 / 1893.0         0.50 / 0.5            1.02 / 1.5
-  Fracaso                 0.00 / 0.0            0.00 / 0.0            0.00 / 0.0
-
-  -- EVOCACION --
-  Exito                  10.14 / 11.0         566.80 / 1994.0        11.84 / 22.0
-  Fracaso                 9.88 / 11.0         463.47 / 1206.0        12.03 / 21.0
-====================ANALISIS====================
-LSOBB - ALTA
-    Una vez encontrada la posición a insertar, se realizan corrimientos
-    de atrás hacia adelante. En el peor caso (insertar al inicio) se
-    desplazan n elementos. El valor observado [1932] confirma esto.
-    => Cota superior: O(n)
-
-LVO - ALTA
-    Solo se modifican punteros (nodo anterior y nodo nuevo).
-    El costo es constante, no depende de n.
-    => Cota superior: O(1)
-
-ABB - ALTA
-    Se enlaza el nuevo nodo como hoja, modificando un único puntero
-    del padre.
-    => Cota superior: O(1)
-
-
-LSOBB - BAJA
-    Similar al alta: en el peor caso (eliminar el primero) se deben
-    desplazar n-1 elementos para compactar la lista.
-    => Cota superior: O(n)
-
-LVO - BAJA
-    Solo se redirige el puntero del nodo anterior al siguiente.
-    El costo es constante.
-    => Cota superior: O(1)
-
-ABB - BAJA
-    Si el nodo tiene 0 o 1 hijo: solo se modifica un puntero (0.5).
-    Si tiene 2 hijos: se usa el menor de los mayores con copia de
-    datos, sumando 1 por la copia (total 1.5).
-    => Cota superior: O(1) (el costo no depende de n)
-
-
-LSOBB - EVOCACION
-    Búsqueda binaria: en cada paso se reduce el intervalo a la mitad.
-    Para n = 2000, log2(2000) ≈ 11. El máximo observado [11] coincide.
-    => Cota superior: O(log n)
-
-LVO - EVOCACION
-    Búsqueda secuencial: en el peor caso se recorre toda la lista.
-    El máximo observado [1994] confirma esto.
-    => Cota superior: O(n)
-
-ABB - EVOCACION
-    En un árbol balanceado se desciende por un camino, comparando
-    en cada nivel. Si el árbol degenera en lista, se recorre todo.
-    El máximo observado [22] indica un árbol razonablemente balanceado.
-    => Cota superior: O(log n) si está balanceado
-    => Peor caso: O(n) en un arbol degenerado
-
-
-====================CONCLUSION====================
-
-    LSOBB: muy buena para consultas (O(log n)), pero muy costosa
-    para altas y bajas (O(n)) por los corrimientos.
-
-    LVO: muy buena para altas y bajas (O(1)), pero muy costosa
-    para consultas (O(n)) por el recorrido secuencial.
-
-    ABB: equilibrada. Altas y bajas en O(1), consultas en O(log n)
-    si el árbol se mantiene balanceado. En el peor caso (árbol
-    degenerado) las consultas pueden llegar a O(n).
-
-==================================================
+==============================================
 */
 
 
