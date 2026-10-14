@@ -24,8 +24,11 @@ void initRAC(RAC rac[]){
     for(i=0; i < MRAC; i++) initElector(&rac[i].datos);
 }
 
-int localizarRAC(){
+int localizarRAC(RAC rac[], elector e, bool &exito){
     int i=0;
+    (*exito) = false;
+    if( )
+    i = hashing( )
 }
 
 
