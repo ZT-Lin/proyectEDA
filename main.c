@@ -250,7 +250,6 @@ int main(){
                 //carga una sola vez los datos
                 if (!datos_cargados) {
                     //Resets de structuras y costos
-                    //Resets de structuras y costos
                     initLSOBB(&lista_secuencial_ordenada);
                     vaciar_lvo(lista_lvo);
                     lista_lvo = inicializar_lvo();
