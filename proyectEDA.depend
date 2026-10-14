@@ -30,15 +30,15 @@
 	<stdbool.h>
 	"elector.h"
 
-1790811252 source:c:\users\linzh\desktop\proyectoeda\main.c
+1792019467 source:c:\users\linzh\desktop\proyectoeda\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	<malloc.h>
 	<stdbool.h>
-	"LSOBB.h"
-	"ABB.h"
-	"LVO.h"
+	"RAC.h"
+	"RAL.h"
+	"RS.h"
 
 1790812104 c:\users\linzh\desktop\proyectoeda\lsobb.h
 	"elector.h"
@@ -60,4 +60,14 @@
 	<string.h>
 	<stdbool.h>
 	"elector.h"
+
+1792018994 c:\users\linzh\desktop\proyectoeda\rac.h
+	"funcionHashing.h"
+	"elector.h"
+
+1792018656 c:\users\linzh\desktop\proyectoeda\funcionhashing.h
+
+1792017702 c:\users\linzh\desktop\proyectoeda\ral.h
+
+1792017703 c:\users\linzh\desktop\proyectoeda\rs.h
 

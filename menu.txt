@@ -3,9 +3,9 @@ Grupo nro 41
 Lin Franco
 Correa Perez Valentin
 ========================ESTRUCTURAS=========================
-1. Mostrar estructura: LSOBB
-2. Mostrar estructura: LVO
-3. Mostrar estructura: ABB
+1. Mostrar estructura: RAL
+2. Mostrar estructura: RAC
+3. Mostrar estructura: RS
 4. Comparar estructuras
 ===========================SISTEMA==========================
 0. Salir
