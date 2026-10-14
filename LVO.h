@@ -50,6 +50,16 @@ float localizarLVO(NodoLVO *cab, long dni, int *exito, NodoLVO **ant, NodoLVO **
 }
 
 float altaLVO(NodoLVO **cab, elector e, int *exito) {
+    if (cab == NULL || *cab == NULL) {
+        if (exito) *exito = 0;
+        return 0.0f;
+    } 
+    
+    if (e.dni >= VALOR_INFINITO) {
+        if (exito) *exito = 0;
+        return 0.0f;
+    }
+    
     NodoLVO *anterior = NULL;
     NodoLVO *actual = NULL;
     int exitoL = 0;
@@ -86,6 +96,11 @@ float bajaLVO(NodoLVO **cab, elector e, int *exito) {
         return 0.0f;
     }
 
+    if (e.dni >= VALOR_INFINITO) {
+        if (exito) *exito = 0;
+        return 0.0f;
+    }
+
     NodoLVO *anterior = NULL;
     NodoLVO *actual = NULL;
     int exitoL = 0;
@@ -110,6 +125,17 @@ float bajaLVO(NodoLVO **cab, elector e, int *exito) {
 }
 
 float evocarLVO(NodoLVO *cab, long dni, elector *encontrado, int *exito) {
+    if (cab == NULL) {
+        if (exito) *exito = 0;
+        return 0.0f;
+    }
+    
+    
+    if (dni >= VALOR_INFINITO) {
+        if (exito) *exito = 0;
+        return 0.0f;
+    }
+    
     NodoLVO *anterior = NULL;
     NodoLVO *actual = NULL;
 
