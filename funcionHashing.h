@@ -1,6 +1,12 @@
 #ifndef FUNCIONHASHING_H_INCLUDED
 #define FUNCIONHASHING_H_INCLUDED
 
+// estados de la celda
+#define VIRGEN 0
+#define OCUPADA 1
+#define LIBRE 2
+
+// funcion hashing
 int hashing(int dni, int M){
         char x[10];
         int longitud, i;

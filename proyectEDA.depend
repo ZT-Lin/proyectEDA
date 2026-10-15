@@ -30,7 +30,7 @@
 	<stdbool.h>
 	"elector.h"
 
-1792019467 source:c:\users\linzh\desktop\proyectoeda\main.c
+1792019582 source:c:\users\linzh\desktop\proyectoeda\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -61,11 +61,11 @@
 	<stdbool.h>
 	"elector.h"
 
-1792018994 c:\users\linzh\desktop\proyectoeda\rac.h
+1792024970 c:\users\linzh\desktop\proyectoeda\rac.h
 	"funcionHashing.h"
 	"elector.h"
 
-1792018656 c:\users\linzh\desktop\proyectoeda\funcionhashing.h
+1792020340 c:\users\linzh\desktop\proyectoeda\funcionhashing.h
 
 1792017702 c:\users\linzh\desktop\proyectoeda\ral.h
 

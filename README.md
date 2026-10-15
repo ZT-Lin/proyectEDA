@@ -24,12 +24,13 @@ El número estimado de electores en el archivo es de 2000. (**N=2000 electores**
 
 ## objetivos
 - [ ] eliminar `ABB.h` `LSOBB.h` `LVO.h`
-- [ ] crear `RAC.h` con ρ=0.83
+- [x] crear `RAC.h` con ρ=0.83
     - => ρ = N/Mr
         - -> M = N/ρ = 2000/0.83 = 2409.638...
         - aproximadamente M = 2410
         - ! PERO, se usa 2411 xq es un numero primo
         - x eso dice "calcular bien el M"
+    - [ ] checkear los codigos
 - [ ] crear `RAL.h` con ρ=0.79
     - => ρ = N/Mr
         - -> M = N/ρ = 2000/0.79 = 2531.645...

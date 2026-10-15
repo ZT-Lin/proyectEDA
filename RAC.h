@@ -17,19 +17,112 @@
 
 typedef struct{
         elector datos;// un solo ranura
+        int estado;
 }RAC;
 
-void initRAC(RAC rac[]){
-    int i = 0;
-    for(i=0; i < MRAC; i++) initElector(&rac[i].datos);
+void initRAC( RAC rac[] ){
+    int i;
+    for(i=0; i < MRAC; i++){
+            initElector(&rac[i].datos);
+            rac[i].estado = VIRGEN;
+    }
 }
 
-int localizarRAC(RAC rac[], elector e, bool &exito){
-    int i=0;
+int localizarRAC(const RAC rac[], const elector e, int inicial,
+                 int *pos, int *posLibre, bool *exito){
     (*exito) = false;
-    if( )
-    i = hashing( )
+
+    int k=0, actual=0, pcd= 0;
+    int costoLocalizar = 0;
+    // obtener posicion inicial h(x), actual i+k, y primera celda desocupada PCD
+    actual = (inicial + ((k*(k+1))/2) ) % MRAC;
+    pcd = -1;//aun no encontrado
+
+    while( k<MRAC ){
+        /**PREGUNTAR SI HAY QUE USAR EL "VECTOR FLAG"
+        PARA QUE NO VUELVA A CONTAR EL COSTO DE LA MISMA POSICION
+        O PARA SABER QUE DIO UNA VUELTA Y QUE SE CAYO EN EL MISMO LUGAR**/
+        costoLocalizar++;
+        k++;
+        if( rac[actual].estado == OCUPADA){
+            if( rac[actual].datos.dni == e.dni){
+                //encontrado, copia de datos
+                (*exito) = true;
+                (*pos) = actual;
+                (*posLibre) = pcd;
+                return costoLocalizar;
+            }/*else{
+                no encontrado, continua la busqueda
+                su tratamiento es logicamente equivalente a estado LIBRE
+            }*/
+        }
+        if( rac[actual].estado == LIBRE){
+            if(pcd == -1) pcd = actual;
+            //es la primer celda desocupada encontrada
+        }
+        if( rac[actual].estado == VIRGEN){
+            //final de la lista, chequear si han encontrado PCD
+            if(pcd == -1) pcd = actual;
+            break;
+        }
+        actual = (inicial + ((k*(k+1))/2) ) % MRAC;
+    }
+    //busqueda fallada por intentos exceso de M intentos o celda VIRGEN
+    (*pos) = -1;
+    (*posLibre) = pcd;
+    return costoLocalizar;
 }
 
+int altaRAC(RAC rac[], const elector e, bool *exito){
+    (*exito) = false;
+    int costoAlta =0, posicion, libre;
+    bool exitoL;
+
+    int inicial = hashing(e.dni, MRAC);
+    costoAlta += localizarRAC(rac, e, inicial, &posicion, &libre, &exitoL);
+
+    if( exitoL ) return costoAlta;
+    // elector repetido
+
+    if( libre == -1){
+        (*exito) = false;
+        return costoAlta;
+    }// no hay celda libre para insertar para h(dni, MRAC)
+    //debido al exceso de M intento o llegar celda Virgen
+
+    //dar alta en la primera celda desocupada
+    rac[libre].datos = e;
+    rac[libre].estado = OCUPADA;
+    (*exito) = true;
+    return costoAlta;
+}
+
+int bajaRAC(RAC rac[], const elector e, bool *exito){
+    (*exito) = false;
+    int costoBaja =0, posicion, libre;
+    bool exitoL;
+
+    int inicial = hashing(e.dni, MRAC);
+    costoBaja += localizarRAC(rac, e, inicial, &posicion, &libre, &exitoL);
+
+    if( exitoL){
+        rac[posicion].estado = LIBRE;
+        return costoBaja;
+    }// encontrado, dar de baja
+
+    return costoBaja;
+}
+
+int evocarRAC(const RAC rac[], const elector e, bool *exito, elector *resultado){
+    (*exito) = false;
+    int costoEvocar = 0, pos=0, libre=0;
+
+    int inicial = hashing(e.dni, MRAC);
+    costoEvocar+= localizarRAC(rac, e,inicial, &pos, &libre, exito);
+
+    if( (*exito) ) (*resultado) = rac[pos].datos;
+    //encontrado -> copia datos
+    return costoEvocar;
+}
 
 #endif // RAC_H_INCLUDED

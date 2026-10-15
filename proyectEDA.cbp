@@ -35,6 +35,7 @@
 		<Unit filename="RAL.h" />
 		<Unit filename="RS.h" />
 		<Unit filename="elector.h" />
+		<Unit filename="funcionHashing.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
