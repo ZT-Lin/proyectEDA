@@ -3,6 +3,7 @@
 
 #include "funcionHashing.h"
 #include "elector.h"
+#include "RA.h"
 #define MRAC 2411
 /*
     factor de carga del RAC: p=0.83
@@ -15,20 +16,7 @@
         verificacion: 2000/2411 = 0,82953...... = 0.83
 */
 
-typedef struct{
-        elector datos;// un solo ranura
-        int estado;
-}RAC;
-
-void initRAC( RAC rac[] ){
-    int i;
-    for(i=0; i < MRAC; i++){
-            initElector(&rac[i].datos);
-            rac[i].estado = VIRGEN;
-    }
-}
-
-int localizarRAC(const RAC rac[], const elector e, int inicial,
+int localizarRAC(const RA rac[], const elector e, int inicial,
                  int *pos, bool *exito){
     (*exito) = false;
 
@@ -43,21 +31,18 @@ int localizarRAC(const RAC rac[], const elector e, int inicial,
     while( k<MRAC ){
         costoLocalizar++;
         k++;
-        if( rac[actual].estado == OCUPADA){
-            if( rac[actual].datos.dni == e.dni){
+        if( (rac[actual].estado == OCUPADA) && ( rac[actual].datos.dni == e.dni) ){
                 //encontrado, copia de datos
                 (*exito) = true;
                 (*pos) = actual;
                 return costoLocalizar;
-            }/*else{
+        }/*else{
+                ocupado pero el dni no es lo que busca
                 no encontrado, continua la busqueda
                 su tratamiento es logicamente equivalente a estado LIBRE
-            }*/
-        }
-        if( rac[actual].estado == LIBRE){
-            if(pcd == -1) pcd = actual;
-            //es la primer celda desocupada encontrada
-        }
+        }*/
+        if( (rac[actual].estado == LIBRE) && (pcd == -1) ) pcd = actual;
+        // si es la primer celda desocupada
         if( rac[actual].estado == VIRGEN){
             //final de la lista, chequear si han encontrado PCD
             if(pcd == -1) pcd = actual;
@@ -73,7 +58,7 @@ int localizarRAC(const RAC rac[], const elector e, int inicial,
     return costoLocalizar;
 }
 
-int altaRAC(RAC rac[], const elector e, bool *exito){
+int altaRAC(RA rac[], const elector e, bool *exito){
     (*exito) = false;
     int costoAlta =0, posicion;
     bool exitoL;
@@ -81,13 +66,9 @@ int altaRAC(RAC rac[], const elector e, bool *exito){
     int inicial = hashing(e.dni, MRAC);
     costoAlta += localizarRAC(rac, e, inicial, &posicion, &exitoL);
 
-    if( exitoL ) return costoAlta;
-    // elector repetido
-
-    if( posicion == -1){
-        (*exito) = false;
-        return costoAlta;
-    }// no hay celda libre para insertar para h(dni, MRAC)
+    if( (exitoL) || ( posicion == -1)) return costoAlta;
+    // encuentra con dni repetido, o
+    // no hay celda libre para insertar para h(dni, MRAL)
     //debido al exceso de M intento o llegar celda Virgen
 
     //dar alta en la primera celda desocupada
@@ -97,7 +78,7 @@ int altaRAC(RAC rac[], const elector e, bool *exito){
     return costoAlta;
 }
 
-int bajaRAC(RAC rac[], const elector e, bool *exito){
+int bajaRAC(RA rac[], const elector e, bool *exito){
     (*exito) = false;
     int costoBaja =0, posicion;
     bool exitoL;
@@ -123,7 +104,7 @@ int bajaRAC(RAC rac[], const elector e, bool *exito){
     return costoBaja;
 }
 
-int evocarRAC(const RAC rac[], const elector e, bool *exito, elector *resultado){
+int evocarRAC(const RA rac[], const elector e, bool *exito, elector *resultado){
     (*exito) = false;
     int costoEvocar = 0, pos=0;
 

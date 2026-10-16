@@ -30,10 +30,10 @@ un punto (1) por cada celda.
 int mostrar_menu(void);
 void enter(void);
 
-int cargarEstructura(RAC[]);
+int cargarEstructura(RA[], RA[]);
 
 #define ITEMPORPAGINA 10
-void mostrarRAC(RAC[]);
+void mostrarRA(RA[], int);
 //==========costos de cada una==========
 Costo cAlta_rac_ex, cBaja_rac_ex, cEvocar_rac_ex;
 Costo cAlta_rac_fr, cBaja_rac_fr, cEvocar_rac_fr;
@@ -100,8 +100,9 @@ int main(){
     initCosto(&cEvocar_rs_fr);
 
     //==========estructuras==========
-    RAC RACuadratico[MRAC];
-    initRAC( RACuadratico );
+    RA RACuadratico[MRAC], RALineal[MRAL];
+    initRA( RACuadratico, MRAC );
+    initRA( RALineal, MRAL);
 
     //==========variables==========
 
@@ -125,12 +126,20 @@ int main(){
 
         switch (comando_user[0]){
             case '1':{
+                system("cls");
+                if( ESTRUCTURA_CARGADO ){
+                    mostrarRA(RALineal, MRAL);
+                }else{
+                    printf("============================================================\n");
+                    printf("\t REBALSE ABIERTO LINEAL NO ESTA CARGADO!\n");
+                }
+                enter();
                 break;
             } // mostrar estructura RAL
             case '2': {
                 system("cls");
                 if( ESTRUCTURA_CARGADO ){
-                    mostrarRAC(RACuadratico);
+                    mostrarRA(RACuadratico, MRAC);
                 }else{
                     printf("============================================================\n");
                     printf("\t REBALSE ABIERTO CUADRATICO NO ESTA CARGADO!\n");
@@ -144,7 +153,7 @@ int main(){
             case '4': {
                 //controlar si carga bien los datos
                 system("cls");
-                if( cargarEstructura(  RACuadratico ) != 0) {
+                if( cargarEstructura(  RACuadratico, RALineal ) != 0) {
                     printf("============================================================\n");
                     printf("\tHubo error en la carga de datos!\n");
                     enter();
@@ -175,7 +184,7 @@ int main(){
 
                 // costo para buscar elector aConsultar en RAC
                 int costoRAC = evocarRAC(RACuadratico, aConsultar, &exito_rac, &erac);
-                //int costoRAL = evocarRAL(RALineal, aConsultar, &exito_ral, &eral);
+                int costoRAL = evocarRAL(RALineal, aConsultar, &exito_ral, &eral);
                 //int costoRS   = evocarRS(RSeparado, aConsultar, &exito_rs, &ers);
 
                 printf("============================================================\n");
@@ -187,17 +196,17 @@ int main(){
                 printf("| %-12s | %-8s | %-10s | %-14s |\n",
                     "ESTRUCTURA", "EXITO", "COSTO", "RESULTADO");
                 lineaTabla('-', 60);
-                /*printf("| %-12s | %-8s | %-10d | %-14s |\n",
-                    "RAL",  exito_ral ? "SI" : "NO", costoRAL, exito_ral ? "encontrado" : "no existe");*/
+                printf("| %-12s | %-8s | %-10d | %-14s |\n",
+                    "RAL",  exito_ral ? "SI" : "NO", costoRAL, exito_ral ? "encontrado" : "no existe");
                 printf("| %-12s | %-8s | %-10d | %-14s |\n",
                     "RAC", exito_rac ? "SI" : "NO", costoRAC, exito_rac ? "encontrado" : "no existe");
                 /*printf("| %-12s | %-8s | %-10d | %-14s |\n",
                     "RS",    exito_rs  ? "SI" : "NO", costoRS,  exito_rs  ? "encontrado" : "no existe");*/
                 lineaTabla('-', 60);
-                /*printf("============================================================\n");
+                printf("============================================================\n");
                 printf("\tELECTOR REGISTRADO EN REBALSE ABIERTO LINEAL\n");
                 printf("============================================================\n");
-                elector_mostrar(eral);*/
+                elector_mostrar(eral);
 
                 printf("============================================================\n");
                 printf("ELECTOR REGISTRADO EN REBALSE ABIERTO CUADRATICO\n");
@@ -248,7 +257,7 @@ void enter(){
     getchar();
 }
 
-int cargarEstructura(RAC rac[]){
+int cargarEstructura(RA rac[], RA ral[]){
     FILE *operaciones = fopen("Operaciones_Padron.txt", "r");
     if (operaciones == NULL) return -1;
 
@@ -296,7 +305,14 @@ int cargarEstructura(RAC rac[]){
 
         switch (comando){
             case 1:{
-                // LSOBB alta
+                // RAL alta
+                costo = altaRAL(ral, e_temp, &exito);
+                if (exito){
+                    acumular(&cAlta_ral_ex, costo);
+                } else {
+                    acumular(&cAlta_ral_fr, costo);
+                }
+                // RAC alta
                 costo = altaRAC(rac, e_temp, &exito);
                 if (exito){
                     acumular(&cAlta_rac_ex, costo);
@@ -307,7 +323,14 @@ int cargarEstructura(RAC rac[]){
                 break;
             }
             case 2:{
-                // LSOBB baja
+                // RAL baja
+                costo = bajaRAL(ral, e_temp, &exito);
+                if (exito){
+                    acumular(&cBaja_ral_ex, costo);
+                } else {
+                    acumular(&cBaja_ral_fr, costo);
+                }
+                // RAC baja
                 costo = bajaRAC(rac, e_temp, &exito);
                 if (exito){
                     acumular(&cBaja_rac_ex, costo);
@@ -317,7 +340,14 @@ int cargarEstructura(RAC rac[]){
                 break;
             }
             case 3:{
-                // LSOBB evocar
+                // RAL evocar
+                costo = evocarRAL(ral, e_temp, &exito, &e_result);
+                if (exito){
+                    acumular(&cEvocar_ral_ex, costo);
+                } else {
+                    acumular(&cEvocar_ral_fr, costo);
+                }
+                // RAC evocar
                 costo = evocarRAC(rac, e_temp, &exito, &e_result);
                 if (exito){
                     acumular(&cEvocar_rac_ex, costo);
@@ -334,49 +364,21 @@ int cargarEstructura(RAC rac[]){
     promedio(&cAlta_rac_fr);
     promedio(&cBaja_rac_fr);
     promedio(&cEvocar_rac_fr);
+
+    promedio(&cAlta_ral_ex);
+    promedio(&cBaja_ral_ex);
+    promedio(&cEvocar_ral_ex);
+    promedio(&cAlta_ral_fr);
+    promedio(&cBaja_ral_fr);
+    promedio(&cEvocar_ral_fr);
+
+    /*promedio(&cAlta_rs_ex);
+    promedio(&cBaja_rs_ex);
+    promedio(&cEvocar_rs_ex);
+    promedio(&cAlta_rs_fr);
+    promedio(&cBaja_rs_fr);
+    promedio(&cEvocar_rs_fr);*/
     fclose(operaciones);
     return 0;
 }
 
-void mostrarRAC(RAC rac[]){
-    int i;
-    int contador = 0;
-    const char *simbolo;
-
-    for (i = 0; i < MRAC; i++){
-        switch (rac[i].estado){
-            case OCUPADA: simbolo = "OCUPADA (o)"; break;
-            case LIBRE:   simbolo = "LIBRE (+)";   break;
-            default:      simbolo = "VIRGEN (*)";  break;
-        }
-
-        printf("------------------------------------------------------------\n");
-        printf("[%d] estado: %s\n", (i+1), simbolo);
-
-
-        /* solo cuando OCUPADA mostramos el elector */
-        if (rac[i].estado == OCUPADA){
-            elector_mostrar(rac[i].datos);
-        }
-
-        /* cada ITEMPORPAGINA celdas, pausar */
-        contador++;
-        if (contador == ITEMPORPAGINA){
-            contador = 0;
-            printf("------------------------------------------------------------\n");
-            printf("  Enter = seguir    q = salir\n  usuario ->\t");
-            int c = getchar();
-            if (c == 'q' || c == 'Q'){
-                while (getchar() != '\n');
-                printf("  ... cancelado\n");
-                break;
-            }
-            while (c != '\n' && c != EOF) c = getchar();
-            system("cls");
-        }
-    }
-
-    printf("============================================================\n");
-    printf("  Fin del recorrido RAC\n");
-    printf("============================================================\n");
-}
