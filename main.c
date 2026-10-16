@@ -20,89 +20,88 @@ un punto (1) por cada celda.
 #include <string.h>
 #include <malloc.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 #include "RAC.h"
 #include "RAL.h"
 #include"RS.h"
+#include "costo.h"
 
 int mostrar_menu(void);
 void enter(void);
 
-int preload();
+int cargarEstructura(RAC[]);
 
-//===========definicion de estructura costo====
-typedef struct{
-    float mayor, promedio;
-    float realizado;/*total_operacion_realizado*/
-    float acumulado;/*total_acumulado*/
-}Costo;
-
-void initCosto(Costo *l){
-    l->mayor=0.0f;
-    l->promedio=0.0f;
-    l->acumulado=0.0f;
-    l->realizado=0.0f;
-}
+#define ITEMPORPAGINA 10
+void mostrarRAC(RAC[]);
 //==========costos de cada una==========
 Costo cAlta_rac_ex, cBaja_rac_ex, cEvocar_rac_ex;
 Costo cAlta_rac_fr, cBaja_rac_fr, cEvocar_rac_fr;
 
-Costo cAlta_lvo_ex, cBaja_lvo_ex, cEvocar_lvo_ex;
-Costo cAlta_lvo_fr, cBaja_lvo_fr, cEvocar_lvo_fr;
+Costo cAlta_ral_ex, cBaja_ral_ex, cEvocar_ral_ex;
+Costo cAlta_ral_fr, cBaja_ral_fr, cEvocar_ral_fr;
 
-Costo cAlta_abb_ex, cBaja_abb_ex, cEvocar_abb_ex;
-Costo cAlta_abb_fr, cBaja_abb_fr, cEvocar_abb_fr;
+Costo cAlta_rs_ex, cBaja_rs_ex, cEvocar_rs_ex;
+Costo cAlta_rs_fr, cBaja_rs_fr, cEvocar_rs_fr;
 
+/* tabla completa: RAL | RAC | RS */
+void mostrarTablaCostos(void){
+    lineaTabla('=', 95);
+    printf("| %-22s | %20s | %20s | %20s |\n",
+           "OPERACION", "RAL", "RAC", "RS");
+    lineaTabla('=', 95);
 
-//==========acumular costos==========
-void acumular(Costo *c, float valor){
-    c->realizado += 1.0f;
-    c->acumulado += valor;
-    if (valor > c->mayor)
-        c->mayor = valor;
+    bloqueCostos("ALTA EXITO",     &cAlta_ral_ex,   &cAlta_rac_ex,   &cAlta_rs_ex);
+    lineaTabla('-', 95);
+    bloqueCostos("ALTA FRACASO",     &cAlta_ral_fr,   &cAlta_rac_fr,   &cAlta_rs_fr);
+    lineaTabla('-', 95);
+
+    bloqueCostos("BAJA EXITO",     &cBaja_ral_ex,   &cBaja_rac_ex,   &cBaja_rs_ex);
+    lineaTabla('-', 95);
+    bloqueCostos("BAJA FRACASO",     &cBaja_ral_fr,   &cBaja_rac_fr,   &cBaja_rs_fr);
+    lineaTabla('-', 95);
+
+    bloqueCostos("EVOCAR EXITO",   &cEvocar_ral_ex, &cEvocar_rac_ex, &cEvocar_rs_ex);
+    lineaTabla('-', 95);
+    bloqueCostos("EVOCAR FRACASO", &cEvocar_ral_fr, &cEvocar_rac_fr, &cEvocar_rs_fr);
+    lineaTabla('=', 95);
 }
 
-//==========calcular medio==========
-void promedio(Costo *c){
-    if(c->realizado !=0) {
-            c->promedio = c->acumulado / c->realizado;
-    }else{
-        c->promedio = 0;
-    }
-}
 
 int main(){
     // menu
-    bool SISTEMA = true;
+    bool SISTEMA = true, ESTRUCTURA_CARGADO = false;
     char comando_user[100];
 
     //==========init costos(exito)==========
     initCosto(&cAlta_rac_ex);
-    initCosto(&cAlta_lvo_ex);
-    initCosto(&cAlta_abb_ex);
+    initCosto(&cAlta_ral_ex);
+    initCosto(&cAlta_rs_ex);
 
     initCosto(&cBaja_rac_ex);
-    initCosto(&cBaja_lvo_ex);
-    initCosto(&cBaja_abb_ex);
+    initCosto(&cBaja_ral_ex);
+    initCosto(&cBaja_rs_ex);
 
     initCosto(&cEvocar_rac_ex);
-    initCosto(&cEvocar_lvo_ex);
-    initCosto(&cEvocar_abb_ex);
+    initCosto(&cEvocar_ral_ex);
+    initCosto(&cEvocar_rs_ex);
 
     //==========init costos(fracaso)==========
     initCosto(&cAlta_rac_fr);
-    initCosto(&cAlta_lvo_fr);
-    initCosto(&cAlta_abb_fr);
+    initCosto(&cAlta_ral_fr);
+    initCosto(&cAlta_rs_fr);
 
     initCosto(&cBaja_rac_fr);
-    initCosto(&cBaja_lvo_fr);
-    initCosto(&cBaja_abb_fr);
+    initCosto(&cBaja_ral_fr);
+    initCosto(&cBaja_rs_fr);
 
     initCosto(&cEvocar_rac_fr);
-    initCosto(&cEvocar_lvo_fr);
-    initCosto(&cEvocar_abb_fr);
+    initCosto(&cEvocar_ral_fr);
+    initCosto(&cEvocar_rs_fr);
 
     //==========estructuras==========
+    RAC RACuadratico[MRAC];
+    initRAC( RACuadratico );
 
     //==========variables==========
 
@@ -111,7 +110,7 @@ int main(){
         system("cls");
         if( mostrar_menu() == -1 ){
             printf("============================================================\n");
-            printf("\tError: archivo \"Operaciones_Padron.txt\" no encontrado.\n");
+            printf("\tError: archivo \"menu.txt\" no encontrado.\n");
             enter();
             return -1;
         }
@@ -127,14 +126,90 @@ int main(){
         switch (comando_user[0]){
             case '1':{
                 break;
-            } // mostrar estructura LSOBB
+            } // mostrar estructura RAL
             case '2': {
+                system("cls");
+                if( ESTRUCTURA_CARGADO ){
+                    mostrarRAC(RACuadratico);
+                }else{
+                    printf("============================================================\n");
+                    printf("\t REBALSE ABIERTO CUADRATICO NO ESTA CARGADO!\n");
+                }
+                enter();
                 break;
-            }// mostrar estructura LVO
+            }// mostrar estructura RAC
             case '3':{
                 break;
-            } // mostrar estructura ABB
+            } // mostrar estructura RS
             case '4': {
+                //controlar si carga bien los datos
+                system("cls");
+                if( cargarEstructura(  RACuadratico ) != 0) {
+                    printf("============================================================\n");
+                    printf("\tHubo error en la carga de datos!\n");
+                    enter();
+                    break;
+                }else{
+                    printf("============================================================\n");
+                    printf("\tCarga de datos con exito!\n");
+                    ESTRUCTURA_CARGADO = true;
+                    mostrarTablaCostos();
+                    enter();
+                }
+                system("cls");
+
+                // pedir al usuario datos del elector
+                elector aConsultar;
+                initElector(&aConsultar);
+                printf("============================================================\n");
+                printf("Ingrese el DNI del elector:\nusuario-> ");
+                scanf("%d", &aConsultar.dni);
+
+                enter();
+                system("cls");
+                // elector aConsultar pero solo dni
+
+                bool exito_rac, exito_ral, exito_rs;
+                elector erac, eral, ers;
+                initElector(&erac); initElector(&eral); initElector(&ers);
+
+                // costo para buscar elector aConsultar en RAC
+                int costoRAC = evocarRAC(RACuadratico, aConsultar, &exito_rac, &erac);
+                //int costoRAL = evocarRAL(RALineal, aConsultar, &exito_ral, &eral);
+                //int costoRS   = evocarRS(RSeparado, aConsultar, &exito_rs, &ers);
+
+                printf("============================================================\n");
+                printf("\tCONSULTA DE UN ELECTOR DADO\n");
+                printf("============================================================\n");
+                printf("DNI consultado: %d\n", aConsultar.dni);
+                lineaTabla('-', 60);
+
+                printf("| %-12s | %-8s | %-10s | %-14s |\n",
+                    "ESTRUCTURA", "EXITO", "COSTO", "RESULTADO");
+                lineaTabla('-', 60);
+                /*printf("| %-12s | %-8s | %-10d | %-14s |\n",
+                    "RAL",  exito_ral ? "SI" : "NO", costoRAL, exito_ral ? "encontrado" : "no existe");*/
+                printf("| %-12s | %-8s | %-10d | %-14s |\n",
+                    "RAC", exito_rac ? "SI" : "NO", costoRAC, exito_rac ? "encontrado" : "no existe");
+                /*printf("| %-12s | %-8s | %-10d | %-14s |\n",
+                    "RS",    exito_rs  ? "SI" : "NO", costoRS,  exito_rs  ? "encontrado" : "no existe");*/
+                lineaTabla('-', 60);
+                /*printf("============================================================\n");
+                printf("\tELECTOR REGISTRADO EN REBALSE ABIERTO LINEAL\n");
+                printf("============================================================\n");
+                elector_mostrar(eral);*/
+
+                printf("============================================================\n");
+                printf("ELECTOR REGISTRADO EN REBALSE ABIERTO CUADRATICO\n");
+                printf("============================================================\n");
+                elector_mostrar(erac);
+
+                /*printf("============================================================\n");
+                printf("\tELECTOR REGISTRADO EN REBALSE SEPARADO\n");
+                printf("============================================================\n");
+                elector_mostrar(ers);*/
+
+                enter();
                 break;
         } // comparar estructuras
             case '0':{
@@ -172,9 +247,8 @@ void enter(){
     printf("============================================================\n");
     getchar();
 }
-/**ESPERANDO RECONSTRUIR**/
-/*
-int preload(LSOBB *lsobb, ABB *abb, NodoLVO **lvo){
+
+int cargarEstructura(RAC rac[]){
     FILE *operaciones = fopen("Operaciones_Padron.txt", "r");
     if (operaciones == NULL) return -1;
 
@@ -200,8 +274,14 @@ int preload(LSOBB *lsobb, ABB *abb, NodoLVO **lvo){
             fscanf(operaciones, "%d", &itemp);
             e_temp.dni = itemp;
             fscanf(operaciones, " %[^\n]", nam);
+            for(int c = 0; nam[c] != '\0'; c++) {
+                nam[c] = (char)tolower((unsigned char)nam[c]);
+            }//todo a minuscula
             strcpy(e_temp.nombreApellido, nam);
             fscanf(operaciones, " %[^\n]", dom);
+            for(int c = 0; dom[c] != '\0'; c++) {
+                dom[c] = (char)tolower((unsigned char)dom[c]);
+            }//todo a minuscula
             strcpy(e_temp.domicilio, dom);
             fscanf(operaciones, "%d", &itemp);
             e_temp.cPostal = itemp;
@@ -217,108 +297,86 @@ int preload(LSOBB *lsobb, ABB *abb, NodoLVO **lvo){
         switch (comando){
             case 1:{
                 // LSOBB alta
-                costo = altaLSO(lsobb, e_temp, &exito);
+                costo = altaRAC(rac, e_temp, &exito);
                 if (exito){
                     acumular(&cAlta_rac_ex, costo);
                 } else {
                     acumular(&cAlta_rac_fr, costo);
                 }
 
-                // LVO alta
-                int ok_lvo = 0;
-                float costo_lvo = altaLVO(lvo, e_temp, &ok_lvo);
-                if (ok_lvo) {
-                    acumular(&cAlta_lvo_ex, costo_lvo);
-                } else {
-                    acumular(&cAlta_lvo_fr, costo_lvo);
-                }
-
-                // ABB alta
-                costo = altaABB(abb, e_temp, &exito);
-                if (exito){
-                    acumular(&cAlta_abb_ex, costo);
-                } else {
-                    acumular(&cAlta_abb_fr, costo);
-                }
                 break;
             }
             case 2:{
                 // LSOBB baja
-                costo = bajaLSO(lsobb, e_temp, &exito);
+                costo = bajaRAC(rac, e_temp, &exito);
                 if (exito){
                     acumular(&cBaja_rac_ex, costo);
                 } else {
                     acumular(&cBaja_rac_fr, costo);
                 }
-
-                // LVO baja
-                int ok_lvo = 0;
-                float costo_lvo = bajaLVO(lvo, e_temp, &ok_lvo);
-                if (ok_lvo) {
-                    acumular(&cBaja_lvo_ex, costo_lvo);
-                } else {
-                    acumular(&cBaja_lvo_fr, costo_lvo);
-                }
-
-                // ABB baja
-                costo = bajaABB(abb, e_temp, &exito);
-                if (exito){
-                    acumular(&cBaja_abb_ex, costo);
-                } else {
-                    acumular(&cBaja_abb_fr, costo);
-                }
                 break;
             }
             case 3:{
                 // LSOBB evocar
-                costo = evocarLSO(*lsobb, e_temp, &exito, &e_result);
+                costo = evocarRAC(rac, e_temp, &exito, &e_result);
                 if (exito){
                     acumular(&cEvocar_rac_ex, costo);
                 } else {
                     acumular(&cEvocar_rac_fr, costo);
-                }
-
-                // LVO evocar
-                int ok_lvo = 0;
-                elector res_lvo;
-                float costo_lvo = evocarLVO(*lvo, e_temp.dni, &res_lvo, &ok_lvo);
-                if(e_temp.dni != VALOR_INFINITO){ //No contar el centinela basicamente
-                    if (ok_lvo) {
-                        acumular(&cEvocar_lvo_ex, costo_lvo);
-                    } else {
-                        acumular(&cEvocar_lvo_fr, costo_lvo);
-                    }
-                }
-
-                // ABB evocar
-                costo = evocarABB(abb, e_temp, &exito, &e_result);
-                if (exito){
-                    acumular(&cEvocar_abb_ex, costo);
-                } else {
-                    acumular(&cEvocar_abb_fr, costo);
                 }
                 break;
             }
         }
     }
     promedio(&cAlta_rac_ex);
-    promedio(&cAlta_lvo_ex);
-    promedio(&cAlta_abb_ex);
     promedio(&cBaja_rac_ex);
-    promedio(&cBaja_lvo_ex);
-    promedio(&cBaja_abb_ex);
     promedio(&cEvocar_rac_ex);
-    promedio(&cEvocar_lvo_ex);
-    promedio(&cEvocar_abb_ex);
     promedio(&cAlta_rac_fr);
-    promedio(&cAlta_lvo_fr);
-    promedio(&cAlta_abb_fr);
     promedio(&cBaja_rac_fr);
-    promedio(&cBaja_lvo_fr);
-    promedio(&cBaja_abb_fr);
     promedio(&cEvocar_rac_fr);
-    promedio(&cEvocar_lvo_fr);
-    promedio(&cEvocar_abb_fr);
     fclose(operaciones);
     return 0;
-}*/
+}
+
+void mostrarRAC(RAC rac[]){
+    int i;
+    int contador = 0;
+    const char *simbolo;
+
+    for (i = 0; i < MRAC; i++){
+        switch (rac[i].estado){
+            case OCUPADA: simbolo = "OCUPADA (o)"; break;
+            case LIBRE:   simbolo = "LIBRE (+)";   break;
+            default:      simbolo = "VIRGEN (*)";  break;
+        }
+
+        printf("------------------------------------------------------------\n");
+        printf("[%d] estado: %s\n", (i+1), simbolo);
+
+
+        /* solo cuando OCUPADA mostramos el elector */
+        if (rac[i].estado == OCUPADA){
+            elector_mostrar(rac[i].datos);
+        }
+
+        /* cada ITEMPORPAGINA celdas, pausar */
+        contador++;
+        if (contador == ITEMPORPAGINA){
+            contador = 0;
+            printf("------------------------------------------------------------\n");
+            printf("  Enter = seguir    q = salir\n  usuario ->\t");
+            int c = getchar();
+            if (c == 'q' || c == 'Q'){
+                while (getchar() != '\n');
+                printf("  ... cancelado\n");
+                break;
+            }
+            while (c != '\n' && c != EOF) c = getchar();
+            system("cls");
+        }
+    }
+
+    printf("============================================================\n");
+    printf("  Fin del recorrido RAC\n");
+    printf("============================================================\n");
+}

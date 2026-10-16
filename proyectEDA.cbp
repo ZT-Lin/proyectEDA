@@ -34,6 +34,7 @@
 		<Unit filename="RAC.h" />
 		<Unit filename="RAL.h" />
 		<Unit filename="RS.h" />
+		<Unit filename="costo.h" />
 		<Unit filename="elector.h" />
 		<Unit filename="funcionHashing.h" />
 		<Unit filename="main.c">

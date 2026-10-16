@@ -42,4 +42,13 @@ bool elector_copiar(elector *destino, const elector origen){
     return elector_sonIguales(*destino, origen);
 }
 
+void elector_mostrar( const elector aMostrar){
+    printf("DNI:                 %d\n", aMostrar.dni);
+    printf("Nombre y apellido:   %s\n", aMostrar.nombreApellido);
+    printf("Domicilio:           %s\n", aMostrar.domicilio);
+    printf("Codigo postal:       %d\n", aMostrar.cPostal);
+    printf("Numero de mesa:      %d\n", aMostrar.mesa);
+    printf("Numero de circuito:  %d\n", aMostrar.circuito);
+}
+
 #endif // ELECTOR_H_INCLUDED

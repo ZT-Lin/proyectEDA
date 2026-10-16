@@ -105,10 +105,20 @@ int bajaRAC(RAC rac[], const elector e, bool *exito){
     int inicial = hashing(e.dni, MRAC);
     costoBaja += localizarRAC(rac, e, inicial, &posicion, &exitoL);
 
-    if( exitoL ){
-        rac[posicion].estado = LIBRE;
-        return costoBaja;
-    }// encontrado, dar de baja
+    if( exitoL ){// encontrado, dar de baja
+        elector guardado = rac[posicion].datos;
+        costoBaja++;//un costo mas para sacarlo de la estructura
+        if( elector_sonIguales(guardado, e) ){//comparacion por codigo
+            rac[posicion].estado = LIBRE;
+            (*exito) = true;
+            return costoBaja;
+        }
+    }
+    /*si se encuentra exitoL==true, empieza dar de baja
+    sacando de la estructura -> costo por consultar +1
+    comparar toda la nupla, si esta bien, recien ahi se da la baja
+    actualizando el estado, exito=true, y retornar el costo
+    sino, se sale de la rutina*/
 
     return costoBaja;
 }
