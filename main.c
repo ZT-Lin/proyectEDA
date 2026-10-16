@@ -32,7 +32,6 @@ void enter(void);
 
 int cargarEstructura(RA[], RA[]);
 
-#define ITEMPORPAGINA 10
 void mostrarRA(RA[], int);
 //==========costos de cada una==========
 Costo cAlta_rac_ex, cBaja_rac_ex, cEvocar_rac_ex;
@@ -209,7 +208,7 @@ int main(){
                 elector_mostrar(eral);
 
                 printf("============================================================\n");
-                printf("ELECTOR REGISTRADO EN REBALSE ABIERTO CUADRATICO\n");
+                printf("\tELECTOR REGISTRADO EN REBALSE ABIERTO CUADRATICO\n");
                 printf("============================================================\n");
                 elector_mostrar(erac);
 

@@ -64,7 +64,7 @@ int altaRAL(RA ral[], const elector e, bool *exito){
     bool exitoL;
 
     int inicial = hashing(e.dni, MRAL);
-    costoAlta += localizarRAC(ral, e, inicial, &posicion, &exitoL);
+    costoAlta += localizarRAL(ral, e, inicial, &posicion, &exitoL);
 
     if( (exitoL) || ( posicion == -1)) return costoAlta;
     // encuentra con dni repetido, o
@@ -84,7 +84,7 @@ int bajaRAL(RA ral[], const elector e, bool *exito){
     bool exitoL;
 
     int inicial = hashing(e.dni, MRAL);
-    costoBaja += localizarRAC(ral, e, inicial, &posicion, &exitoL);
+    costoBaja += localizarRAL(ral, e, inicial, &posicion, &exitoL);
 
     if( exitoL ){// encontrado, dar de baja
         elector guardado = ral[posicion].datos;

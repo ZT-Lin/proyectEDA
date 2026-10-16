@@ -3,6 +3,8 @@
 
 #include "elector.h"
 
+#define ITEMPORPAGINA 10
+
 typedef struct{
         elector datos;// un solo ranura
         int estado;

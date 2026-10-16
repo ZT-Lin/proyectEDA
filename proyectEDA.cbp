@@ -31,6 +31,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="RA.h" />
 		<Unit filename="RAC.h" />
 		<Unit filename="RAL.h" />
 		<Unit filename="RS.h" />
