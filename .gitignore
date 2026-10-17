@@ -1,0 +1,7 @@
+# Code::Blocks 
+*.layout
+*.depend
+*.pdf
+
+/bin/
+/obj/
