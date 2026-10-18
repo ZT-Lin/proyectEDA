@@ -9,8 +9,82 @@ Correa Valentin, Lin Franco.
 cantidad de celdas consultadas para realizar dicha operación en cada una de las estructuras
 un punto (1) por cada celda.
 
+SI cuenta celdas repetidas.
+
+==========CONSTANTE UTIL Y SU UBICACION==============
+
+RA.h:
+    - ITEMPORPAGINA: usado para paginar la muestra
+
+RAL.h:
+    - MRAL: cantidad de balde de Rebalse Abierto Lineal
+RAC.h
+    - MRAC: cantidad de balde de Rebalse Abierto Cuadratico
+RS.h
+    - MRS: cantidad de balde de Rebalse Separado
+
 ============COMPARACION DE ESTRUCTURAS============
+| OPERACION              |                  RAL |                  RAC |                   RS |
 ==============================================
+| ALTA EXITO             |                      |                      |                      |
+|   Total realizado      |              2746.00 |              2746.00 |              2746.00 |
+|   Total costo          |           3196382.00 |            124633.00 |             18115.00 |
+|   Maximo               |              1997.00 |                67.00 |                30.00 |
+|   Promedio             |              1164.01 |                45.39 |                 6.60 |
+-----------------------------------------------------------------------------------------------
+| ALTA FRACASO           |                      |                      |                      |
+|   Total realizado      |                 0.00 |                 0.00 |                 0.00 |
+|   Total costo          |                 0.00 |                 0.00 |                 0.00 |
+|   Maximo               |                 0.00 |                 0.00 |                 0.00 |
+|   Promedio             |                 0.00 |                 0.00 |                 0.00 |
+-----------------------------------------------------------------------------------------------
+| BAJA EXITO             |                      |                      |                      |
+|   Total realizado      |              2001.00 |              2001.00 |              2001.00 |
+|   Total costo          |           1790912.00 |             80431.00 |             19473.00 |
+|   Maximo               |              1965.00 |                66.00 |                32.00 |
+|   Promedio             |               895.01 |                40.20 |                 9.73 |
+-----------------------------------------------------------------------------------------------
+| BAJA FRACASO           |                      |                      |                      |
+|   Total realizado      |                 0.00 |                 0.00 |                 0.00 |
+|   Total costo          |                 0.00 |                 0.00 |                 0.00 |
+|   Maximo               |                 0.00 |                 0.00 |                 0.00 |
+|   Promedio             |                 0.00 |                 0.00 |                 0.00 |
+-----------------------------------------------------------------------------------------------
+| EVOCAR EXITO           |                      |                      |                      |
+|   Total realizado      |              2175.00 |              2175.00 |              2175.00 |
+|   Total costo          |           1219696.00 |             66259.00 |             13504.00 |
+|   Maximo               |              1965.00 |                66.00 |                20.00 |
+|   Promedio             |               560.78 |                30.46 |                 6.21 |
+-----------------------------------------------------------------------------------------------
+| EVOCAR FRACASO         |                      |                      |                      |
+|   Total realizado      |              2053.00 |              2053.00 |              2053.00 |
+|   Total costo          |           3243918.00 |            115104.00 |             14861.00 |
+|   Maximo               |              1998.00 |                68.00 |                19.00 |
+|   Promedio             |              1580.09 |                56.07 |                 7.24 |
+==============================================
+
+==================REBALSE ABIERTO LINEAL / CUADRATICO==================
+De acuerdo al limite de recorrer puesto para todas las REBALSES ABIERTAS fueron:
+                                            intentos < M
+M=cantidad de baldes que pertenece a cada una. Por lo tanto, el peor caso es
+cuando el intento supera al M:
+                                            intentos >= M
+entonces: *para alta y baja (ninguno de los dos consulta el celda cuando realiza
+                    sus operaciones correspondientes)
+                    ->pertenece al O(M),
+                *para evocar, al final de la rutina simpre suma 1 por consultar a la celda para
+                    extraer el elector, su costo es siempre costoLocalizar+1, es similar al del alta y baja
+                    ->pertenece al O(M)
+
+==========================REBALSE SEPARADO========================
+Tiene el mejor costo de todas las estructuras.
+
+Se consulta la lista segun el funcion hashing (consulta al celda->costo+1)
+y luego recorre la lista vinculada hasta llegar al final (head->null, costo+longitud de la lista)
+
+el peor caso es cuando todos los elementos guarda en el mismo lugar
+=> pertenece al O(M)
+
 */
 
 #include <stdio.h>
