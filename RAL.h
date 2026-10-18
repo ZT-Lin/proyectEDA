@@ -26,11 +26,13 @@ int localizarRAL(const RA ral[], const elector e, int inicial,
     // primera celda desocupada PCD
     actual = inicial % MRAL;
     pcd = -1;//aun no encontrado
+    elector guardado;
 
     while( k<MRAL ){
+        guardado = ral[actual].datos;
         costoLocalizar++;
         k++;
-        if( (ral[actual].estado == OCUPADA) && ( ral[actual].datos.dni == e.dni) ){
+        if( (guardado.estado == OCUPADA) && ( guardado.datos.dni == e.dni) ){
                 //encontrado, copia de datos
                 (*exito) = true;
                 (*pos) = actual;
@@ -41,9 +43,9 @@ int localizarRAL(const RA ral[], const elector e, int inicial,
                 su tratamiento es logicamente equivalente a estado LIBRE
         }*/
 
-        if( (ral[actual].estado == LIBRE) && (pcd == -1) ) pcd = actual;
+        if( (guardado.estado == LIBRE) && (pcd == -1) ) pcd = actual;
         // si es la primer celda desocupada
-        if( ral[actual].estado == VIRGEN){
+        if( guardado.estado == VIRGEN){
             //final de la lista, chequear si han encontrado PCD
             if(pcd == -1) pcd = actual;
             break;
