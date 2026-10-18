@@ -1,7 +1,6 @@
 #ifndef RS_H_INCLUDED
 #define RS_H_INCLUDED
 
-<<<<<<< HEAD
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -161,19 +160,3 @@ void liberarRS(RS tabla[], int M){
 }
 
 #endif
-=======
-#define MRS 1237
-/*
-    factor de carga del RS: p=1.61
-    cantidad de elector estimado: N=2000
-    ranura para cada balde: r=1
-
-    Baldes: p = N/Mr -> M=N/pr -> M=2000 / 1.61*1
-        M = 1242,2360...... = 1242
-        numero primo cercano: 1237
-        verificacion: 2000/1237 = 1,6168...... = 1.61
-*/
-
-
-#endif // RS_H_INCLUDED
->>>>>>> 6feb72da2a7ae696b1247743b2c470d587e9e00a
