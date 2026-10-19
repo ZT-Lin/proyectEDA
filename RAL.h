@@ -26,10 +26,10 @@ int localizarRAL(const RA ral[], const elector e, int inicial,
     // primera celda desocupada PCD
     actual = inicial % MRAL;
     pcd = -1;//aun no encontrado
-    elector guardado;
+    RA guardado;
 
     while( k<MRAL ){
-        guardado = ral[actual].datos;
+        guardado = ral[actual];
         costoLocalizar++;
         k++;
         if( (guardado.estado == OCUPADA) && ( guardado.datos.dni == e.dni) ){
@@ -51,7 +51,7 @@ int localizarRAL(const RA ral[], const elector e, int inicial,
             break;
         }
         actual = (actual + 1) % MRAL;
-        // diferente al anterior, este es actual + k, k=1
+        // diferente al RACuadratico, este es actual + k, k=1
     }
 
     // busqueda fallada por intentos exceso de M intentos o celda VIRGEN
@@ -113,10 +113,11 @@ int evocarRAL(const RA ral[], const elector e, bool *exito, elector *resultado){
     int inicial = hashing(e.dni, MRAL);
     costoEvocar+= localizarRAL(ral, e,inicial, &pos, exito);
 
-    if( (*exito) ){
+    if((*exito)){
         (*resultado) = ral[pos].datos;
         costoEvocar+=1;
-    }//encontrado -> copia datos, consulta la celda
+        //copia datos, consulta la celda
+    }
     return costoEvocar;
 }
 
