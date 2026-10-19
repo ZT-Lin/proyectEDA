@@ -26,11 +26,13 @@ int localizarRAL(const RA ral[], const elector e, int inicial,
     // primera celda desocupada PCD
     actual = inicial % MRAL;
     pcd = -1;//aun no encontrado
+    RA guardado;
 
     while( k<MRAL ){
+        guardado = ral[actual];
         costoLocalizar++;
         k++;
-        if( (ral[actual].estado == OCUPADA) && ( ral[actual].datos.dni == e.dni) ){
+        if( (guardado.estado == OCUPADA) && ( guardado.datos.dni == e.dni) ){
                 //encontrado, copia de datos
                 (*exito) = true;
                 (*pos) = actual;
@@ -41,15 +43,15 @@ int localizarRAL(const RA ral[], const elector e, int inicial,
                 su tratamiento es logicamente equivalente a estado LIBRE
         }*/
 
-        if( (ral[actual].estado == LIBRE) && (pcd == -1) ) pcd = actual;
+        if( (guardado.estado == LIBRE) && (pcd == -1) ) pcd = actual;
         // si es la primer celda desocupada
-        if( ral[actual].estado == VIRGEN){
+        if( guardado.estado == VIRGEN){
             //final de la lista, chequear si han encontrado PCD
             if(pcd == -1) pcd = actual;
             break;
         }
         actual = (actual + 1) % MRAL;
-        // diferente al anterior, este es actual + k, k=1
+        // diferente al RACuadratico, este es actual + k, k=1
     }
 
     // busqueda fallada por intentos exceso de M intentos o celda VIRGEN
@@ -111,8 +113,15 @@ int evocarRAL(const RA ral[], const elector e, bool *exito, elector *resultado){
     int inicial = hashing(e.dni, MRAL);
     int costoEvocar = localizarRAL(ral, e, inicial, &pos, exito);
 
+<<<<<<< HEAD
     if (*exito) {
         *resultado = ral[pos].datos;
+=======
+    if((*exito)){
+        (*resultado) = ral[pos].datos;
+        costoEvocar+=1;
+        //copia datos, consulta la celda
+>>>>>>> 60c5a6697880f6e372361a81aa26a207388920d4
     }
     return costoEvocar;
 }

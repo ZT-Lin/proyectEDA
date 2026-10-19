@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "funcionHashing.h"
-#include "elector.h"
+#include "elector.h" 
 
 // N = 2000, factor de carga = 1.61 -> M = 2000 / 1.61 = 1242.23
 // El primo mas cercano es 1237 (chequeado con la tabla de primos para no pifiarle)

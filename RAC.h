@@ -27,11 +27,13 @@ int localizarRAC(const RA rac[], const elector e, int inicial,
     // primera celda desocupada PCD
     actual = (inicial + k) % MRAC;
     pcd = -1;//aun no encontrado
+    RA guardado;
 
     while( k<MRAC ){
+        guardado = rac[actual];
         costoLocalizar++;
         k++;
-        if( (rac[actual].estado == OCUPADA) && ( rac[actual].datos.dni == e.dni) ){
+        if( (guardado.estado == OCUPADA) && ( guardado.datos.dni == e.dni) ){
                 //encontrado, copia de datos
                 (*exito) = true;
                 (*pos) = actual;
@@ -41,15 +43,15 @@ int localizarRAC(const RA rac[], const elector e, int inicial,
                 no encontrado, continua la busqueda
                 su tratamiento es logicamente equivalente a estado LIBRE
         }*/
-        if( (rac[actual].estado == LIBRE) && (pcd == -1) ) pcd = actual;
+        if( (guardado.estado == LIBRE) && (pcd == -1) ) pcd = actual;
         // si es la primer celda desocupada
-        if( rac[actual].estado == VIRGEN){
+        if( guardado.estado == VIRGEN){
             //final de la lista, chequear si han encontrado PCD
             if(pcd == -1) pcd = actual;
             break;
         }
         actual = (actual + k) % MRAC;
-        // diferente al anterior, este es actual + k
+        // diferente al RALineal, este es actual + k
     }
 
     // busqueda fallada por intentos exceso de M intentos o celda VIRGEN
