@@ -106,15 +106,14 @@ int bajaRAL(RA ral[], const elector e, bool *exito){
 
 int evocarRAL(const RA ral[], const elector e, bool *exito, elector *resultado){
     (*exito) = false;
-    int costoEvocar = 0, pos=0;
+    int pos = 0;
 
     int inicial = hashing(e.dni, MRAL);
-    costoEvocar+= localizarRAL(ral, e,inicial, &pos, exito);
+    int costoEvocar = localizarRAL(ral, e, inicial, &pos, exito);
 
-    if( (*exito) ){
-        (*resultado) = ral[pos].datos;
-        costoEvocar+=1;
-    }//encontrado -> copia datos, consulta la celda
+    if (*exito) {
+        *resultado = ral[pos].datos;
+    }
     return costoEvocar;
 }
 

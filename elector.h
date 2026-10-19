@@ -5,6 +5,10 @@
 #include <string.h>
 #include <stdbool.h>
 
+#if !defined(_WIN32) && !defined(__MINGW32__)
+    #include <strings.h>
+    #define stricmp strcasecmp
+#endif
 
 typedef struct{
     int dni, cPostal, mesa, circuito;

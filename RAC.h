@@ -106,15 +106,14 @@ int bajaRAC(RA rac[], const elector e, bool *exito){
 
 int evocarRAC(const RA rac[], const elector e, bool *exito, elector *resultado){
     (*exito) = false;
-    int costoEvocar = 0, pos=0;
+    int pos = 0;
 
     int inicial = hashing(e.dni, MRAC);
-    costoEvocar+= localizarRAC(rac, e,inicial, &pos, exito);
+    int costoEvocar = localizarRAC(rac, e, inicial, &pos, exito);
 
-    if( (*exito) ){
-        (*resultado) = rac[pos].datos;
-        costoEvocar+=1;
-    }//encontrado -> copia datos, consulta la celda
+    if (*exito) {
+        *resultado = rac[pos].datos;
+    }
     return costoEvocar;
 }
 

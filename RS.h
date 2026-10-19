@@ -106,8 +106,6 @@ int evocarRS(const RS tabla[], const elector e, bool *exito, elector *resultado)
 
     if (*exito) {
         elector_copiar(resultado, act->datos);
-        //+1 por culpa del acceso
-        costo++;
     }
     return costo;
 }
