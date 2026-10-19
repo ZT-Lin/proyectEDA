@@ -113,36 +113,43 @@ int evocarRS(const RS tabla[], const elector e, bool *exito, elector *resultado)
 void mostrarRS(const RS tabla[], int M){
     int ocupadas = 0;
     int total = 0;
+    int contadorPaginacion = 0;
 
     for (int i = 0; i < M; i++) {
+        printf("------------------------------------------------------------\n");
         if (tabla[i] == NULL) {
-            printf("[%d] Vacia\n", i + 1);
+            printf("[%d] Lista VACIA\n", i + 1);
         } else {
             ocupadas++;
-            printf("[%d]:\n", i + 1);
+            printf("[%d] Lista OCUPADA:\n", i + 1);
             NodoRS *act = tabla[i];
             int n = 1;
             while (act != NULL) {
                 total++;
-                printf("  Nodo %d: ", n++);
+                printf("  -> Elemento #%d:\n", n++);
                 elector_mostrar(act->datos);
                 act = act->sig;
             }
         }
 
-        if ((i + 1) % 10 == 0 && (i + 1) < M) {
-            printf("-- Pausa (Enter continuar, 's' salir) --");
+        contadorPaginacion++;
+        if (contadorPaginacion == ITEMPORPAGINA) {
+            contadorPaginacion = 0;
+            printf("------------------------------------------------------------\n");
+            printf("  Enter = seguir    q = salir\n  usuario ->\t");
             int c = getchar();
-            if (c == 's' || c == 'S') {
+            if (c == 'q' || c == 'Q') {
                 while (getchar() != '\n');
+                printf("  ... cancelado\n");
                 break;
             }
-            if (c != '\n') {
-                while (getchar() != '\n');
-            }
+            while (c != '\n' && c != EOF) c = getchar();
+            system("cls");
         }
     }
-    printf("Total: %d electores en %d listas.\n", total, ocupadas);
+    printf("============================================================\n");
+    printf(" Total: %d electores registrados en %d listas activas.\n", total, ocupadas);
+    printf("============================================================\n");
 }
 
 void liberarRS(RS tabla[], int M){

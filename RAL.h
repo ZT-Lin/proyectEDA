@@ -113,15 +113,8 @@ int evocarRAL(const RA ral[], const elector e, bool *exito, elector *resultado){
     int inicial = hashing(e.dni, MRAL);
     int costoEvocar = localizarRAL(ral, e, inicial, &pos, exito);
 
-<<<<<<< HEAD
     if (*exito) {
         *resultado = ral[pos].datos;
-=======
-    if((*exito)){
-        (*resultado) = ral[pos].datos;
-        costoEvocar+=1;
-        //copia datos, consulta la celda
->>>>>>> 60c5a6697880f6e372361a81aa26a207388920d4
     }
     return costoEvocar;
 }
