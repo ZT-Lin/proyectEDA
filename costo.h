@@ -40,9 +40,9 @@ void lineaTabla(char c, int n){
     putchar('\n');
 }
 
-/* fila con valores (%.2f => maximo dos decimales) */
+/* fila con valores (%.4f => maximo cuatro decimales) */
 void filaTabla(const char *etiqueta, float ral, float rac, float rs){
-    printf("| %-22s | %20.2f | %20.2f | %20.2f |\n",
+    printf("| %-22s | %20.4f | %20.4f | %20.4f |\n",
            etiqueta, ral, rac, rs);
 }
 

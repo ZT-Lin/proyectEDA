@@ -25,43 +25,43 @@ RS.h
 
 ============COMPARACION DE ESTRUCTURAS============
 | OPERACION              |                  RAL |                  RAC |                   RS |
-==============================================
+===============================================
 | ALTA EXITO             |                      |                      |                      |
-|   Total realizado      |              2746.00 |              2746.00 |              2746.00 |
-|   Total costo          |           3196382.00 |            124633.00 |             18115.00 |
-|   Maximo               |              1997.00 |                67.00 |                30.00 |
-|   Promedio             |              1164.01 |                45.39 |                 6.60 |
+|   Total realizado      |            2746.0000 |            2746.0000 |            2746.0000 |
+|   Total costo          |         3196382.0000 |          124633.0000 |           18115.0000 |
+|   Maximo               |            1997.0000 |              67.0000 |              30.0000 |
+|   Promedio             |            1164.0138 |              45.3871 |               6.5969 |
 -----------------------------------------------------------------------------------------------
 | ALTA FRACASO           |                      |                      |                      |
-|   Total realizado      |                 0.00 |                 0.00 |                 0.00 |
-|   Total costo          |                 0.00 |                 0.00 |                 0.00 |
-|   Maximo               |                 0.00 |                 0.00 |                 0.00 |
-|   Promedio             |                 0.00 |                 0.00 |                 0.00 |
+|   Total realizado      |               0.0000 |               0.0000 |               0.0000 |
+|   Total costo          |               0.0000 |               0.0000 |               0.0000 |
+|   Maximo               |               0.0000 |               0.0000 |               0.0000 |
+|   Promedio             |               0.0000 |               0.0000 |               0.0000 |
 -----------------------------------------------------------------------------------------------
 | BAJA EXITO             |                      |                      |                      |
-|   Total realizado      |              2001.00 |              2001.00 |              2001.00 |
-|   Total costo          |           1790912.00 |             80431.00 |             19473.00 |
-|   Maximo               |              1965.00 |                66.00 |                32.00 |
-|   Promedio             |               895.01 |                40.20 |                 9.73 |
+|   Total realizado      |            2001.0000 |            2001.0000 |            2001.0000 |
+|   Total costo          |         1790912.0000 |           80431.0000 |           19473.0000 |
+|   Maximo               |            1965.0000 |              66.0000 |              32.0000 |
+|   Promedio             |             895.0085 |              40.1954 |               9.7316 |
 -----------------------------------------------------------------------------------------------
 | BAJA FRACASO           |                      |                      |                      |
-|   Total realizado      |                 0.00 |                 0.00 |                 0.00 |
-|   Total costo          |                 0.00 |                 0.00 |                 0.00 |
-|   Maximo               |                 0.00 |                 0.00 |                 0.00 |
-|   Promedio             |                 0.00 |                 0.00 |                 0.00 |
+|   Total realizado      |               0.0000 |               0.0000 |               0.0000 |
+|   Total costo          |               0.0000 |               0.0000 |               0.0000 |
+|   Maximo               |               0.0000 |               0.0000 |               0.0000 |
+|   Promedio             |               0.0000 |               0.0000 |               0.0000 |
 -----------------------------------------------------------------------------------------------
 | EVOCAR EXITO           |                      |                      |                      |
-|   Total realizado      |              2175.00 |              2175.00 |              2175.00 |
-|   Total costo          |           1219696.00 |             66259.00 |             13504.00 |
-|   Maximo               |              1965.00 |                66.00 |                20.00 |
-|   Promedio             |               560.78 |                30.46 |                 6.21 |
+|   Total realizado      |            2175.0000 |            2175.0000 |            2175.0000 |
+|   Total costo          |         1217521.0000 |           64084.0000 |           11329.0000 |
+|   Maximo               |            1964.0000 |              65.0000 |              19.0000 |
+|   Promedio             |             559.7798 |              29.4639 |               5.2087 |
 -----------------------------------------------------------------------------------------------
 | EVOCAR FRACASO         |                      |                      |                      |
-|   Total realizado      |              2053.00 |              2053.00 |              2053.00 |
-|   Total costo          |           3243918.00 |            115104.00 |             14861.00 |
-|   Maximo               |              1998.00 |                68.00 |                19.00 |
-|   Promedio             |              1580.09 |                56.07 |                 7.24 |
-==============================================
+|   Total realizado      |            2053.0000 |            2053.0000 |            2053.0000 |
+|   Total costo          |         3243918.0000 |          115104.0000 |           14861.0000 |
+|   Maximo               |            1998.0000 |              68.0000 |              19.0000 |
+|   Promedio             |            1580.0867 |              56.0662 |               7.2387 |
+==================================================
 
 ==================REBALSE ABIERTO LINEAL / CUADRATICO==================
 De acuerdo al limite de recorrer puesto para todas las REBALSES ABIERTAS fueron:
@@ -396,37 +396,37 @@ int cargarEstructura(RA rac[], RA ral[], RS rs[]){
         switch (comando){
             case 1:{
                 // RAL alta
-                altaRAL(ral, e_temp, &exito);
-                if (exito) cAlta_ral_ex.realizado += 1.0f;
-                else       cAlta_ral_fr.realizado += 1.0f;
+                costo = altaRAL(ral, e_temp, &exito);
+                if (exito) acumular(&cAlta_ral_ex, costo);
+                else       acumular(&cAlta_ral_fr, costo);
 
                 // RAC alta
-                altaRAC(rac, e_temp, &exito);
-                if (exito) cAlta_rac_ex.realizado += 1.0f;
-                else       cAlta_rac_fr.realizado += 1.0f;
+                costo = altaRAC(rac, e_temp, &exito);
+                if (exito) acumular(&cAlta_rac_ex, costo);
+                else       acumular(&cAlta_rac_fr, costo);
 
                 // RS alta
-                altaRS(rs, e_temp, &exito);
-                if (exito) cAlta_rs_ex.realizado += 1.0f;
-                else       cAlta_rs_fr.realizado += 1.0f;
+                costo = altaRS(rs, e_temp, &exito);
+                if (exito) acumular(&cAlta_rs_ex, costo);
+                else       acumular(&cAlta_rs_fr, costo);
 
                 break;
             }
             case 2:{
                 // RAL baja
-                bajaRAL(ral, e_temp, &exito);
-                if (exito) cBaja_ral_ex.realizado += 1.0f;
-                else       cBaja_ral_fr.realizado += 1.0f;
+                costo = bajaRAL(ral, e_temp, &exito);
+                if (exito) acumular(&cBaja_ral_ex, costo);
+                else       acumular(&cBaja_ral_fr, costo);
 
                 // RAC baja
-                bajaRAC(rac, e_temp, &exito);
-                if (exito) cBaja_rac_ex.realizado += 1.0f;
-                else       cBaja_rac_fr.realizado += 1.0f;
+                costo = bajaRAC(rac, e_temp, &exito);
+                if (exito) acumular(&cBaja_rac_ex, costo);
+                else       acumular(&cBaja_rac_fr, costo);
 
                 // RS baja
-                bajaRS(rs, e_temp, &exito);
-                if (exito) cBaja_rs_ex.realizado += 1.0f;
-                else       cBaja_rs_fr.realizado += 1.0f;
+                costo = bajaRS(rs, e_temp, &exito);
+                if (exito) acumular(&cBaja_rs_ex, costo);
+                else       acumular(&cBaja_rs_fr, costo);
 
                 break;
             }
