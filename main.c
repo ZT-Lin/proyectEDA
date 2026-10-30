@@ -3,88 +3,80 @@
 Correa Valentin, Lin Franco.
 ====================
 
+==================== FUNCION DE COSTOS ====================
+Cantidad de celdas consultadas para realizar dicha operacion en cada una de las estructuras,
+un punto (1) por cada celda (incluyendo celdas repetidas).
 
-====================FUNCION DE COSTOS====================
-
-cantidad de celdas consultadas para realizar dicha operación en cada una de las estructuras
-un punto (1) por cada celda.
-
-SI cuenta celdas repetidas.
-
-==========CONSTANTE UTIL Y SU UBICACION==============
-
+========== CONSTANTE UTIL Y SU UBICACION ==============
 RA.h:
     - ITEMPORPAGINA: usado para paginar la muestra
-
 RAL.h:
-    - MRAL: cantidad de balde de Rebalse Abierto Lineal
-RAC.h
-    - MRAC: cantidad de balde de Rebalse Abierto Cuadratico
-RS.h
-    - MRS: cantidad de balde de Rebalse Separado
+    - MRAL: cantidad de baldes de Rebalse Abierto Lineal (2531)
+RAC.h:
+    - MRAC: cantidad de baldes de Rebalse Abierto Cuadratico (2411)
+RS.h:
+    - MRS: cantidad de listas en la cabecera de Rebalse Separado (1237)
 
-============COMPARACION DE ESTRUCTURAS============
+============ COMPARACION DE ESTRUCTURAS ============
 | OPERACION              |                  RAL |                  RAC |                   RS |
-===============================================
+===============================================================================================
 | ALTA EXITO             |                      |                      |                      |
-|   Total realizado      |            2746.0000 |            2746.0000 |            2746.0000 |
-|   Total costo          |         3196382.0000 |          124633.0000 |           18115.0000 |
-|   Maximo               |            1997.0000 |              67.0000 |              30.0000 |
-|   Promedio             |            1164.0138 |              45.3871 |               6.5969 |
+|   Total realizado      |              2746.00 |              2746.00 |              2746.00 |
+|   Total costo          |           3196382.00 |            124633.00 |             18115.00 |
+|   Maximo               |              1997.00 |                67.00 |                30.00 |
+|   Promedio             |              1164.01 |                45.39 |                 6.60 |
 -----------------------------------------------------------------------------------------------
 | ALTA FRACASO           |                      |                      |                      |
-|   Total realizado      |               0.0000 |               0.0000 |               0.0000 |
-|   Total costo          |               0.0000 |               0.0000 |               0.0000 |
-|   Maximo               |               0.0000 |               0.0000 |               0.0000 |
-|   Promedio             |               0.0000 |               0.0000 |               0.0000 |
+|   Total realizado      |                 0.00 |                 0.00 |                 0.00 |
+|   Total costo          |                 0.00 |                 0.00 |                 0.00 |
+|   Maximo               |                 0.00 |                 0.00 |                 0.00 |
+|   Promedio             |                 0.00 |                 0.00 |                 0.00 |
 -----------------------------------------------------------------------------------------------
 | BAJA EXITO             |                      |                      |                      |
-|   Total realizado      |            2001.0000 |            2001.0000 |            2001.0000 |
-|   Total costo          |         1790912.0000 |           80431.0000 |           19473.0000 |
-|   Maximo               |            1965.0000 |              66.0000 |              32.0000 |
-|   Promedio             |             895.0085 |              40.1954 |               9.7316 |
+|   Total realizado      |              2001.00 |              2001.00 |              2001.00 |
+|   Total costo          |           1790912.00 |             80431.00 |             19473.00 |
+|   Maximo               |              1965.00 |                66.00 |                32.00 |
+|   Promedio             |               895.01 |                40.20 |                 9.73 |
 -----------------------------------------------------------------------------------------------
 | BAJA FRACASO           |                      |                      |                      |
-|   Total realizado      |               0.0000 |               0.0000 |               0.0000 |
-|   Total costo          |               0.0000 |               0.0000 |               0.0000 |
-|   Maximo               |               0.0000 |               0.0000 |               0.0000 |
-|   Promedio             |               0.0000 |               0.0000 |               0.0000 |
+|   Total realizado      |                 0.00 |                 0.00 |                 0.00 |
+|   Total costo          |                 0.00 |                 0.00 |                 0.00 |
+|   Maximo               |                 0.00 |                 0.00 |                 0.00 |
+|   Promedio             |                 0.00 |                 0.00 |                 0.00 |
 -----------------------------------------------------------------------------------------------
 | EVOCAR EXITO           |                      |                      |                      |
-|   Total realizado      |            2175.0000 |            2175.0000 |            2175.0000 |
-|   Total costo          |         1217521.0000 |           64084.0000 |           11329.0000 |
-|   Maximo               |            1964.0000 |              65.0000 |              19.0000 |
-|   Promedio             |             559.7798 |              29.4639 |               5.2087 |
+|   Total realizado      |              2175.00 |              2175.00 |              2175.00 |
+|   Total costo          |           1219696.00 |             66259.00 |             13504.00 |
+|   Maximo               |              1965.00 |                66.00 |                20.00 |
+|   Promedio             |               560.78 |                30.46 |                 6.21 |
 -----------------------------------------------------------------------------------------------
 | EVOCAR FRACASO         |                      |                      |                      |
-|   Total realizado      |            2053.0000 |            2053.0000 |            2053.0000 |
-|   Total costo          |         3243918.0000 |          115104.0000 |           14861.0000 |
-|   Maximo               |            1998.0000 |              68.0000 |              19.0000 |
-|   Promedio             |            1580.0867 |              56.0662 |               7.2387 |
-==================================================
+|   Total realizado      |              2053.00 |              2053.00 |              2053.00 |
+|   Total costo          |           3243918.00 |            115104.00 |             14861.00 |
+|   Maximo               |              1998.00 |                68.00 |                19.00 |
+|   Promedio             |              1580.09 |                56.07 |                 7.24 |
+===============================================================================================
 
-==================REBALSE ABIERTO LINEAL / CUADRATICO==================
-De acuerdo al limite de recorrer puesto para todas las REBALSES ABIERTAS fueron:
-                                            intentos < M
-M=cantidad de baldes que pertenece a cada una. Por lo tanto, el peor caso es
-cuando el intento supera al M:
-                                            intentos >= M
-entonces: *para alta y baja (ninguno de los dos consulta el celda cuando realiza
-                    sus operaciones correspondientes)
-                    ->pertenece al O(M),
-                *para evocar, al final de la rutina simpre suma 1 por consultar a la celda para
-                    extraer el elector, su costo es siempre costoLocalizar+1, es similar al del alta y baja
-                    ->pertenece al O(M)
+================== ANALISIS DE RESULTADOS Y COMPLEJIDAD TEORICA ==================
 
-==========================REBALSE SEPARADO========================
-Tiene el mejor costo de todas las estructuras.
+1. Rebalse Abierto Lineal (RAL) y Cuadratico (RAC):
+   - Peor caso: En direccionamiento abierto el limite de busqueda son M intentos, que serian las celdas totales de la tabla.
+     Por ende, el peor caso se da cuando barremos las M posiciones sin toparnos con una celda VIRGEN ni con la clave buscada, cayendo en O(M).
+   - Operacion de Evocacion: Equivale directamente a lo que cuesta ubicar la clave en la estructura, sumando 1 punto por cada celda inspeccionada al comparar el DNI.
+     Copiar el registro a la variable de salida es una transferencia interna en memoria, asi que no suma un acceso extra (+1).
+   - Comportamiento esperado: Manejando rho_RAL = 0.79 y rho_RAC = 0.83, RAC mitiga el agrupamiento primario que castiga feo a RAL tras varias altas y bajas,
+     donde los estados LIBRE obligan a seguir recorriendo hasta toparse con una celda VIRGEN. A tener en cuenta: solo en RAC es obligatorio que M sea un numero primo para
+     garantizar que la exploracion cuadratica recorra al menos (M + 1)/2 posiciones distintas sin entrar en bucles; en RAL no hace falta porque el paso es 1 y mcd(1, M) = 1.
 
-Se consulta la lista segun el funcion hashing (consulta al celda->costo+1)
-y luego recorre la lista vinculada hasta llegar al final (head->null, costo+longitud de la lista)
-
-el peor caso es cuando todos los elementos guarda en el mismo lugar
-=> pertenece al O(M)
-
+2. Rebalse Separado (RS):
+   - Peor caso: El peor caso teorico de RS no es O(M), sino O(N), siendo N el total de elementos cargados.
+     Esto ocurre ante una colision total donde absolutamente todos los registros caen en la misma posicion de la cabecera,
+     formando una unica lista encadenada de longitud N. En ese escenario, buscar requiere 1 acceso a la celda cabecera mas N lecturas en los nodos de la lista (1 + N accesos),
+     por lo que pertenece a O(N).
+   - Comportamiento esperado: Con rho_RS = 1.61, la longitud media de cada lista resulta alpha = 1.61.
+     Como las listas se manejan de forma independiente en memoria dinamica y las bajas liberan fisicamente el nodo con free()
+     (sin dejar marcas tipo "libre" que estiren las busquedas a futuro), RS ofrece el mejor rendimiento global en todas las operaciones.
+     Aparte, no requiere que M sea primo porque las colisiones se resuelven fuera de la tabla estatica.
 */
 
 #include <stdio.h>
@@ -100,13 +92,12 @@ el peor caso es cuando todos los elementos guarda en el mismo lugar
 #include "elector.h"
 #include "funcionHashing.h"
 
-int mostrar_menu(void);
+void mostrar_menu(void);
 void enter(void);
-
 int cargarEstructura(RA[], RA[], RS[]);
-
 void mostrarRA(RA[], int);
-//==========costos de cada una==========
+
+// ========== Costos de cada estructura ==========
 Costo cAlta_rac_ex, cBaja_rac_ex, cEvocar_rac_ex;
 Costo cAlta_rac_fr, cBaja_rac_fr, cEvocar_rac_fr;
 
@@ -116,7 +107,7 @@ Costo cAlta_ral_fr, cBaja_ral_fr, cEvocar_ral_fr;
 Costo cAlta_rs_ex, cBaja_rs_ex, cEvocar_rs_ex;
 Costo cAlta_rs_fr, cBaja_rs_fr, cEvocar_rs_fr;
 
-/* tabla completa: RAL | RAC | RS */
+/* Tabla completa comparativa: RAL | RAC | RS */
 void mostrarTablaCostos(void){
     lineaTabla('=', 95);
     printf("| %-22s | %20s | %20s | %20s |\n",
@@ -139,13 +130,11 @@ void mostrarTablaCostos(void){
     lineaTabla('=', 95);
 }
 
-
-int main(){
-    // menu
+int main(void){
     bool SISTEMA = true;
     char comando_user[100];
 
-    //==========init costos(exito)==========
+    // ========== Inicializacion de costos (Exito) ==========
     initCosto(&cAlta_rac_ex);
     initCosto(&cAlta_ral_ex);
     initCosto(&cAlta_rs_ex);
@@ -158,7 +147,7 @@ int main(){
     initCosto(&cEvocar_ral_ex);
     initCosto(&cEvocar_rs_ex);
 
-    //==========init costos(fracaso)==========
+    // ========== Inicializacion de costos (Fracaso) ==========
     initCosto(&cAlta_rac_fr);
     initCosto(&cAlta_ral_fr);
     initCosto(&cAlta_rs_fr);
@@ -171,138 +160,71 @@ int main(){
     initCosto(&cEvocar_ral_fr);
     initCosto(&cEvocar_rs_fr);
 
-    //==========estructuras==========
+    // ========== Estructuras ==========
     RA RACuadratico[MRAC], RALineal[MRAL];
     RS RSeparado[MRS];
-    initRA( RACuadratico, MRAC );
-    initRA( RALineal, MRAL);
-    initRS( RSeparado, MRS );
+    initRA(RACuadratico, MRAC);
+    initRA(RALineal, MRAL);
+    initRS(RSeparado, MRS);
 
-    //==========variables==========
-
-    while (SISTEMA)
-    {
+    while (SISTEMA) {
         system("cls");
-        if( mostrar_menu() == -1 ){
-            printf("============================================================\n");
-            printf("\tError: archivo \"menu.txt\" no encontrado.\n");
-            enter();
-            return -1;
+        mostrar_menu();
+
+        if (scanf("%99s", comando_user) != 1) {
+            continue;
         }
-        scanf("%99s", comando_user);
         getchar();
-        if (strlen(comando_user) != 1){
+
+        if (strlen(comando_user) != 1) {
             printf("============================================================\n");
-            printf("\t Error: opcion invalido\n");
+            printf("\t Error: opcion invalida\n");
             enter();
             continue;
         }
 
-        switch (comando_user[0]){
-            case '1':{
+        switch (comando_user[0]) {
+            case '1': {
                 system("cls");
                 mostrarRA(RALineal, MRAL);
                 enter();
                 break;
-            } // mostrar estructura RAL
+            } // Mostrar estructura RAL
             case '2': {
                 system("cls");
                 mostrarRA(RACuadratico, MRAC);
                 enter();
                 break;
-            }// mostrar estructura RAC
-            case '3':{
+            } // Mostrar estructura RAC
+            case '3': {
                 system("cls");
                 mostrarRS(RSeparado, MRS);
                 enter();
                 break;
-            } // mostrar estructura RS
-            case '4': {
-                //controlar si carga bien los datos
+            } // Mostrar estructura RS
+            case '4': { //controlar si carga bien los datos
                 system("cls");
-                if( cargarEstructura( RACuadratico, RALineal, RSeparado ) != 0) {
+                if (cargarEstructura(RACuadratico, RALineal, RSeparado) != 0) {
                     printf("============================================================\n");
                     printf("\tHubo error en la carga de datos!\n");
                     enter();
                     break;
-                }else{
+                } else {
                     printf("============================================================\n");
                     printf("\tCarga de datos con exito!\n");
                     mostrarTablaCostos();
                     enter();
                 }
-                system("cls");
-
-                // pedir al usuario datos del elector
-                elector aConsultar;
-                initElector(&aConsultar);
-                printf("============================================================\n");
-                printf("Ingrese el DNI del elector:\nusuario-> ");
-                if (scanf("%d", &aConsultar.dni) != 1) {
-                    aConsultar.dni = -1;
-                }
-                while (getchar() != '\n'); // Limpia el salto de linea para que enter() funcione correctamente
-
-                system("cls");
-                // elector aConsultar pero solo dni
-
-                bool exito_rac, exito_ral, exito_rs;
-                elector erac, eral, ers;
-                initElector(&erac); initElector(&eral); initElector(&ers);
-
-                // costo para buscar elector aConsultar en RAC
-                int costoRAC = evocarRAC(RACuadratico, aConsultar, &exito_rac, &erac);
-                int costoRAL = evocarRAL(RALineal, aConsultar, &exito_ral, &eral);
-                int costoRS  = evocarRS(RSeparado, aConsultar, &exito_rs, &ers);
-
-                printf("============================================================\n");
-                printf("\tCONSULTA DE UN ELECTOR DADO\n");
-                printf("============================================================\n");
-                printf("DNI consultado: %d\n", aConsultar.dni);
-                lineaTabla('-', 60);
-
-                printf("| %-12s | %-8s | %-10s | %-14s |\n",
-                    "ESTRUCTURA", "EXITO", "COSTO", "RESULTADO");
-                lineaTabla('-', 60);
-                printf("| %-12s | %-8s | %-10d | %-14s |\n",
-                    "RAL",  exito_ral ? "SI" : "NO", costoRAL, exito_ral ? "encontrado" : "no existe");
-                printf("| %-12s | %-8s | %-10d | %-14s |\n",
-                    "RAC", exito_rac ? "SI" : "NO", costoRAC, exito_rac ? "encontrado" : "no existe");
-                printf("| %-12s | %-8s | %-10d | %-14s |\n",
-                    "RS",    exito_rs  ? "SI" : "NO", costoRS,  exito_rs  ? "encontrado" : "no existe");
-                lineaTabla('-', 60);
-                if (exito_ral){
-                    printf("============================================================\n");
-                    printf("\tELECTOR REGISTRADO EN REBALSE ABIERTO LINEAL\n");
-                    printf("============================================================\n");
-                    elector_mostrar(eral);
-                }
-
-                if (exito_rac) {
-                    printf("============================================================\n");
-                    printf("\tELECTOR REGISTRADO EN REBALSE ABIERTO CUADRATICO\n");
-                    printf("============================================================\n");
-                    elector_mostrar(erac);
-                }
-
-                if (exito_rs){
-                    printf("============================================================\n");
-                    printf("\tELECTOR REGISTRADO EN REBALSE SEPARADO\n");
-                    printf("============================================================\n");
-                    elector_mostrar(ers);
-                }
-
-                enter();
                 break;
-            } // comparar estructuras
-            case '0':{
+            } // Comparar estructuras
+            case '0': {
                 SISTEMA = false;
-                liberarRS(RSeparado, MRS); // Liberamos memoria de la estructura dinámica
+                liberarRS(RSeparado, MRS); // Liberamos memoria de la estructura dinamica
                 break;
             }
-            default:{
+            default: {
                 printf("============================================================\n");
-                printf("\t Error: opcion invalido\n");
+                printf("\t Error: opcion invalida\n");
                 enter();
                 continue;
             }
@@ -311,21 +233,20 @@ int main(){
     return 0;
 } // main
 
-int mostrar_menu(void){
-    FILE *menu = fopen("menu.txt", "r");
-    if (menu == NULL)
-        return -1;
-
-    char buffer[100];
-    while (fgets(buffer, sizeof(buffer), menu) != NULL)
-    {
-        printf("%s", buffer);
-    }
-    fclose(menu);
-    return 0;
+void mostrar_menu(void){
+    printf("============================================================\n");
+    printf("     PADRON ELECTORAL - COMPARACION DE ESTRUCTURAS HASH     \n");
+    printf("============================================================\n");
+    printf("  1. Mostrar Rebalse Abierto Lineal (RAL)\n");
+    printf("  2. Mostrar Rebalse Abierto Cuadratico (RAC)\n");
+    printf("  3. Mostrar Rebalse Separado (RS)\n");
+    printf("  4. Comparacion de estructuras\n");
+    printf("  0. Salir\n");
+    printf("============================================================\n");
+    printf("usuario -> ");
 }
 
-void enter(){
+void enter(void){
     printf("============================================================\n");
     printf("\tPresionar \"enter\" para continuar\n");
     printf("============================================================\n");
@@ -336,52 +257,55 @@ int cargarEstructura(RA rac[], RA ral[], RS rs[]){
     FILE *operaciones = fopen("Operaciones_Padron.txt", "r");
     if (operaciones == NULL) return -1;
 
-    // Reinicializamos estructuras estáticas y dinámicas por si se carga más de una vez
+    // Reinicializamos estructuras estaticas y dinamicas por si se carga mas de una vez y no se haga cosas raras
     initRA(rac, MRAC);
     initRA(ral, MRAL);
     liberarRS(rs, MRS);
     initRS(rs, MRS);
 
-    // Reinicializamos contadores de costos para no acumular sobre una carga previa
-    initCosto(&cAlta_rac_ex); initCosto(&cAlta_ral_ex); initCosto(&cAlta_rs_ex);
-    initCosto(&cBaja_rac_ex); initCosto(&cBaja_ral_ex); initCosto(&cBaja_rs_ex);
+    // Reinicializamos contadores de costos para no acumular sobre una carga que estaba antes
+    initCosto(&cAlta_rac_ex);   initCosto(&cAlta_ral_ex);   initCosto(&cAlta_rs_ex);
+    initCosto(&cBaja_rac_ex);   initCosto(&cBaja_ral_ex);   initCosto(&cBaja_rs_ex);
     initCosto(&cEvocar_rac_ex); initCosto(&cEvocar_ral_ex); initCosto(&cEvocar_rs_ex);
-    initCosto(&cAlta_rac_fr); initCosto(&cAlta_ral_fr); initCosto(&cAlta_rs_fr);
-    initCosto(&cBaja_rac_fr); initCosto(&cBaja_ral_fr); initCosto(&cBaja_rs_fr);
+    initCosto(&cAlta_rac_fr);   initCosto(&cAlta_ral_fr);   initCosto(&cAlta_rs_fr);
+    initCosto(&cBaja_rac_fr);   initCosto(&cBaja_ral_fr);   initCosto(&cBaja_rs_fr);
     initCosto(&cEvocar_rac_fr); initCosto(&cEvocar_ral_fr); initCosto(&cEvocar_rs_fr);
 
-
-    //variables
-    float costo=0.0f;
-    // resultado de cada operacion
+    float costo = 0.0f;
     elector e_temp;
-    // elector reutilizable
     elector e_result;
-    // elector para evocar
     int itemp = 0;
-    // guarda los DNI, codigo postal, etc.
     char nam[51], dom[81];
-    // guarda nombre y domicilio
     bool exito;
 
     int comando = 0;
-    while (fscanf(operaciones, "%d", &comando) == 1){
+    while (fscanf(operaciones, "%d", &comando) == 1) {
         initElector(&e_temp);
         exito = false;
 
-        if ((comando == 1) || (comando == 2)){
+        if ((comando == 1) || (comando == 2)) {
             fscanf(operaciones, "%d", &itemp);
             e_temp.dni = itemp;
-            fscanf(operaciones, " %50[^\n]", nam);
-            for(int c = 0; nam[c] != '\0'; c++) {
-                nam[c] = (char)tolower((unsigned char)nam[c]);
-            }//todo a minuscula
-            strcpy(e_temp.nombreApellido, nam);
-            fscanf(operaciones, " %80[^\n]", dom);
-            for(int c = 0; dom[c] != '\0'; c++) {
-                dom[c] = (char)tolower((unsigned char)dom[c]);
-            }//todo a minuscula
-            strcpy(e_temp.domicilio, dom);
+
+            // Consumir salto de linea pendiente tras el DNI antes de leer el nombre
+            fscanf(operaciones, "%*[\r\n ]");
+            if (fgets(nam, sizeof(nam), operaciones) != NULL) {
+                nam[strcspn(nam, "\r\n")] = '\0';
+                for (int c = 0; nam[c] != '\0'; c++) {
+                    nam[c] = (char)tolower((unsigned char)nam[c]);
+                }
+                strcpy(e_temp.nombreApellido, nam);
+            }
+
+            // Leer domicilio
+            if (fgets(dom, sizeof(dom), operaciones) != NULL) {
+                dom[strcspn(dom, "\r\n")] = '\0';
+                for (int c = 0; dom[c] != '\0'; c++) {
+                    dom[c] = (char)tolower((unsigned char)dom[c]);
+                }
+                strcpy(e_temp.domicilio, dom);
+            }
+
             fscanf(operaciones, "%d", &itemp);
             e_temp.cPostal = itemp;
             fscanf(operaciones, "%d", &itemp);
@@ -393,56 +317,56 @@ int cargarEstructura(RA rac[], RA ral[], RS rs[]){
             e_temp.dni = itemp;
         }
 
-        switch (comando){
-            case 1:{
+        switch (comando) {
+            case 1: {
                 // RAL alta
-                costo = altaRAL(ral, e_temp, &exito);
+                costo = (float)altaRAL(ral, e_temp, &exito);
                 if (exito) acumular(&cAlta_ral_ex, costo);
                 else       acumular(&cAlta_ral_fr, costo);
 
                 // RAC alta
-                costo = altaRAC(rac, e_temp, &exito);
+                costo = (float)altaRAC(rac, e_temp, &exito);
                 if (exito) acumular(&cAlta_rac_ex, costo);
                 else       acumular(&cAlta_rac_fr, costo);
 
                 // RS alta
-                costo = altaRS(rs, e_temp, &exito);
+                costo = (float)altaRS(rs, e_temp, &exito);
                 if (exito) acumular(&cAlta_rs_ex, costo);
                 else       acumular(&cAlta_rs_fr, costo);
 
                 break;
             }
-            case 2:{
+            case 2: {
                 // RAL baja
-                costo = bajaRAL(ral, e_temp, &exito);
+                costo = (float)bajaRAL(ral, e_temp, &exito);
                 if (exito) acumular(&cBaja_ral_ex, costo);
                 else       acumular(&cBaja_ral_fr, costo);
 
                 // RAC baja
-                costo = bajaRAC(rac, e_temp, &exito);
+                costo = (float)bajaRAC(rac, e_temp, &exito);
                 if (exito) acumular(&cBaja_rac_ex, costo);
                 else       acumular(&cBaja_rac_fr, costo);
 
                 // RS baja
-                costo = bajaRS(rs, e_temp, &exito);
+                costo = (float)bajaRS(rs, e_temp, &exito);
                 if (exito) acumular(&cBaja_rs_ex, costo);
                 else       acumular(&cBaja_rs_fr, costo);
 
                 break;
             }
-            case 3:{
+            case 3: {
                 // RAL evocar
-                costo = evocarRAL(ral, e_temp, &exito, &e_result);
+                costo = (float)evocarRAL(ral, e_temp, &exito, &e_result);
                 if (exito) acumular(&cEvocar_ral_ex, costo);
                 else       acumular(&cEvocar_ral_fr, costo);
 
                 // RAC evocar
-                costo = evocarRAC(rac, e_temp, &exito, &e_result);
+                costo = (float)evocarRAC(rac, e_temp, &exito, &e_result);
                 if (exito) acumular(&cEvocar_rac_ex, costo);
                 else       acumular(&cEvocar_rac_fr, costo);
 
                 // RS evocar
-                costo = evocarRS(rs, e_temp, &exito, &e_result);
+                costo = (float)evocarRS(rs, e_temp, &exito, &e_result);
                 if (exito) acumular(&cEvocar_rs_ex, costo);
                 else       acumular(&cEvocar_rs_fr, costo);
 
@@ -450,6 +374,7 @@ int cargarEstructura(RA rac[], RA ral[], RS rs[]){
             }
         }
     }
+
     promedio(&cAlta_rac_ex);
     promedio(&cBaja_rac_ex);
     promedio(&cEvocar_rac_ex);

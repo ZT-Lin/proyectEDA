@@ -5,12 +5,38 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "funcionHashing.h"
-#include "elector.h" 
+#include "elector.h"
+#include "RA.h"
 
-// N = 2000, factor de carga = 1.61 -> M = 2000 / 1.61 = 1242.23
-// El primo mas cercano es 1237 (chequeado con la tabla de primos para no pifiarle)
+/*
+ * ============================================================================
+ * JUSTIFICACION TECNICA DEL DIMENSIONAMIENTO DE M (REBALSE SEPARADO)
+ * ============================================================================
+ * Cantidad estimada de electores: N = 2000
+ * Factor de carga fijado por consigna: rho = 1.61
+ * Calculo teorico del tamano de tabla:
+ *      M = ceil(N / rho) = ceil(2000 / 1.61) = ceil(1242.23...) = 1243
+ *
+ * Observacion de la catedra sobre primalidad:
+ * "En RS no hace falta que sea primo".
+ * A diferencia del Rebalse Abierto Cuadratico (RAC), donde la primalidad de M
+ * es una condicion matematica necesaria para garantizar que la secuencia de
+ * exploracion recorra al menos (M + 1) / 2 celdas distintas sin entrar en
+ * ciclos cerrados prematuros, en Rebalse Separado las colisiones se gestionan
+ * mediante listas simplemente enlazadas alojadas dinamicamente en el Heap.
+ * Cada posicion de la cabecera es un punto de acceso independiente.
+ *
+ * Por lo tanto, un M no primo (como 1243) o un primo cercano (como 1237) son
+ * ambos validos. Se mantiene fijo MRS = 1237 para asegurar compatibilidad con
+ * las corridas de prueba previas y la funcion de hashing del proyecto.
+ */
 #define MRS 1237
 
+/*
+ * Estructura de nodo para Rebalse Separado:
+ * Cumple estrictamente con la restriccion: "No se utilizaran baldes en la cabecera del RS".
+ * La cabecera de la tabla hash es un arreglo unidimensional de punteros a NodoRS.
+ */
 typedef struct NodoRS {
     elector datos;
     struct NodoRS *sig;
@@ -18,25 +44,30 @@ typedef struct NodoRS {
 
 typedef NodoRS* RS;
 
+/* Inicializacion de la cabecera: asigna NULL a cada puntero del arreglo */
 void initRS(RS tabla[], int M){
-    for(int i = 0; i < M; i++){
+    for (int i = 0; i < M; i++){
         tabla[i] = NULL;
     }
 }
 
+/*
+ * Localizar en RS:
+ * Metrica de costo:
+ * - 1 acceso a la posicion de la cabecera del arreglo (tabla[actual]).
+ * - 1 acceso adicional por cada nodo de la lista enlazada inspeccionado.
+ */
 int localizarRS(const RS tabla[], const elector e, int inicial, NodoRS **ant, NodoRS **act, bool *exito){
     (*exito) = false;
     int actual = inicial % MRS;
     (*ant) = NULL;
     (*act) = tabla[actual];
 
-    // consulta el puntero en la cabecera tabla[inicial % MRS] ya suma 1 acceso
-    int costoLocalizar = 1;
+    int costoLocalizar = 1; // 1 acceso a la cabecera de la tabla
 
-    // se saltea de nodo en nodo por la lista enlazada hasta encontrar el DNI o llegar a NULL
-    while((*act) != NULL){
-        costoLocalizar++; // +1 por cada nodo recorrido en la lista enlazada
-        if((*act)->datos.dni == e.dni){
+    while ((*act) != NULL) {
+        costoLocalizar++; // +1 por cada nodo recorrido e inspeccionado
+        if ((*act)->datos.dni == e.dni) {
             (*exito) = true;
             return costoLocalizar;
         }
@@ -47,6 +78,13 @@ int localizarRS(const RS tabla[], const elector e, int inicial, NodoRS **ant, No
     return costoLocalizar;
 }
 
+/*
+ * Alta en RS:
+ * - Si el DNI ya existe, no se inserta y se devuelve el costo de localizacion.
+ * - Si no existe, se asigna memoria dinamica para un nuevo nodo, se copian los
+ *   datos con elector_copiar y se inserta al inicio de la lista correspondiente
+ *   utilizando indexacion modular segura (tabla[inicial % MRS]).
+ */
 int altaRS(RS tabla[], const elector e, bool *exito){
     (*exito) = false;
     NodoRS *ant = NULL, *act = NULL;
@@ -54,22 +92,29 @@ int altaRS(RS tabla[], const elector e, bool *exito){
     int inicial = hashing(e.dni, MRS);
     int costoAlta = localizarRS(tabla, e, inicial, &ant, &act, &exitoL);
 
-    if(exitoL) return costoAlta;
+    if (exitoL) return costoAlta; // Elemento repetido
 
     NodoRS *nuevo = (NodoRS *)malloc(sizeof(NodoRS));
-    if(nuevo == NULL) return costoAlta; // por si nos quedamos sin memoria en el heap
+    if (nuevo == NULL) return costoAlta; // Falla en la reserva de memoria
 
-    // se susa la primitiva del TAD elector para copiar los datos al nodo
+    // Primitiva del TAD elector para transferir la informacion
     elector_copiar(&nuevo->datos, e);
 
-    // inserta al inicio de la lista en O(1)
-    nuevo->sig = tabla[inicial];
-    tabla[inicial] = nuevo;
+    // Insercion al frente de la lista con indexacion acotada
+    int posSegura = inicial % MRS;
+    nuevo->sig = tabla[posSegura];
+    tabla[posSegura] = nuevo;
     (*exito) = true;
 
     return costoAlta;
 }
 
+/*
+ * Baja en RS:
+ * - Si localiza el DNI, se accede a la nupla completa del nodo para verificar
+ *   la coincidencia exacta de todos los campos mediante elector_sonIguales.
+ * - Confirmada la igualdad, se desenlaza el nodo y se libera con free().
+ */
 int bajaRS(RS tabla[], const elector e, bool *exito){
     (*exito) = false;
     NodoRS *ant = NULL, *act = NULL;
@@ -77,26 +122,31 @@ int bajaRS(RS tabla[], const elector e, bool *exito){
     int inicial = hashing(e.dni, MRS);
     int costoBaja = localizarRS(tabla, e, inicial, &ant, &act, &exitoL);
 
-    if(exitoL){
-        // si localiza el DNI, se suma +1 por acceder a la nupla completa para verificar ==
-        elector guardado = act->datos;
-        costoBaja++;
-        if(elector_sonIguales(guardado, e)){
-            if(ant == NULL){
-                // era el primero de la lista, movemos la cabecera al siguiente
-                tabla[inicial] = act->sig;
+    if (exitoL) {
+        costoBaja++; // Acceso a la nupla completa para confirmacion por codigo
+        if (elector_sonIguales(act->datos, e)) {
+            int posSegura = inicial % MRS;
+            if (ant == NULL) {
+                tabla[posSegura] = act->sig;
             } else {
-                // estaba en el medio o al final, puenteamos con el anterior
                 ant->sig = act->sig;
             }
-            free(act); // libera el nodo para no dejar memory leaks
+            free(act); // Liberacion segura del nodo
             (*exito) = true;
             return costoBaja;
         }
     }
+
     return costoBaja;
 }
 
+/*
+ * Evocacion en RS:
+ * - Retorna estrictamente el costo devuelto por localizarRS.
+ * - La asignacion del elector encontrado al parametro de salida (*resultado)
+ *   mediante elector_copiar constituye la entrega del resultado y no anade
+ *   ninguna inspeccion estructural de celda adicional.
+ */
 int evocarRS(const RS tabla[], const elector e, bool *exito, elector *resultado){
     *exito = false;
     NodoRS *ant = NULL;
@@ -110,6 +160,12 @@ int evocarRS(const RS tabla[], const elector e, bool *exito, elector *resultado)
     return costo;
 }
 
+/*
+ * Muestra paginada de RS:
+ * - Enumera las listas de 1 a M (i + 1).
+ * - Muestra elementos o indica lista vacia.
+ * - Pausa cada ITEMPORPAGINA listas, permitiendo continuar con ENTER o salir con 'q'/'Q'.
+ */
 void mostrarRS(const RS tabla[], int M){
     int ocupadas = 0;
     int total = 0;
@@ -152,6 +208,10 @@ void mostrarRS(const RS tabla[], int M){
     printf("============================================================\n");
 }
 
+/*
+ * Liberacion de memoria dinamica de RS:
+ * Recorre las M listas enlazadas liberando cada nodo y resetea los punteros a NULL.
+ */
 void liberarRS(RS tabla[], int M){
     for (int i = 0; i < M; i++) {
         NodoRS *act = tabla[i];
@@ -164,4 +224,4 @@ void liberarRS(RS tabla[], int M){
     }
 }
 
-#endif
+#endif // RS_H_INCLUDED
